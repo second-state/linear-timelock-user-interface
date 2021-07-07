@@ -51,10 +51,20 @@ Configure the application by editing `config.env`
 
 ### Run 
 
+Change directories
+
+```
+cd faucet-with-social-media-authentication/src
+```
+
+Then start manually
+
 ```
 node server.js
 ```
-Or
+
+Or using forever (auto restart if required)
+
 ```
 forever start -o out.log -e err.log server.js
 ```
