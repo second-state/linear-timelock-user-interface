@@ -28,8 +28,9 @@ A lot of parameters are configurable. This is good for security (separate config
 - blockchain_chain_id
 - hash_tags_to_check
 - collect_api_data
-- limit_per_user
-- limit_duration
+- user_rate_limit
+- rate_limit_duration
+- token_amount_in_wei
 - blockchain_logo_url
 - blockchain_name
 - blockchain_description
