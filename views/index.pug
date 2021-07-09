@@ -1,13 +1,29 @@
 extends layout
 
 block layout-content
-  div.View
+  div.View.WelcomeView
     h1.Banner Faucet
-    div.Message
+    div.Message.center
       div.Title
-        h3 Social Media Authenticated
-        h1 asdf
-      span.Details Get your free tokens here
+        h3 Please enter your public address
+        input(
+            id="recipient_address"
+            type="text"
+            class="full_width"
+            value=""
+            size="2"
+        )
+    script(src = "jquery.min.js")
+    script(src = "helper.js")
     div.NavButtons
-      a(href="/user")
-          div.NavButton Use the faucet!
+      button.NavButton(onclick="onButtonClick($('#recipient_address').val())", id=button_send_tokens) Send me tokens!
+    a(
+      href="https://secondstate.io"
+      target="_blank"
+    )
+      img(
+        class="bottom_left"
+        src="ss.png"
+        a="href"
+        target="_blank"
+      )
