@@ -76,7 +76,7 @@ npm run prod
 
 Users will visit the site and paste in their public key
 
-![home page](https://github.com/second-state/universal-faucet/raw/main/home_page.png)
+![home page](https://github.com/second-state/universal-faucet/raw/main/home_page.png =250x)
 
 ### HTTP Request Response
 
