@@ -1,4 +1,4 @@
-# Faucet with social media authentication
+# Universal Faucet (for Ethereum compatible blockchain networks)
 
 # What does it do?
 
