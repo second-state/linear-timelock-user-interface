@@ -83,7 +83,7 @@ Users will visit the site and paste in their public key
 Users can also use requests to perform the same task. For example the following HTTP Post request can be used (where `0xF9A8917c7fFb04822daDC861E9e66E69cecCD248` is the users public key).
 
 ```
-curl --location --request POST 'http://localhost:8001/transfer/0xF9A8917c7fFb04822daDC861E9e66E69cecCD248'
+curl --location --request POST 'http://localhost:8001/api/0xF9A8917c7fFb04822daDC861E9e66E69cecCD248'
 ```
 
 ### Rate limiting
