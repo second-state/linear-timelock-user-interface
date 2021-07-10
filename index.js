@@ -13,7 +13,9 @@ const Web3 = require('web3');
 const https = require('https');
 const helmet = require("helmet");
 const express = require("express");
+const Toastify = require("toastify-js");
 const rateLimit = require("express-rate-limit");
+
 
 /**
  * App Variables
@@ -90,6 +92,20 @@ app.post('/transfer/:recipient_address', function(req, res){
       if (!error) {
           web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
               if (!error) {
+                            Toastify({
+                avatar: "https://avatars.githubusercontent.com/u/78342518?s=200&v=4",
+                text: "Transaction sent, please wait ...",
+                duration: 5000,
+                destination: "http://scan.parastate.io/tx/" + response,
+                newWindow: true,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                backgroundColor: "linear-gradient(to right, #0000ff, #009fd8)",
+                stopOnFocus: false, // Prevents dismissing of toast on hover
+                onClick: function() {} // Callback after click
+            }).showToast();
+
                   response = "Success" + signed_tx.transactionHash;
                   console.log(signed_tx.transactionHash);
               } else {
