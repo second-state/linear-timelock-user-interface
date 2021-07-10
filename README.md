@@ -2,26 +2,26 @@
 
 # What does it do?
 
-This software provides blockchain tokens to users who post on social media; all components are configurable.
+This software provides Ethereum compatible blockchain tokens; think of this as a "Faucet as a Service".
+It provides a web page interface (where users can paste in their public key).
+It also provides an RPC endpoint (which can be called manually or programatically).
+This software has specific rate limiting built in.
+Just as with settings like `token_amount_in_wei`, `blockchain_rpc`, `blockchain_chain_id` and so forth, the aforementioned rate limiting (`user_rate_limit` & `rate_limit_duration` is completely configurable i.e. one token per hour or 10 tokens per day etc.
 
 # What problem does it solve?
 
-At present blockchain faucets are prone to being spammed; even in cases where the blockchain tokens are not worth much. This spamming overloads and also dries up faucet supply, making it hard for legitimate smart contract developers etc. to obtain free tokens.
+At present blockchain faucets are prone to being spammed; even in cases where the blockchain tokens are not worth much. This spamming overloads the faucet hosting and also dries up faucet supply. This makes it hard for legitimate smart contract developers etc. to obtain free tokens.
 
 # How does it work?
 
-This node application allows users to paste in a link to their social media post. 
+This node application allows users to paste in their Ethereum compatible address (future version will accept a link to a social media post with address also). 
 
-The user is required to paste their public key inside their social media post. In some cases they may also be required to use a specific hashtag i.e. hashtag of a conference etc. 
+This application transfers the blockchain token from the faucet to the user's account.
 
-This application then goes and reads that social media post, obtains the key and finally transfers the blockchain token from the faucet to the user's account.
-
-This application optionally collects some information (as per social media's public APIs) about the user i.e. when their account was create, lists of followers in order to determine if the users are legitimate or just bots. This is configurable.
-
-The application can rate limit the amount of tokens that it provides to users. This is configurable.
+Future versions of this application will optionally collect some information (as per social media's public APIs) about the user i.e. when their account was created, etc in order to determine if the users are legitimate or just bots. Like everything else this will also be configurable.
 
 # What is configurable
-A lot of parameters are configurable. This is good for security (separate config file) and also allows this code to be reused for other projects. Configurations include:
+A lot of parameters will be configurable. This is good for security (separate config file) and also allows this code to be reused for other projects. Configurations will eventially include:
 - faucet_private_key
 - faucet_public_key
 - blockchain_rpc
@@ -38,7 +38,7 @@ A lot of parameters are configurable. This is good for security (separate config
 - blockchain_block_explorer_address_url
 - blockchain_block_explorer_transaction_url
 
-## How to use it
+## How to host it (as a faucet for your own blockchain network)
 
 ### Fetch the code
 
@@ -70,3 +70,24 @@ npm init
 npm run prod
 ```
 
+## How to use it (as an end user)
+
+### Web site
+
+Users will visit the site and paste in their public key
+
+![]()
+
+### HTTP Request Response
+
+Users can also use requests to perform the same task. For example the following HTTP Post request can be used.
+
+```
+
+```
+
+### Rate limiting
+
+The faucet uses rate limiting which will return the [429 Too Many Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) response code; if rate is exceeded. For web users the following static page will be shown as the visual response (still technically a 429 response with a static page attached)
+
+![rate limit image]()
