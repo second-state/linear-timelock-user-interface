@@ -76,18 +76,18 @@ npm run prod
 
 Users will visit the site and paste in their public key
 
-![]()
+![home page](https://github.com/second-state/universal-faucet/raw/main/home_page.png)
 
 ### HTTP Request Response
 
-Users can also use requests to perform the same task. For example the following HTTP Post request can be used.
+Users can also use requests to perform the same task. For example the following HTTP Post request can be used (where `0xF9A8917c7fFb04822daDC861E9e66E69cecCD248` is the users public key).
 
 ```
-
+curl --location --request POST 'http://localhost:8001/transfer/0xF9A8917c7fFb04822daDC861E9e66E69cecCD248'
 ```
 
 ### Rate limiting
 
 The faucet uses rate limiting which will return the [429 Too Many Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) response code; if rate is exceeded. For web users the following static page will be shown as the visual response (still technically a 429 response with a static page attached)
 
-![rate limit image]()
+![rate limit image](https://github.com/second-state/universal-faucet/raw/main/rate_limit_page.png)
