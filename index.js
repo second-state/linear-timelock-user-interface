@@ -10,7 +10,11 @@ const path = require("path");
 const cors = require('cors');
 const Web3 = require('web3');
 const https = require('https');
-const helmet = require("helmet");
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 const express = require("express");
 const rateLimit = require("express-rate-limit");
 
