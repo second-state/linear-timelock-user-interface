@@ -41,6 +41,7 @@ const api_limiter = rateLimit({
 console.log("Duration for rate limit: " + process.env.rate_limit_duration);
 console.log("Amount per duration: " + process.env.user_rate_limit);
 console.log("Using HTTPS: " + process.env.https);
+var credentials;
 if (process.env.https == "yes") {
   const ca = fs.readFileSync('/etc/letsencrypt/live/' + process.env.server_name + '/fullchain.pem', 'utf8');
   const certificate = fs.readFileSync('/etc/letsencrypt/live/' + process.env.server_name + '/cert.pem', 'utf8');
@@ -159,7 +160,7 @@ app.post('/api/:recipient_address', function(req, res) {
  */
 
 if (process.env.https == "yes") {
-  https.createServer(credentials, app).listen(port, process.env.host, () => {
+  https.createServer(credentials, app).listen(server_port, '0.0.0.0', () => {
     console.log("Welcome to faucet");
   });
 } else if (process.env.https == "no") {
