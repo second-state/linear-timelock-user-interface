@@ -2,7 +2,7 @@ extends layout
 
 block layout-content
   div.View.WelcomeView
-    h1.Banner Faucet
+    h1.Banner #{blockchain_name}
     div.Message.center
       div.Title
         h3 Please enter your public address
@@ -10,11 +10,11 @@ block layout-content
             id="recipient_address"
             type="text"
             class="full_width"
-            value=""
-            size="2"
+            value="0xF9A8917c7fFb04822daDC861E9e66E69cecCD248"
         )
     script(src = "jquery.min.js")
     script(src = "helper.js")
+    div(id="asdf" value="a")
     div.NavButtons
       button.NavButton(onclick="onButtonClick($('#recipient_address').val())", id=button_send_tokens) Send me tokens!
     a(
