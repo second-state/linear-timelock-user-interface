@@ -42,9 +42,9 @@ console.log("Duration for rate limit: " + process.env.rate_limit_duration);
 console.log("Amount per duration: " + process.env.user_rate_limit);
 console.log("Using HTTPS: " + process.env.https);
 if (process.env.https == "yes") {
-  const ca = fs.readFileSync('/etc/letsencrypt/live/' + server_name + '/fullchain.pem', 'utf8');
-  const certificate = fs.readFileSync('/etc/letsencrypt/live/' + server_name + '/cert.pem', 'utf8');
-  const privateKey = fs.readFileSync('/etc/letsencrypt/live/' + server_name + '/privkey.pem', 'utf8');
+  const ca = fs.readFileSync('/etc/letsencrypt/live/' + process.env.server_name + '/fullchain.pem', 'utf8');
+  const certificate = fs.readFileSync('/etc/letsencrypt/live/' + process.env.server_name + '/cert.pem', 'utf8');
+  const privateKey = fs.readFileSync('/etc/letsencrypt/live/' + process.env.server_name + '/privkey.pem', 'utf8');
   const credentials = {
     key: privateKey,
     cert: certificate,
