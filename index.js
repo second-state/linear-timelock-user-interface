@@ -155,8 +155,9 @@ app.post('/api/:recipient_address', function(req, res) {
  */
 
 if (process.env.https == "yes") {
-  https.createServer(credentials, app).listen(server_port, '0.0.0.0', () => {
+  https.createServer(credentials, app).listen(server_port, process.env.host, () => {
     console.log("Welcome to faucet");
+    console.log("Host:" + process.env.host + "\nPort: " + server_port);
   });
 } else if (process.env.https == "no") {
   app.listen(server_port, () => {
