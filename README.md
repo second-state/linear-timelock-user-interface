@@ -61,7 +61,7 @@ cd faucet-with-social-media-authentication
 ### Install
 
 ```
-npm init
+npm install
 ```
 
 ### Start
