@@ -10,11 +10,7 @@ const path = require("path");
 const cors = require('cors');
 const Web3 = require('web3');
 const https = require('https');
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-  })
-);
+const helmet = require("helmet");
 const express = require("express");
 const rateLimit = require("express-rate-limit");
 
@@ -75,7 +71,11 @@ app.use("/api/", api_limiter);
 
 
 // TODO install CSP and do not set this to false, this was just for testing
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 
 /**
  * Routes Definitions
