@@ -71,12 +71,7 @@ app.use("/api/", api_limiter);
 
 
 // TODO install CSP and do not set this to false, this was just for testing
-//app.use(helmet());
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-  })
-);
+app.use(helmet());
 
 /**
  * Routes Definitions
