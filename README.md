@@ -55,17 +55,15 @@ sudo apt install nodejs npm
 git clone https://github.com/ParaState/universal-blockchain-faucet.git
 ```
 
-### Configure 
-
-Configure the application by editing `config.env`
-
-### Run 
-
 Change directories
 
 ```
 cd universal-blockchain-faucet
 ```
+
+### Configure 
+
+Configure the application by editing the `.env` file
 
 ### Install
 
