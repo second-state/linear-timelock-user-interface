@@ -40,6 +40,15 @@ A lot of parameters will be configurable. This is good for security (separate co
 
 ## How to host it (as a faucet for your own blockchain network)
 
+### System dependencies
+
+**Ubuntu example**
+
+```
+sudo apt update
+sudo apt install nodejs npm
+```
+
 ### Fetch the code
 
 ```
