@@ -79,8 +79,8 @@ text-align: center;
   bottom: 8px;
   left: 16px;
   font-size: 18px;
-  -webkit-filter: drop-shadow(10px 10px 10px #FFFFFF);
-  filter: drop-shadow(10px 10px 10px #FFFFFF);
+  -webkit-filter: drop-shadow(10px 10px 10px #);
+  filter: drop-shadow(10px 10px 10px #5a5a5a);
   background-repeat: no-repeat;
 }
 

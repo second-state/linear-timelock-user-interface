@@ -12,6 +12,7 @@ const Web3 = require('web3');
 const https = require('https');
 const helmet = require("helmet");
 const express = require("express");
+const readline = require('readline');
 const rateLimit = require("express-rate-limit");
 
 /**
@@ -88,6 +89,83 @@ app.get("/faucet", (req, res) => {
   });
 });
 
+// Twitter Access
+app.post('/api/:tweet_url', function(req, res) {
+  var response;
+  console.log('Transfer');
+  var twitterUrl = req.params.tweet_url;
+  // TODO fetch tweet
+  // TODO parse tweet
+  // TODO extract handle
+  // TODO check cache to see if handle has recently received tokens
+  // TODO confirm handle follows a specific account
+  // TODO extract address
+  // TODO check address validity
+  // var recipientAddress = TODO
+
+  console.log("Recipient address: " + recipientAddress);
+  var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url
+  var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url
+  var faucetPublicKey = process.env.faucet_public_key;
+  var faucetPrivateKey = process.env.faucet_private_key;
+  var blockchainChainId = process.env.blockchain_chain_id;
+  var gasPrice = process.env.gas_price;
+  var gasLimit = process.env.gas_limit;
+  var tokenAmountInWei = process.env.token_amount_in_wei;
+  var blockchainLogoUrl = process.env.blockchain_logo_url;
+  var transactionObject = {
+    chainId: blockchainChainId,
+    from: faucetPublicKey,
+    gasPrice: gasPrice,
+    gas: gasLimit,
+    to: recipientAddress,
+    value: tokenAmountInWei,
+  }
+  web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+    if (!error) {
+      web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+        if (!error) {
+          var toastObjectSuccess = {
+            avatar: blockchainLogoUrl,
+            text: "Click to see Tx",
+            duration: 6000,
+            destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+            newWindow: true,
+            close: true,
+            gravity: "top", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
+            stopOnFocus: false, // Prevents dismissing of toast on hover
+            onClick: function() {} // Callback after click
+          }
+          response =  toastObjectSuccess;
+          res.send(response);
+        } else {
+            var toastObjectFail = {
+            avatar: blockchainLogoUrl,
+            text: "Transaction failed!",
+            duration: 6000,
+            destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+            newWindow: true,
+            close: true,
+            gravity: "top", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+            stopOnFocus: false, // Prevents dismissing of toast on hover
+            onClick: function() {} // Callback after click
+          }
+          response = toastObjectFail;
+          console.log("Send signed transaction failed: " + error);
+          res.send(response);
+        }
+      });
+    } else {
+      console.log(error);
+    }
+  });
+});
+
+// Address access
 app.post('/api/:recipient_address', function(req, res) {
   var response;
   console.log('Transfer');
@@ -170,3 +248,18 @@ if (process.env.https == "yes") {
 } else {
   console.log("ERROR: Please set the https setting in the .env config file");
 }
+
+
+// START Load AOT files from manifect
+const readInterface = readline.createInterface({
+    input: fs.createReadStream(path.join(process.env.data_dir, 'data.txt')),
+    output: false,
+    console: false
+});
+
+console.log("Loading data into cache");
+readInterface.on('line', function(line) {
+    var split_data = line.split(",");
+    console.log("Loading " + split_data[0] + ": " + split_data[1] + ".");
+    myCache.set(split_data[0], split_data[1], 0);
+});
