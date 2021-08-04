@@ -63,9 +63,52 @@ cd universal-blockchain-faucet
 
 ### Configure 
 
-Configure the application by editing the `.env` file
+Create a new file called `.env` and add the following text
 
-### Install
+```
+# A throw away practice key (never store large amounts in this address for obvious reasons)
+faucet_private_key=xx123xx
+faucet_public_key=0x2C67EE088F309438B27DAC19D76B4Eb860232871
+blockchain_rpc=https://rpc.parastate.io:8545
+blockchain_chain_id=123
+# How many times a user can use this server per duration period
+user_rate_limit=10
+# The duration period in minutes i.e. 1440 is 24 hours
+rate_limit_duration=1
+# The amount of wei to be sent per airdrop i.e. 1000000000000000000 (to send 1 ETH)
+token_amount_in_wei=1000000000000000
+blockchain_logo_url=https://pbs.twimg.com/profile_images/1357246244540751873/zhVBBG5-_400x400.jpg
+blockchain_name=ParaState Testnet
+blockchain_description=ParaState Testnet
+blockchain_block_explorer_url=http://scan.parastate.io/
+# URL and path to address/account, include trailing slash i.e. https://explore.io/address/
+blockchain_block_explorer_address_url=http://scan.parastate.io/account/
+# URL and path to transaction/tx etc, including trailing slash i.e. https://explore.io/tx/
+blockchain_block_explorer_transaction_url=http://scan.parastate.io/tx/
+# Override gas price
+gas_price=5000000000
+# Override gas limit
+gas_limit=8000000
+# Flavour of client's web3 i.e. oeth (Oasis Ethereum), cmt (CyberMiles), eth (Ethereum), state (ParaState), dot (Polkadot)
+web3_flavour=eth
+server_name=testnet.faucet.parastate.io
+server_port=8001
+# Are you using HTTPS (letsencrypt)? yes/no
+https=no
+host=0.0.0.0
+data_dir=/media/nvme/universal-faucet-data
+```
+
+### Data Directory
+
+Create a data directory which is the same as what you just set in the `.env` file
+
+```
+mkdir -p /media/nvme/universal-faucet-data
+sudo chown -R $USER:$USER /media/nvme/universal-faucet-data
+```
+
+### Install node dependencies automatically
 
 ```
 npm install
