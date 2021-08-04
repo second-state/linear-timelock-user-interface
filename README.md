@@ -98,3 +98,12 @@ curl --location --request POST 'http://localhost:8001/api/0xF9A8917c7fFb04822daD
 The faucet uses rate limiting which will return the [429 Too Many Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) response code; if rate is exceeded. For web users the following static page will be shown as the visual response (still technically a 429 response with a static page attached)
 
 ![rate limit image](https://github.com/ParaState/universal-blockchain-faucet/raw/main/rate_limit_page.png)
+
+## Development
+
+If you would like to contribute to this project and you don't want your `.env` file to be pushed to this repo, please run the following commands. 
+
+```
+git rm .env --cached
+git commit -m "Stopped tracking .env File"
+```
