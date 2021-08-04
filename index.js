@@ -89,80 +89,117 @@ app.get("/faucet", (req, res) => {
   });
 });
 
+function removeLine(_handle) {
+  var data = fs.readFileSync(path.join(process.env.data_dir, "data.txt"), 'utf-8');
+  var reg = new RegExp('^' + _handle + '.*\n');
+  console.log(reg);
+  var newValue = data.replace(reg, '');
+  console.log(newValue);
+  fs.writeFileSync(path.join(process.env.data_dir, "data.txt"), newValue, 'utf-8');
+}
+
 // Twitter Access
 app.post('/api/:tweet_url', function(req, res) {
+  var goodToGo = false;
   var response;
   console.log('Transfer');
   var twitterUrl = req.params.tweet_url;
   // TODO fetch tweet
   // TODO parse tweet
   // TODO extract handle
-  // TODO check cache to see if handle has recently received tokens
+  // var handle = TODO
   // TODO confirm handle follows a specific account
   // TODO extract address
   // TODO check address validity
   // var recipientAddress = TODO
-
-  console.log("Recipient address: " + recipientAddress);
-  var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url
-  var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url
-  var faucetPublicKey = process.env.faucet_public_key;
-  var faucetPrivateKey = process.env.faucet_private_key;
-  var blockchainChainId = process.env.blockchain_chain_id;
-  var gasPrice = process.env.gas_price;
-  var gasLimit = process.env.gas_limit;
-  var tokenAmountInWei = process.env.token_amount_in_wei;
-  var blockchainLogoUrl = process.env.blockchain_logo_url;
-  var transactionObject = {
-    chainId: blockchainChainId,
-    from: faucetPublicKey,
-    gasPrice: gasPrice,
-    gas: gasLimit,
-    to: recipientAddress,
-    value: tokenAmountInWei,
+  var new_timestamp = Math.floor(new Date().getTime() / 1000);
+  var timestamp = myCache.get(handle);
+  if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
+    goodToGo = true;
+    removeLine(handle);
   }
-  web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
-    if (!error) {
-      web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
-        if (!error) {
-          var toastObjectSuccess = {
-            avatar: blockchainLogoUrl,
-            text: "Click to see Tx",
-            duration: 6000,
-            destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-            newWindow: true,
-            close: true,
-            gravity: "top", // `top` or `bottom`
-            position: "right", // `left`, `center` or `right`
-            backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
-            stopOnFocus: false, // Prevents dismissing of toast on hover
-            onClick: function() {} // Callback after click
-          }
-          response =  toastObjectSuccess;
-          res.send(response);
-        } else {
-            var toastObjectFail = {
-            avatar: blockchainLogoUrl,
-            text: "Transaction failed!",
-            duration: 6000,
-            destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-            newWindow: true,
-            close: true,
-            gravity: "top", // `top` or `bottom`
-            position: "right", // `left`, `center` or `right`
-            backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
-            stopOnFocus: false, // Prevents dismissing of toast on hover
-            onClick: function() {} // Callback after click
-          }
-          response = toastObjectFail;
-          console.log("Send signed transaction failed: " + error);
-          res.send(response);
-        }
-      });
-    } else {
-      console.log(error);
+  if (timestamp == undefined || goodToGo == true) {
+    myCache.set(handle, new_timestamp, 0);
+    fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + '\n', function(err) {
+      if (err) throw err;
+      console.log("Updated timestamp saved");
+    });
+    console.log("Recipient address: " + recipientAddress);
+    var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url
+    var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url
+    var faucetPublicKey = process.env.faucet_public_key;
+    var faucetPrivateKey = process.env.faucet_private_key;
+    var blockchainChainId = process.env.blockchain_chain_id;
+    var gasPrice = process.env.gas_price;
+    var gasLimit = process.env.gas_limit;
+    var tokenAmountInWei = process.env.token_amount_in_wei;
+    var blockchainLogoUrl = process.env.blockchain_logo_url;
+    var transactionObject = {
+      chainId: blockchainChainId,
+      from: faucetPublicKey,
+      gasPrice: gasPrice,
+      gas: gasLimit,
+      to: recipientAddress,
+      value: tokenAmountInWei,
     }
-  });
+    web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+      if (!error) {
+        web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+          if (!error) {
+            var toastObjectSuccess = {
+              avatar: blockchainLogoUrl,
+              text: "Click to see Tx",
+              duration: 6000,
+              destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+              newWindow: true,
+              close: true,
+              gravity: "top", // `top` or `bottom`
+              position: "right", // `left`, `center` or `right`
+              backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
+              stopOnFocus: false, // Prevents dismissing of toast on hover
+              onClick: function() {} // Callback after click
+            }
+            response =  toastObjectSuccess;
+            res.send(response);
+          } else {
+              var toastObjectFail = {
+              avatar: blockchainLogoUrl,
+              text: "Transaction failed!",
+              duration: 6000,
+              destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+              newWindow: true,
+              close: true,
+              gravity: "top", // `top` or `bottom`
+              position: "right", // `left`, `center` or `right`
+              backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+              stopOnFocus: false, // Prevents dismissing of toast on hover
+              onClick: function() {} // Callback after click
+            }
+            response = toastObjectFail;
+            console.log("Send signed transaction failed: " + error);
+            res.send(response);
+          }
+        });
+      } else {
+        console.log(error);
+      }
+    });
+  } else {
+    var toastObjectTwitterFail = {
+      avatar: blockchainLogoUrl,
+      text: "Sorry!",
+      duration: 6000,
+      close: true,
+      gravity: "top", // `top` or `bottom`
+      position: "right", // `left`, `center` or `right`
+      backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+      stopOnFocus: false, // Prevents dismissing of toast on hover
+      onClick: function() {} // Callback after click
+    }
+    response = toastObjectTwitterFail;
+    console.log("Rate limiter: " + error);
+    res.send(response);
+  }
 });
 
 // Address access
@@ -249,8 +286,11 @@ if (process.env.https == "yes") {
   console.log("ERROR: Please set the https setting in the .env config file");
 }
 
+// Node Cache
+const NodeCache = require("node-cache");
+const myCache = new NodeCache();
 
-// START Load AOT files from manifect
+// START Load data from data file
 const readInterface = readline.createInterface({
     input: fs.createReadStream(path.join(process.env.data_dir, 'data.txt')),
     output: false,
