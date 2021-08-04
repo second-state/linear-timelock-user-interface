@@ -99,13 +99,19 @@ host=0.0.0.0
 data_dir=/media/nvme/universal-faucet-data
 ```
 
-### Data Directory
+### Data directory
 
 Create a data directory which is the same as what you just set in the `.env` file
 
 ```
-mkdir -p /media/nvme/universal-faucet-data
+sudo mkdir -p /media/nvme/universal-faucet-data
 sudo chown -R $USER:$USER /media/nvme/universal-faucet-data
+```
+
+### Create the data file
+
+```
+touch /media/nvme/universal-faucet-data/data.txt
 ```
 
 ### Install node dependencies automatically
