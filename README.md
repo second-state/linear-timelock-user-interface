@@ -157,3 +157,38 @@ If you would like to contribute to this project and you don't want your `.env` f
 git rm .env --cached
 git commit -m "Stopped tracking .env File"
 ```
+
+## Hosting using SSL
+
+If you would like to host this as a stand alone faucet for your own project it is advised that you use letsencrypt and provide users with https address (as apposed to just hosting locally via http for testing and dev purposes).
+
+First install these packages on Ubuntu operating system.
+
+```
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get install -y certbot
+```
+
+Create a new directory for the letsencrypt certificates
+
+```
+sudo mkdir /etc/letsencrypt
+sudo chown $USER:$USER -R /etc/letsencrypt
+```
+
+Part of the verification of letsencrypt requires that you host a text file at a specific location on the server. The quickest way to do this is to install apache2 and use /var/www/html path on the server.
+
+First install apache2
+
+```
+sudo apt install apache2
+```
+
+Then log into your server with another session (so you can perform the validation whilst also writing to www/html dir) 
+
+Once you have two sessions openb, run the following command to create and verify the certificates. It is just a matter of following the prompts.
+
+```
+sudo certbot certonly --manual
+```
