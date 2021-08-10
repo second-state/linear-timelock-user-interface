@@ -118,7 +118,7 @@ function removeLine(_handle) {
 }
 
 // Twitter Access
-app.post('/api/:tweet_url', function(req, res) {
+app.post('/api/twitter/:tweet_url', function(req, res) {
   var goodToGo = false;
   var response;
   console.log('Transfer');
