@@ -187,8 +187,39 @@ sudo apt install apache2
 
 Then log into your server with another session (so you can perform the validation whilst also writing to www/html dir) 
 
-Once you have two sessions openb, run the following command to create and verify the certificates. It is just a matter of following the prompts.
+Once you have two sessions open, run the following command to create and verify the certificates. It is just a matter of following the prompts.
 
 ```
 sudo certbot certonly --manual
+```
+
+Example of apache2 work required whilst the above `certbot` command is running include ...
+
+```
+Create a file containing just this data:
+
+asdfasdf
+
+And make it available on your web server at this URL:
+
+http://testnet.faucet.parastate.io/.well-known/acme-challenge/asdf
+
+```
+
+You then write the data provided by the `certbot` command to the file path provided by the `certbot` command.
+
+```
+sudo mkdir -p .well-known/acme-challenge
+vi asdf
+```
+
+For example, enter the text `asdfasdf` and save `asdf` file and press enter to continue in the `certbot` terminal.
+
+
+You will also need to open port 80 so that `certbot` can see the data in that file.
+
+When the verification is finished you will need to update the ownership of the new certificates in the letsencrypt location (because they were written by root not your user). Simply do the following (to prevent an error like this `Error: EACCES: permission denied, open '/etc/letsencrypt` when starting the faucet)
+
+```
+sudo chown $USER:$USER -R /etc/letsencrypt
 ```
