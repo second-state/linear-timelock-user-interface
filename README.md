@@ -97,6 +97,7 @@ server_port=8001
 https=no
 host=0.0.0.0
 data_dir=/media/nvme/universal-faucet-data
+twitter_bearer_token=
 ```
 
 ### Data directory
