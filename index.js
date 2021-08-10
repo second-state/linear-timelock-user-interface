@@ -1,4 +1,13 @@
+// Twitter sample code
+// https://github.com/twitterdev/Twitter-API-v2-sample-code
 //
+// We will look up followers of the ParaState account like this
+// https://github.com/twitterdev/Twitter-API-v2-sample-code/blob/main/Follows-Lookup/followers_lookup.js
+//
+// We will then read the tweet like this
+// https://github.com/twitterdev/Twitter-API-v2-sample-code/blob/main/Tweet-Lookup/get_tweets_with_bearer_token.js
+//
+// 
 // index.js
 
 /**
@@ -10,6 +19,7 @@ const path = require("path");
 const cors = require('cors');
 const Web3 = require('web3');
 const https = require('https');
+const needle = require('needle');
 const helmet = require("helmet");
 const express = require("express");
 const readline = require('readline');

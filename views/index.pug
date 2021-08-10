@@ -5,19 +5,27 @@ block layout-content
     h1.Banner #{blockchain_name}
     div.Message.center
       div.Title
-        h3 Please enter your public address
+        h3 Please enter your Tweet's URL
+        a(
+          href="https://help.twitter.com/en/using-twitter/tweet-and-moment-url"
+          target="_blank"
+        )
+         p.linkage How to find your Tweet's URL
         input(
             id="recipient_address"
             type="text"
             class="full_width"
-            value="0xF9A8917c7fFb04822daDC861E9e66E69cecCD248"
+            value="https://twitter.com/user/status/1234"
         )
+        br 
+        br
+        button.clearButton(onclick="clearTwitterInput()", id=clear_input) Clear
     script(src = "jquery.min.js")
     script(src = "helper.js")
     div.NavButtons
-      button.NavButton(onclick="onButtonClick($('#recipient_address').val())", id=button_send_tokens) Send me tokens!
+      button.NavButton.center(onclick="onButtonClick($('#recipient_address').val())", id=button_send_tokens) Send me tokens!
     a(
-      href="https://secondstate.io"
+      href="https://parastate.io"
       target="_blank"
     )
       img(

@@ -29,3 +29,7 @@ function onButtonClick(_address) {
         xhr.send();
       });
   }
+
+  function clearTwitterInput() {
+    document.getElementById("recipient_address").value = '';
+  }

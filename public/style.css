@@ -84,6 +84,11 @@ text-align: center;
   background-repeat: no-repeat;
 }
 
+.linkage {
+  font-size: 12px;
+  color: blue;
+}
+
 .View {
   flex: 1;
   display: flex;
@@ -140,11 +145,32 @@ text-align: center;
 }
 
 .NavButtons {
-  display: flex;
+  display: unset;
   width: 100%;
   justify-content: space-around;
   align-items: center;
   padding: 0 20px;
+}
+
+.clearButton {
+  display: center;
+  justify-content: center;
+  align-items: center;
+
+  height: 25px;
+  width: 50px;
+
+  background: #99d6ff;
+
+  border-radius: 15px;
+  border-width:  0px;
+
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+
+  -webkit-filter: drop-shadow(5px 5px 5px #);
+  filter: drop-shadow(5px 5px 5px #5a5a5a);
 }
 
 .NavButton {
