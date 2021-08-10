@@ -57,7 +57,7 @@ if (process.env.https == "yes") {
   const ca = fs.readFileSync('/etc/letsencrypt/live/' + process.env.server_name + '/fullchain.pem', 'utf8');
   const certificate = fs.readFileSync('/etc/letsencrypt/live/' + process.env.server_name + '/cert.pem', 'utf8');
   const privateKey = fs.readFileSync('/etc/letsencrypt/live/' + process.env.server_name + '/privkey.pem', 'utf8');
-  const credentials = {
+  credentials = {
     key: privateKey,
     cert: certificate,
     ca: ca
@@ -91,6 +91,15 @@ app.use(
 /**
  * Routes Definitions
  */
+
+ app.get('/', (req, res) => {
+    response = [{
+        "application": "universal-blockchain-faucet"
+    }, {
+        "usage:": "Please visit URL:8001/faucet"
+    }];
+    res.send(JSON.stringify(response));
+});
 
 app.get("/faucet", (req, res) => {
   res.render("index", {
@@ -285,7 +294,7 @@ app.post('/api/:recipient_address', function(req, res) {
 
 if (process.env.https == "yes") {
   https.createServer(credentials, app).listen(server_port, process.env.host, () => {
-    console.log("Welcome to faucet");
+    console.log("Welcome to faucet; using https");
     console.log("Host:" + process.env.host + "\nPort: " + server_port);
   });
 } else if (process.env.https == "no") {
