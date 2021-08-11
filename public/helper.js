@@ -66,11 +66,16 @@ async function getRequest(_ids, _twitter_bearer_token) {
 
 
 function onButtonClickTwitter(_tweet_url, _twitter_bearer_token) {
+  console.log("Tweet URL: " + _tweet_url);
+  console.log("Twitter token: " + _twitter_bearer_token);
   var toastResponse;
   return new Promise(function(resolve, reject) {
     var pattern = /[0-9]*$/;
+    console.log("Pattern: " + pattern);
     var resultRegex = pattern.exec(_tweet_url);
+    console.log("resultRegex: " + resultRegex);
     var tweetId = resultRegex[0];
+    console.log("Tweet id: " + tweetId);
     // We have tweet id so now we need to read the tweet
     getRequest(tweet_id).then(result => {
       console.log(result); 
