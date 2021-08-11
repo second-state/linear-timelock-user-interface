@@ -33,12 +33,12 @@ function onButtonClick(_address) {
   function clearTwitterInput() {
     document.getElementById("recipient_address").value = '';
   }
-/*
+
 const endpointURL = "https://api.twitter.com/2/tweets?ids=";
 
 
 
-async function getRequest(_ids) {
+async function getRequest(_ids, _twitter_bearer_token) {
 
     // These are the parameters for the API request
     // specify Tweet IDs to fetch, and any additional fields that are required
@@ -53,7 +53,7 @@ async function getRequest(_ids) {
     const res = await needle('get', endpointURL, params, {
         headers: {
             "User-Agent": "v2TweetLookupJS",
-            "authorization": `Bearer ${twitter_token}`
+            "authorization": `Bearer ${_twitter_bearer_token}`
         }
     })
 
@@ -65,7 +65,7 @@ async function getRequest(_ids) {
 }
 
 
-function onButtonClickTwitter(_tweet_url) {
+function onButtonClickTwitter(_tweet_url, _twitter_bearer_token) {
   var toastResponse;
   return new Promise(function(resolve, reject) {
     var pattern = /[0-9]*$/;
@@ -76,7 +76,7 @@ function onButtonClickTwitter(_tweet_url) {
       console.log(result); 
     })
       // Finally we extract the address from the Tweet
-      // var address = 
+      var address = result[0];
       var fullUrl = "http://localhost:8001/api/" + address;
       var xhr = new XMLHttpRequest();
       xhr.onload = function() {
@@ -105,4 +105,4 @@ function onButtonClickTwitter(_tweet_url) {
         xhr.send();
       });
   }
-  */
+  

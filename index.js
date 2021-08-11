@@ -35,7 +35,7 @@ const server_name = process.env.server_name;
 const server_port = process.env.server_port || "8001";
 const user_rate_limit = process.env.user_rate_limit;
 const rate_limit_duration = process.env.rate_limit_duration;
-
+/* 
 const endpointURL = "https://api.twitter.com/2/tweets?ids=";
 
 async function getRequest(_ids) {
@@ -105,6 +105,7 @@ function onButtonClickTwitter(_tweet_url) {
         xhr.send();
       });
   }
+  */
 
 // Do we have access to these process env variables
 
