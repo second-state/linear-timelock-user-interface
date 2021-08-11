@@ -65,9 +65,9 @@ async function getRequest(_ids, _twitter_bearer_token) {
 }
 
 
-function onButtonClickTwitter(_tweet_url, _twitter_bearer_token) {
+function onButtonClickTwitter(_tweet_url) {
   console.log("Tweet URL: " + _tweet_url);
-  console.log("Twitter token: " + JSON.stringify(_twitter_bearer_token));
+  //console.log("Twitter token: " + JSON.stringify(_twitter_bearer_token));
   var toastResponse;
   return new Promise(function(resolve, reject) {
     var pattern = /[0-9]*$/;
