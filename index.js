@@ -93,7 +93,7 @@ app.use(
  */
 
  app.get('/', (req, res) => {
-    var direct = "Click to visit <a href=\"" + process.env.server_name + ":" + process.env.server_port + "/faucet\" target=\"_blank\"> :8001/faucet </a>";
+    var direct = "Click to visit <a href=\"https://" + process.env.server_name + ":" + process.env.server_port + "/faucet\" target=\"_blank\"> :8001/faucet </a>";
     res.send(direct);
 });
 
