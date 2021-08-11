@@ -5,15 +5,16 @@ block layout-content
     h1.Banner #{blockchain_name}
     div.Message.center
       div.Title
-        h3 Please enter your address
+        h3 Please enter your Tweet URL
         input(
-            id="recipient_address"
+            id="tweet_url"
             type="text"
             class="full_width"
-            value="0x70346505F0F769dC14d39460eec1d7872FDB3d0D"
+            value="https://twitter.com/testing_one_/status/1425321665378938880"
         )
         br 
         br
+        p Please note this is under heavy development and may not be working
         button.clearButton(onclick="clearTwitterInput()", id=clear_input) Clear
     script(src = "jquery.min.js")
     script(src = "helper.js")

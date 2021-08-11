@@ -36,7 +36,6 @@ const server_port = process.env.server_port || "8001";
 const user_rate_limit = process.env.user_rate_limit;
 const rate_limit_duration = process.env.rate_limit_duration;
 
-
 const endpointURL = "https://api.twitter.com/2/tweets?ids=";
 
 async function getRequest(_ids) {
@@ -65,6 +64,49 @@ async function getRequest(_ids) {
     }
 }
 
+
+function onButtonClickTwitter(_tweet_url) {
+  var toastResponse;
+  return new Promise(function(resolve, reject) {
+    var pattern = /[0-9]*$/;
+    var resultRegex = pattern.exec(_tweet_url);
+    var tweetId = resultRegex[0];
+    // We have tweet id so now we need to read the tweet
+    getRequest(tweetId).then(result => {
+      console.log(result); 
+    })
+      // Finally we extract the address from the Tweet
+      var address = "0x70346505F0F769dC14d39460eec1d7872FDB3d0D";
+      var fullUrl = "http://localhost:8001/api/" + address;
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        if (this.responseText.startsWith("Rate limit exceeded")) {
+            var toastResponse = JSON.stringify({
+              avatar: "./rate_limit.png",
+              text: "Rate limit exceeded!",
+              duration: 6000,
+              newWindow: true,
+              close: true,
+              gravity: "top", // `top` or `bottom`
+              position: "right", // `left`, `center` or `right`
+              backgroundColor: "linear-gradient(to right, #FF6600, #FFA500)",
+              stopOnFocus: false, // Prevents dismissing of toast on hover
+              onClick: function() {} // Callback after click
+            });
+          } else {
+            var toastResponse = this.responseText;
+          }
+          var toastObject = JSON.parse(toastResponse); 
+          Toastify(toastObject).showToast(); 
+          resolve();
+        };
+        xhr.onerror = reject;
+        xhr.open('POST', fullUrl);
+        xhr.send();
+      });
+  }
+
+// Do we have access to these process env variables
 
 // Web page rate limit
 const web_page_limiter = rateLimit({
@@ -145,7 +187,7 @@ function removeLine(_handle) {
 }
 
 // Twitter Access
-app.post('/api/twitter/:tweet_url', function(req, res) {
+app.post('/api/twitter/:tweet_id', function(req, res) {
   var goodToGo = false;
   var response;
   console.log('Transfer');
@@ -154,8 +196,8 @@ app.post('/api/twitter/:tweet_url', function(req, res) {
   var pattern = /[0-9]*$/;
   var resultRegex = pattern.exec(fullUrl);
   var tweetId = resultRegex[0];
-  console.log("Twitter id is: " + tweetId);
-  getRequest(tweetId).then(result => {
+  console.log("Twitter id is: " + tweet_id);
+  getRequest(tweet_id).then(result => {
     console.log(result); 
 })
   var new_timestamp = Math.floor(new Date().getTime() / 1000);

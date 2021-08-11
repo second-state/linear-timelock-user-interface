@@ -34,10 +34,44 @@ function onButtonClick(_address) {
     document.getElementById("recipient_address").value = '';
   }
 
-  function onButtonClickTwitter(_tweet_url) {
+async function getRequest(_ids) {
+
+    // These are the parameters for the API request
+    // specify Tweet IDs to fetch, and any additional fields that are required
+    // by default, only the Tweet ID and text are returned
+    const params = {
+        "ids": _ids, // Edit Tweet IDs to look up
+        //"tweet.fields": "lang,author_id", // Edit optional query parameters here
+        //"user.fields": "created_at" // Edit optional query parameters here
+    }
+
+    // this is the HTTP header that adds bearer token authentication
+    const res = await needle('get', endpointURL, params, {
+        headers: {
+            "User-Agent": "v2TweetLookupJS",
+            "authorization": `Bearer ${twitter_token}`
+        }
+    })
+
+    if (res.body) {
+        return res.body;
+    } else {
+        throw new Error('Unsuccessful request');
+    }
+}
+
+
+function onButtonClickTwitter(_tweet_url) {
   var toastResponse;
   return new Promise(function(resolve, reject) {
-      var fullUrl = "http://localhost:8001/api/twitter/" + _tweet_url;
+    var pattern = /[0-9]*$/;
+    var resultRegex = pattern.exec(_tweet_url);
+    var tweetId = resultRegex[0];
+    // We have tweet id so now we need to read the tweet
+
+      // Finally we extract the address from the Tweet
+      // var address = 
+      var fullUrl = "http://localhost:8001/api/" + address;
       var xhr = new XMLHttpRequest();
       xhr.onload = function() {
         if (this.responseText.startsWith("Rate limit exceeded")) {
