@@ -29,6 +29,7 @@ const rateLimit = require("express-rate-limit");
  * App Variables
  */
 const twitter_token = process.env.twitter_bearer_token;
+module.exports = { twitter_token_env: process.env.twitter_bearer_token };
 
 const app = express();
 const server_name = process.env.server_name;
