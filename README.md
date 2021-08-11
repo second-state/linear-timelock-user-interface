@@ -381,4 +381,10 @@ IMPORTANT NOTES:
 
 ```
 
+**Please note:** Any time you install, reinstall, or update certificates you will need to run the following chown command; because these certificate files are written to the letsencrypt folder as non user
+
+```bash
+sudo chown -R $USER:$USER /etc/letsencrypt/
+```
+
 Now, any visitors to your site (regardless if they visit `http` or `https` on the base domain via port 80), will receive the contents of the `/var/www/html/testnet.faucet.parastate.io/public_html/index.html` file; we created eariler. This is awesome because you can give them a hyperlink to the actual faucet on port 8001 and in addition some details about your blockchain, community, social media and so forth.

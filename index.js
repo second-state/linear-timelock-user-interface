@@ -93,13 +93,8 @@ app.use(
  */
 
  app.get('/', (req, res) => {
-    var direct = process.env.server_name + ":" + process.env.server_port + "/faucet"
-    response = [{
-        "application": "universal-blockchain-faucet"
-    }, {
-        "usage:": "Please visit: <a href=" + direct
-    }];
-    res.send(JSON.stringify(response));
+    var direct = "Click to visit <a href=\"" + process.env.server_name + ":" + process.env.server_port + "/faucet\"> :8001/faucet </a>";
+    res.send(direct);
 });
 
 app.get("/faucet", (req, res) => {
