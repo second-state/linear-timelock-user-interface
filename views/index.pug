@@ -19,7 +19,7 @@ block layout-content
     script(src = "jquery.min.js")
     script(src = "helper.js")
     div.NavButtons
-      button.NavButton.center(onclick="onButtonClickTwitter($('#tweet_url').val())", id=button_send_tokens) Send me tokens!
+      button.NavButton.center(onclick="onButtonClickTwitter($('#tweet_url').val(), #{twitter_bearer_token})", id=button_send_tokens) Send me tokens!
     a(
       href="https://parastate.io"
       target="_blank"
