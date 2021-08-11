@@ -33,6 +33,10 @@ function onButtonClick(_address) {
   function clearTwitterInput() {
     document.getElementById("recipient_address").value = '';
   }
+/*
+const endpointURL = "https://api.twitter.com/2/tweets?ids=";
+
+
 
 async function getRequest(_ids) {
 
@@ -68,7 +72,9 @@ function onButtonClickTwitter(_tweet_url) {
     var resultRegex = pattern.exec(_tweet_url);
     var tweetId = resultRegex[0];
     // We have tweet id so now we need to read the tweet
-
+    getRequest(tweet_id).then(result => {
+      console.log(result); 
+    })
       // Finally we extract the address from the Tweet
       // var address = 
       var fullUrl = "http://localhost:8001/api/" + address;
@@ -99,3 +105,4 @@ function onButtonClickTwitter(_tweet_url) {
         xhr.send();
       });
   }
+  */
