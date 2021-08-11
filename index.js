@@ -155,8 +155,9 @@ app.post('/api/twitter/:tweet_url', function(req, res) {
   var resultRegex = pattern.exec(fullUrl);
   var tweetId = resultRegex[0];
   console.log("Twitter id is: " + tweetId);
-  const response = await getRequest(tweetId);
-  console.log(response);
+  getRequest(tweetId).then(result => {
+    console.log(result); 
+})
   var new_timestamp = Math.floor(new Date().getTime() / 1000);
   var timestamp = myCache.get(handle);
   if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
