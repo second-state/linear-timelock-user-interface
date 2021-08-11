@@ -28,12 +28,43 @@ const rateLimit = require("express-rate-limit");
 /**
  * App Variables
  */
+const twitter_token = process.env.twitter_bearer_token;
 
 const app = express();
 const server_name = process.env.server_name;
 const server_port = process.env.server_port || "8001";
 const user_rate_limit = process.env.user_rate_limit;
 const rate_limit_duration = process.env.rate_limit_duration;
+
+
+const endpointURL = "https://api.twitter.com/2/tweets?ids=";
+
+async function getRequest(_ids) {
+
+    // These are the parameters for the API request
+    // specify Tweet IDs to fetch, and any additional fields that are required
+    // by default, only the Tweet ID and text are returned
+    const params = {
+        "ids": _ids, // Edit Tweet IDs to look up
+        //"tweet.fields": "lang,author_id", // Edit optional query parameters here
+        //"user.fields": "created_at" // Edit optional query parameters here
+    }
+
+    // this is the HTTP header that adds bearer token authentication
+    const res = await needle('get', endpointURL, params, {
+        headers: {
+            "User-Agent": "v2TweetLookupJS",
+            "authorization": `Bearer ${twitter_token}`
+        }
+    })
+
+    if (res.body) {
+        return res.body;
+    } else {
+        throw new Error('Unsuccessful request');
+    }
+}
+
 
 // Web page rate limit
 const web_page_limiter = rateLimit({
@@ -119,14 +150,13 @@ app.post('/api/twitter/:tweet_url', function(req, res) {
   var response;
   console.log('Transfer');
   var twitterUrl = req.params.tweet_url;
-  // TODO fetch tweet
-  // TODO parse tweet
-  // TODO extract handle
-  // var handle = TODO
-  // TODO confirm handle follows a specific account
-  // TODO extract address
-  // TODO check address validity
-  // var recipientAddress = TODO
+  var fullUrl = "http://localhost:8001/api/twitter/" + twitterUrl;
+  var pattern = /[0-9]*$/;
+  var resultRegex = pattern.exec(fullUrl);
+  var tweetId = resultRegex[0];
+  console.log("Twitter id is: " + tweetId);
+  const response = await getRequest(tweetId);
+  console.log(response);
   var new_timestamp = Math.floor(new Date().getTime() / 1000);
   var timestamp = myCache.get(handle);
   if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
