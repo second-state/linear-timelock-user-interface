@@ -98,6 +98,8 @@ https=yes
 host=0.0.0.0
 data_dir=/media/nvme/universal-faucet-data
 twitter_bearer_token=
+# Twitter Id. This is the id of the blockchain's twitter account that wants to be followed as part of disbersing tokens (you can use a site like https://tweeterid.com/ to convert a @ handle to an id)
+twitter_id=
 ```
 
 ### Data directory
