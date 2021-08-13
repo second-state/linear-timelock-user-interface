@@ -37,7 +37,7 @@ function onButtonClick(_address) {
 }
 
 function clearTwitterInput() {
-    document.getElementById("recipient_address").value = '';
+    document.getElementById("tweet_url").value = '';
 }
 
 
