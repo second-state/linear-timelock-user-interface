@@ -1,7 +1,7 @@
 function onButtonClick(_address) {
     var toastResponse;
     return new Promise(function(resolve, reject) {
-        var fullUrl = "http://localhost:8001/api/" + _address;
+        var fullUrl = "https://localhost:8001/api/" + _address;
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
             if (this.responseText.startsWith("Rate limit exceeded")) {
@@ -45,7 +45,7 @@ function onButtonClickTwitter(_tweet_url) {
         console.log("resultRegex: " + resultRegex);
         var tweetId = resultRegex[0];
         console.log("Tweet id: " + tweetId);
-        var fullUrl = "http://localhost:8001/api/twitter/" + tweetId;
+        var fullUrl = "https://localhost:8001/api/twitter/" + tweetId;
         console.log("Full URL: " + fullUrl);
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
