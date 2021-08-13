@@ -235,7 +235,6 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                 onClick: function() {} // Callback after click
             }
             response = toastObjectFail;
-            console.log("Rate limit: " + error);
             res.send(response);
         }
     });
