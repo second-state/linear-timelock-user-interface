@@ -45,7 +45,8 @@ function onButtonClickTwitter(_tweet_url) {
         console.log("resultRegex: " + resultRegex);
         var tweetId = resultRegex[0];
         console.log("Tweet id: " + tweetId);
-        var fullUrl = "https://localhost:8001/api/twitter/" + tweetId;
+        //https://testnet.faucet.parastate.io:8001/faucet
+        var fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + tweetId;
         console.log("Full URL: " + fullUrl);
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
