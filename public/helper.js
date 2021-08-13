@@ -78,14 +78,6 @@ function onButtonClickTwitter(_tweet_url) {
     console.log("resultRegex: " + resultRegex);
     var tweetId = resultRegex[0];
     console.log("Tweet id: " + tweetId);
-    // We have tweet id so now we need to read the tweet
-    /*
-    getRequest(tweetId).then(result => {
-      console.log(result); 
-    })
-      // Finally we extract the address from the Tweet
-      var address = result[0];
-      */
       var fullUrl = "http://localhost:8001/api/twitter/" + tweetId;
       console.log("Full URL: " + fullUrl);
       var xhr = new XMLHttpRequest();
