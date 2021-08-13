@@ -1,7 +1,13 @@
 function onButtonClick(_address) {
     var toastResponse;
     return new Promise(function(resolve, reject) {
-        var fullUrl = "https://localhost:8001/api/" + _address;
+
+        // Use this for local testing
+        var fullUrl = "http://localhost:8001/api/" + _address;
+
+        // Use this for prod
+        //var fullUrl = "https://testnet.faucet.parastate.io:8001/api/" + _address;
+
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
             if (this.responseText.startsWith("Rate limit exceeded")) {
@@ -45,8 +51,13 @@ function onButtonClickTwitter(_tweet_url) {
         console.log("resultRegex: " + resultRegex);
         var tweetId = resultRegex[0];
         console.log("Tweet id: " + tweetId);
-        //https://testnet.faucet.parastate.io:8001/faucet
+
+        // Use this for local testing
+        //var fullUrl = "http://localhost:8001/api/twitter/" + tweetId;
+
+        // Use this for prod
         var fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + tweetId;
+
         console.log("Full URL: " + fullUrl);
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
