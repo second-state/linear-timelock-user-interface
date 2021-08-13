@@ -34,6 +34,8 @@ function onButtonClick(_address) {
     document.getElementById("recipient_address").value = '';
   }
 
+
+/*
 const endpointURL = "https://api.twitter.com/2/tweets?ids=";
 
 
@@ -64,10 +66,10 @@ async function getRequest(_ids, _twitter_bearer_token) {
     }
 }
 
+*/
 
-function onButtonClickTwitter(_tweet_url, _twitter_bearer_token) {
+function onButtonClickTwitter(_tweet_url) {
   console.log("Tweet URL: " + _tweet_url);
-  console.log("Twitter token: " + _twitter_bearer_token);
   var toastResponse;
   return new Promise(function(resolve, reject) {
     var pattern = /[0-9]*$/;
@@ -77,12 +79,15 @@ function onButtonClickTwitter(_tweet_url, _twitter_bearer_token) {
     var tweetId = resultRegex[0];
     console.log("Tweet id: " + tweetId);
     // We have tweet id so now we need to read the tweet
-    getRequest(tweet_id).then(result => {
+    /*
+    getRequest(tweetId).then(result => {
       console.log(result); 
     })
       // Finally we extract the address from the Tweet
       var address = result[0];
-      var fullUrl = "http://localhost:8001/api/" + address;
+      */
+      var fullUrl = "http://localhost:8001/api/twitter/" + tweetId;
+      console.log("Full URL: " + fullUrl);
       var xhr = new XMLHttpRequest();
       xhr.onload = function() {
         if (this.responseText.startsWith("Rate limit exceeded")) {
@@ -110,4 +115,6 @@ function onButtonClickTwitter(_tweet_url, _twitter_bearer_token) {
         xhr.send();
       });
   }
+
+
   

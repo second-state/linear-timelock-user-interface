@@ -1,15 +1,3 @@
-// Twitter sample code
-// https://github.com/twitterdev/Twitter-API-v2-sample-code
-//
-// We will look up followers of the ParaState account like this
-// https://github.com/twitterdev/Twitter-API-v2-sample-code/blob/main/Follows-Lookup/followers_lookup.js
-//
-// We will then read the tweet like this
-// https://github.com/twitterdev/Twitter-API-v2-sample-code/blob/main/Tweet-Lookup/get_tweets_with_bearer_token.js
-//
-// 
-// index.js
-
 /**
  * Required External Modules
  */
@@ -29,86 +17,15 @@ const rateLimit = require("express-rate-limit");
  * App Variables
  */
 const twitter_token = process.env.twitter_bearer_token;
-module.exports = { twitter_token_env: process.env.twitter_bearer_token };
 
 const app = express();
 const server_name = process.env.server_name;
 const server_port = process.env.server_port || "8001";
 const user_rate_limit = process.env.user_rate_limit;
 const rate_limit_duration = process.env.rate_limit_duration;
-/* 
+
 const endpointURL = "https://api.twitter.com/2/tweets?ids=";
 
-async function getRequest(_ids) {
-
-    // These are the parameters for the API request
-    // specify Tweet IDs to fetch, and any additional fields that are required
-    // by default, only the Tweet ID and text are returned
-    const params = {
-        "ids": _ids, // Edit Tweet IDs to look up
-        //"tweet.fields": "lang,author_id", // Edit optional query parameters here
-        //"user.fields": "created_at" // Edit optional query parameters here
-    }
-
-    // this is the HTTP header that adds bearer token authentication
-    const res = await needle('get', endpointURL, params, {
-        headers: {
-            "User-Agent": "v2TweetLookupJS",
-            "authorization": `Bearer ${twitter_token}`
-        }
-    })
-
-    if (res.body) {
-        return res.body;
-    } else {
-        throw new Error('Unsuccessful request');
-    }
-}
-
-
-function onButtonClickTwitter(_tweet_url) {
-  var toastResponse;
-  return new Promise(function(resolve, reject) {
-    var pattern = /[0-9]*$/;
-    var resultRegex = pattern.exec(_tweet_url);
-    var tweetId = resultRegex[0];
-    // We have tweet id so now we need to read the tweet
-    getRequest(tweetId).then(result => {
-      console.log(result); 
-    })
-      // Finally we extract the address from the Tweet
-      var address = "0x70346505F0F769dC14d39460eec1d7872FDB3d0D";
-      var fullUrl = "http://localhost:8001/api/" + address;
-      var xhr = new XMLHttpRequest();
-      xhr.onload = function() {
-        if (this.responseText.startsWith("Rate limit exceeded")) {
-            var toastResponse = JSON.stringify({
-              avatar: "./rate_limit.png",
-              text: "Rate limit exceeded!",
-              duration: 6000,
-              newWindow: true,
-              close: true,
-              gravity: "top", // `top` or `bottom`
-              position: "right", // `left`, `center` or `right`
-              backgroundColor: "linear-gradient(to right, #FF6600, #FFA500)",
-              stopOnFocus: false, // Prevents dismissing of toast on hover
-              onClick: function() {} // Callback after click
-            });
-          } else {
-            var toastResponse = this.responseText;
-          }
-          var toastObject = JSON.parse(toastResponse); 
-          Toastify(toastObject).showToast(); 
-          resolve();
-        };
-        xhr.onerror = reject;
-        xhr.open('POST', fullUrl);
-        xhr.send();
-      });
-  }
-  */
-
-// Do we have access to these process env variables
 
 // Web page rate limit
 const web_page_limiter = rateLimit({
@@ -188,109 +105,142 @@ function removeLine(_handle) {
   fs.writeFileSync(path.join(process.env.data_dir, "data.txt"), newValue, 'utf-8');
 }
 
-// Twitter Access
+
+
 app.post('/api/twitter/:tweet_id', function(req, res) {
-  var goodToGo = false;
-  var response;
-  console.log('Transfer');
-  var twitterUrl = req.params.tweet_url;
-  var fullUrl = "http://localhost:8001/api/twitter/" + twitterUrl;
-  var pattern = /[0-9]*$/;
-  var resultRegex = pattern.exec(fullUrl);
-  var tweetId = resultRegex[0];
-  console.log("Twitter id is: " + tweet_id);
-  getRequest(tweet_id).then(result => {
-    console.log(result); 
-})
-  var new_timestamp = Math.floor(new Date().getTime() / 1000);
-  var timestamp = myCache.get(handle);
-  if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
-    goodToGo = true;
-    removeLine(handle);
-  }
-  if (timestamp == undefined || goodToGo == true) {
-    myCache.set(handle, new_timestamp, 0);
-    fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + '\n', function(err) {
-      if (err) throw err;
-      console.log("Updated timestamp saved");
-    });
-    console.log("Recipient address: " + recipientAddress);
-    var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url
-    var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url
-    var faucetPublicKey = process.env.faucet_public_key;
-    var faucetPrivateKey = process.env.faucet_private_key;
-    var blockchainChainId = process.env.blockchain_chain_id;
-    var gasPrice = process.env.gas_price;
-    var gasLimit = process.env.gas_limit;
-    var tokenAmountInWei = process.env.token_amount_in_wei;
-    var blockchainLogoUrl = process.env.blockchain_logo_url;
-    var transactionObject = {
-      chainId: blockchainChainId,
-      from: faucetPublicKey,
-      gasPrice: gasPrice,
-      gas: gasLimit,
-      to: recipientAddress,
-      value: tokenAmountInWei,
-    }
-    web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
-      if (!error) {
-        web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
-          if (!error) {
-            var toastObjectSuccess = {
-              avatar: blockchainLogoUrl,
-              text: "Click to see Tx",
-              duration: 6000,
-              destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-              newWindow: true,
-              close: true,
-              gravity: "top", // `top` or `bottom`
-              position: "right", // `left`, `center` or `right`
-              backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
-              stopOnFocus: false, // Prevents dismissing of toast on hover
-              onClick: function() {} // Callback after click
-            }
-            response =  toastObjectSuccess;
-            res.send(response);
-          } else {
-              var toastObjectFail = {
-              avatar: blockchainLogoUrl,
-              text: "Transaction failed!",
-              duration: 6000,
-              destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-              newWindow: true,
-              close: true,
-              gravity: "top", // `top` or `bottom`
-              position: "right", // `left`, `center` or `right`
-              backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
-              stopOnFocus: false, // Prevents dismissing of toast on hover
-              onClick: function() {} // Callback after click
+    var ethRegex = /0x[a-fA-F0-9]{40}/
+    var tweet_id = req.params.tweet_id;
+    console.log("TWEET_ID: " + tweet_id);
+    var goodToGo = false;
+    var response;
+    var handle;
+    var text;
+    getRequest(tweet_id).then(result => {
+        console.log("Result: " + JSON.stringify(result));
+        handle = result.data[0].author_id;
+        console.log("ID of handle: " + handle);
+        text = result.data[0].text;
+        console.log("Text: " + text);
+        var resultRegex = ethRegex.exec(text);
+        console.log("Eth address: " + resultRegex);
+        var recipientAddress = resultRegex[0];
+        var new_timestamp = Math.floor(new Date().getTime() / 1000);
+        var timestamp = myCache.get(handle);
+        console.log("Timestamp of " + handle + " is " + timestamp);
+        if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
+            goodToGo = true;
+            removeLine(handle);
+        }
+        if (timestamp == undefined || goodToGo == true) {
+          // In case you want to see the followers in full
+          //for(var i = 0, size = listOfFollowers.length; i < size ; i++){
+          //   var item = listOfFollowers[i];
+          //       console.log(item);
+          //}
+          console.log("Checking to see if handle: " + handle + ", is in that list above.");
+                if (listOfFollowers.includes(handle)) {
+                    myCache.set(handle, new_timestamp, 0);
+                    fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + '\n', function(err) {
+                        if (err) throw err;
+                        console.log("Updated timestamp saved");
+                    });
+                    console.log("Recipient address: " + recipientAddress);
+                    var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url
+                    var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url
+                    var faucetPublicKey = process.env.faucet_public_key;
+                    var faucetPrivateKey = process.env.faucet_private_key;
+                    var blockchainChainId = process.env.blockchain_chain_id;
+                    var gasPrice = process.env.gas_price;
+                    var gasLimit = process.env.gas_limit;
+                    var tokenAmountInWei = process.env.token_amount_in_wei;
+                    var blockchainLogoUrl = process.env.blockchain_logo_url;
+                    var transactionObject = {
+                        chainId: blockchainChainId,
+                        from: faucetPublicKey,
+                        gasPrice: gasPrice,
+                        gas: gasLimit,
+                        to: recipientAddress,
+                        value: tokenAmountInWei,
+                    }
+                    web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+                        if (!error) {
+                            web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+                                if (!error) {
+                                    var toastObjectSuccess = {
+                                        avatar: blockchainLogoUrl,
+                                        text: "Click to see Tx",
+                                        duration: 6000,
+                                        destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+                                        newWindow: true,
+                                        close: true,
+                                        gravity: "top", // `top` or `bottom`
+                                        position: "right", // `left`, `center` or `right`
+                                        backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
+                                        stopOnFocus: false, // Prevents dismissing of toast on hover
+                                        onClick: function() {} // Callback after click
+                                    }
+                                    response = toastObjectSuccess;
+                                    res.send(response);
+                                } else {
+                                    var toastObjectFail = {
+                                        avatar: blockchainLogoUrl,
+                                        text: "Transaction failed!",
+                                        duration: 6000,
+                                        destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+                                        newWindow: true,
+                                        close: true,
+                                        gravity: "top", // `top` or `bottom`
+                                        position: "right", // `left`, `center` or `right`
+                                        backgroundColor: "linear-gradient(to right, #800000, #1B1B00)",
+                                        stopOnFocus: false, // Prevents dismissing of toast on hover
+                                        onClick: function() {} // Callback after click
+                                    }
+                                    response = toastObjectFail;
+                                    console.log("Send signed transaction failed: " + error);
+                                    res.send(response);
+                                }
+                            });
+                        } else {
+                            console.log(error);
+                        }
+                    });
+                } else {
+                    var toastObjectFail = {
+                        avatar: blockchainLogoUrl,
+                        text: "Click here and follow " + process.env.blockchain_name + " first to receive tokens. NB. If you just followed, it may take up to 15 minutes to work.",
+                        duration: 15000,
+                        destination: process.env.twitter_url,
+                        newWindow: true,
+                        close: true,
+                        gravity: "top", // `top` or `bottom`
+                        position: "right", // `left`, `center` or `right`
+                        backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+                        stopOnFocus: false, // Prevents dismissing of toast on hover
+                        onClick: function() {} // Callback after click
+                    }
+                    response = toastObjectFail;
+                    res.send(response);
+                }
+
+        } else {
+            var toastObjectFail = {
+                avatar: blockchainLogoUrl,
+                text: "Sorry, rate limit!",
+                duration: 6000,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                stopOnFocus: false, // Prevents dismissing of toast on hover
+                onClick: function() {} // Callback after click
             }
             response = toastObjectFail;
-            console.log("Send signed transaction failed: " + error);
+            console.log("Rate limit: " + error);
             res.send(response);
-          }
-        });
-      } else {
-        console.log(error);
-      }
+        }
     });
-  } else {
-    var toastObjectTwitterFail = {
-      avatar: blockchainLogoUrl,
-      text: "Sorry!",
-      duration: 6000,
-      close: true,
-      gravity: "top", // `top` or `bottom`
-      position: "right", // `left`, `center` or `right`
-      backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
-      stopOnFocus: false, // Prevents dismissing of toast on hover
-      onClick: function() {} // Callback after click
-    }
-    response = toastObjectTwitterFail;
-    console.log("Rate limiter: " + error);
-    res.send(response);
-  }
 });
+
 
 // Address access
 app.post('/api/:recipient_address', function(req, res) {
@@ -360,6 +310,131 @@ app.post('/api/:recipient_address', function(req, res) {
 });
 
 /**
+ * Repeat API dump to memory so we can quickly ask questions via memory 
+ */
+
+
+
+ // ******** TWITTER START ********
+
+  var listOfFollowers = [];
+
+// Set the user id of the blockchain twitter account that users must follow
+const ti = process.env.twitter_id;
+const urlForFollowers = 'https://api.twitter.com/2/users/' + ti + '/followers';
+
+const getFollowers = async () => {
+    let users = [];
+    let params = {
+        "max_results": 1000,
+        "user.fields": "created_at"
+    }
+
+    const options = {
+        headers: {
+            "User-Agent": "v2FollowersJS",
+            "authorization": `Bearer ${twitter_token}`
+        }
+    }
+
+    let hasNextPage = true;
+    let nextToken = null;
+    console.log("Retrieving followers...");
+    while (hasNextPage) {
+        let resp = await getPage(params, options, nextToken);
+        if (resp && resp.meta && resp.meta.result_count && resp.meta.result_count > 0) {
+            if (resp.data) {
+                users.push.apply(users, resp.data);
+            }
+            if (resp.meta.next_token) {
+                nextToken = resp.meta.next_token;
+            } else {
+                hasNextPage = false;
+            }
+        } else {
+            hasNextPage = false;
+        }
+    }
+
+    //console.log(users);
+    //console.log(`Got ${users.length} users.`);
+    return users;
+
+}
+
+const getPage = async (params, options, nextToken) => {
+    if (nextToken) {
+        params.pagination_token = nextToken;
+    }
+
+    try {
+        const resp = await needle('get', urlForFollowers, params, options);
+
+        if (resp.statusCode != 200) {
+            console.log(`${resp.statusCode} ${resp.statusMessage}:\n${resp.body}`);
+            return;
+        }
+        return resp.body;
+    } catch (err) {
+        throw new Error(`Request failed: ${err}`);
+    }
+}
+
+async function getRequest(_ids) {
+    const params = {
+        "ids": _ids,
+        "tweet.fields": "author_id",
+    }
+    const res = await needle('get', endpointURL, params, {
+        headers: {
+            "User-Agent": "v2TweetLookupJS",
+            "authorization": `Bearer ${twitter_token}`
+        }
+    })
+    if (res.body) {
+        return res.body;
+    } else {
+        throw new Error('Unsuccessful request');
+    }
+}
+
+async function doTheyFollow() {
+    getFollowers().then(result => {
+        if (result.length > 0) {
+            listOfFollowers = [];
+            result.forEach(({
+                id
+            }) => {
+                listOfFollowers.push(id);
+            });
+            console.log("Updated list of followers");
+            //console.log(listOfFollowers);
+        } else {
+            console.log("List from Twitter was empty so leaving followers as is for now");
+        }
+    });
+}
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function seeWhoFollows() {
+    while (true) {
+        console.log('Sleeping for 15 minutes...');
+        await sleep(900000);
+        console.log('Running again ...');
+        doTheyFollow().then(followResult => {
+        console.log('Checking followers, please wait ...');
+           
+        });
+
+    }
+
+}
+
+
+/**
  * Server Activation
  */
 
@@ -367,10 +442,22 @@ if (process.env.https == "yes") {
   https.createServer(credentials, app).listen(server_port, process.env.host, () => {
     console.log("Welcome to faucet; using https");
     console.log("Host:" + process.env.host + "\nPort: " + server_port);
+    // Do initial follower harvest
+    doTheyFollow().then(followResult => {
+        console.log('Checking followers, please wait ...');
+    });
+    // Repeat the follower harvest automatically now on; at time intervals
+    seeWhoFollows();
   });
 } else if (process.env.https == "no") {
   app.listen(server_port, () => {
     console.log(`Listening to requests on http://localhost:${server_port}`);
+    // Do initial follower harvest
+    doTheyFollow().then(followResult => {
+        console.log('Checking followers, please wait ...');
+    });
+    // Repeat the follower harvest automatically now on; at time intervals
+    seeWhoFollows();
   });
 } else {
   console.log("ERROR: Please set the https setting in the .env config file");
@@ -379,6 +466,7 @@ if (process.env.https == "yes") {
 // Node Cache
 const NodeCache = require("node-cache");
 const myCache = new NodeCache();
+//const myCacheFollwers = new NodeCache();
 
 // START Load data from data file
 const readInterface = readline.createInterface({
