@@ -44,20 +44,20 @@ function clearTwitterInput() {
 function onButtonClickTwitter(_tweet_url) {
     console.log("Tweet URL: " + _tweet_url);
     var toastResponse;
+    var fullUrl;
     return new Promise(function(resolve, reject) {
-        var pattern = /[0-9]*$/;
-        console.log("Pattern: " + pattern);
+        var pattern = /https\:\/\/twitter.com\/.*\/status\/[0-9]*$/;
         var resultRegex = pattern.exec(_tweet_url);
-        console.log("resultRegex: " + resultRegex);
-        var tweetId = resultRegex[0];
-        console.log("Tweet id: " + tweetId);
-
-        // Use this for local testing
-        //var fullUrl = "http://localhost:8001/api/twitter/" + tweetId;
-
-        // Use this for prod
-        var fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + tweetId;
-
+        if (resultRegex != null){
+            var pattern_id = /[0-9]*$/;
+            var resultRegex_id = pattern_id.exec(_tweet_url);
+            var tweetId = resultRegex_id[0];
+            //fullUrl = "http://localhost:8001/api/twitter/" + tweetId;
+            fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + tweetId;
+        } else {
+            //fullUrl = "http://localhost:8001/api/twitter/" + "incorrect";
+            fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + 'false';
+        }
         console.log("Full URL: " + fullUrl);
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {

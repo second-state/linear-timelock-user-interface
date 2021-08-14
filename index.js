@@ -108,136 +108,188 @@ function removeLine(_handle) {
 
 
 app.post('/api/twitter/:tweet_id', function(req, res) {
+    var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url
+    var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url
+    var faucetPublicKey = process.env.faucet_public_key;
+    var faucetPrivateKey = process.env.faucet_private_key;
+    var blockchainChainId = process.env.blockchain_chain_id;
+    var gasPrice = process.env.gas_price;
+    var gasLimit = process.env.gas_limit;
+    var tokenAmountInWei = process.env.token_amount_in_wei;
+    var blockchainLogoUrl = process.env.blockchain_logo_url;
     var ethRegex = /0x[a-fA-F0-9]{40}/
     var tweet_id = req.params.tweet_id;
-    console.log("TWEET_ID: " + tweet_id);
     var goodToGo = false;
     var response;
     var handle;
     var text;
-    getRequest(tweet_id).then(result => {
-        console.log("Result: " + JSON.stringify(result));
-        handle = result.data[0].author_id;
-        console.log("ID of handle: " + handle);
-        text = result.data[0].text;
-        console.log("Text: " + text);
-        var resultRegex = ethRegex.exec(text);
-        console.log("Eth address: " + resultRegex);
-        var recipientAddress = resultRegex[0];
-        var new_timestamp = Math.floor(new Date().getTime() / 1000);
-        var timestamp = myCache.get(handle);
-        console.log("Timestamp of " + handle + " is " + timestamp);
-        if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
-            goodToGo = true;
-            removeLine(handle);
+    if (tweet_id.match(/incorrect/g)) {
+        console.log("tweet id is broken");
+        var toastObjectFail = {
+            avatar: blockchainLogoUrl,
+            text: "Invalid Tweet URL, click here for more information!",
+            duration: 15000,
+            destination: "https://help.twitter.com/en/using-twitter/tweet-and-moment-url",
+            newWindow: true,
+            close: true,
+            gravity: "top", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+            stopOnFocus: false, // Prevents dismissing of toast on hover
+            onClick: function() {} // Callback after click
         }
-        if (timestamp == undefined || goodToGo == true) {
-            // In case you want to see the followers in full
-            //for(var i = 0, size = listOfFollowers.length; i < size ; i++){
-            //   var item = listOfFollowers[i];
-            //       console.log(item);
-            //}
-            console.log("Checking to see if handle: " + handle + ", is in that list above.");
-            if (listOfFollowers.includes(handle)) {
-                myCache.set(handle, new_timestamp, 0);
-                fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + '\n', function(err) {
-                    if (err) throw err;
-                    console.log("Updated timestamp saved");
-                });
-                console.log("Recipient address: " + recipientAddress);
-                var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url
-                var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url
-                var faucetPublicKey = process.env.faucet_public_key;
-                var faucetPrivateKey = process.env.faucet_private_key;
-                var blockchainChainId = process.env.blockchain_chain_id;
-                var gasPrice = process.env.gas_price;
-                var gasLimit = process.env.gas_limit;
-                var tokenAmountInWei = process.env.token_amount_in_wei;
-                var blockchainLogoUrl = process.env.blockchain_logo_url;
-                var transactionObject = {
-                    chainId: blockchainChainId,
-                    from: faucetPublicKey,
-                    gasPrice: gasPrice,
-                    gas: gasLimit,
-                    to: recipientAddress,
-                    value: tokenAmountInWei,
+        response = toastObjectFail;
+        res.send(response);
+    } else {
+        getRequest(tweet_id).then(result => {
+            console.log("Result: " + JSON.stringify(result));
+            handle = result.data[0].author_id;
+            console.log("ID of handle: " + handle);
+            text = result.data[0].text;
+            console.log("Text: " + text);
+            var resultRegex = ethRegex.exec(text);
+            console.log("Eth address: " + resultRegex);
+            
+            if (resultRegex != null) {
+                var recipientAddress = resultRegex[0];
+                var new_timestamp = Math.floor(new Date().getTime() / 1000);
+                var timestamp = myCache.get(handle);
+                console.log("Timestamp of " + handle + " is " + timestamp);
+                if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
+                    goodToGo = true;
+                    removeLine(handle);
                 }
-                web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
-                    if (!error) {
-                        web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
-                            if (!error) {
-                                var toastObjectSuccess = {
-                                    avatar: blockchainLogoUrl,
-                                    text: "Click to see Tx",
-                                    duration: 6000,
-                                    destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-                                    newWindow: true,
-                                    close: true,
-                                    gravity: "top", // `top` or `bottom`
-                                    position: "right", // `left`, `center` or `right`
-                                    backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
-                                    stopOnFocus: false, // Prevents dismissing of toast on hover
-                                    onClick: function() {} // Callback after click
-                                }
-                                response = toastObjectSuccess;
-                                res.send(response);
-                            } else {
-                                var toastObjectFail = {
-                                    avatar: blockchainLogoUrl,
-                                    text: "Transaction failed!",
-                                    duration: 6000,
-                                    destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-                                    newWindow: true,
-                                    close: true,
-                                    gravity: "top", // `top` or `bottom`
-                                    position: "right", // `left`, `center` or `right`
-                                    backgroundColor: "linear-gradient(to right, #800000, #1B1B00)",
-                                    stopOnFocus: false, // Prevents dismissing of toast on hover
-                                    onClick: function() {} // Callback after click
-                                }
-                                response = toastObjectFail;
-                                console.log("Send signed transaction failed: " + error);
-                                res.send(response);
+                if (timestamp == undefined || goodToGo == true) {
+                    if (Web3.utils.isAddress(recipientAddress)) {
+                        // In case you want to see the followers in full
+                        //for(var i = 0, size = listOfFollowers.length; i < size ; i++){
+                        //   var item = listOfFollowers[i];
+                        //       console.log(item);
+                        //}
+                        console.log("Checking to see if handle: " + handle + ", is in that list above.");
+                        if (listOfFollowers.includes(handle)) {
+                            myCache.set(handle, new_timestamp, 0);
+                            fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + '\n', function(err) {
+                                if (err) throw err;
+                                console.log("Updated timestamp saved");
+                            });
+                            console.log("Recipient address: " + recipientAddress);
+
+                            var transactionObject = {
+                                chainId: blockchainChainId,
+                                from: faucetPublicKey,
+                                gasPrice: gasPrice,
+                                gas: gasLimit,
+                                to: recipientAddress,
+                                value: tokenAmountInWei,
                             }
-                        });
+                            web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+                                if (!error) {
+                                    web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+                                        if (!error) {
+                                            var toastObjectSuccess = {
+                                                avatar: blockchainLogoUrl,
+                                                text: "Click to see Tx",
+                                                duration: 6000,
+                                                destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+                                                newWindow: true,
+                                                close: true,
+                                                gravity: "top", // `top` or `bottom`
+                                                position: "right", // `left`, `center` or `right`
+                                                backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
+                                                stopOnFocus: false, // Prevents dismissing of toast on hover
+                                                onClick: function() {} // Callback after click
+                                            }
+                                            response = toastObjectSuccess;
+                                            res.send(response);
+                                        } else {
+                                            var toastObjectFail = {
+                                                avatar: blockchainLogoUrl,
+                                                text: "Transaction failed!",
+                                                duration: 6000,
+                                                destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+                                                newWindow: true,
+                                                close: true,
+                                                gravity: "top", // `top` or `bottom`
+                                                position: "right", // `left`, `center` or `right`
+                                                backgroundColor: "linear-gradient(to right, #800000, #1B1B00)",
+                                                stopOnFocus: false, // Prevents dismissing of toast on hover
+                                                onClick: function() {} // Callback after click
+                                            }
+                                            response = toastObjectFail;
+                                            console.log("Send signed transaction failed: " + error);
+                                            res.send(response);
+                                        }
+                                    });
+                                } else {
+                                    console.log(error);
+                                }
+                            });
+                        } else {
+                            var toastObjectFail = {
+                                avatar: blockchainLogoUrl,
+                                text: "Click here and follow " + process.env.blockchain_name + " first to receive tokens. NB. If you just followed, it may take up to 15 minutes to work.",
+                                duration: 15000,
+                                destination: process.env.twitter_url,
+                                newWindow: true,
+                                close: true,
+                                gravity: "top", // `top` or `bottom`
+                                position: "right", // `left`, `center` or `right`
+                                backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+                                stopOnFocus: false, // Prevents dismissing of toast on hover
+                                onClick: function() {} // Callback after click
+                            }
+                            response = toastObjectFail;
+                            res.send(response);
+                        }
                     } else {
-                        console.log(error);
+                        var toastObjectFail = {
+                            avatar: blockchainLogoUrl,
+                            text: "The recipient address in the Tweet is not valid",
+                            duration: 15000,
+                            close: true,
+                            gravity: "top", // `top` or `bottom`
+                            position: "right", // `left`, `center` or `right`
+                            backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                            stopOnFocus: false, // Prevents dismissing of toast on hover
+                            onClick: function() {} // Callback after click
+                        }
+                        response = toastObjectFail;
+                        res.send(response);
                     }
-                });
+
+                } else {
+                    var toastObjectFail = {
+                        avatar: blockchainLogoUrl,
+                        text: "Sorry, rate limit!",
+                        duration: 6000,
+                        close: true,
+                        gravity: "top", // `top` or `bottom`
+                        position: "right", // `left`, `center` or `right`
+                        backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                        stopOnFocus: false, // Prevents dismissing of toast on hover
+                        onClick: function() {} // Callback after click
+                    }
+                    response = toastObjectFail;
+                    res.send(response);
+                }
             } else {
                 var toastObjectFail = {
                     avatar: blockchainLogoUrl,
-                    text: "Click here and follow " + process.env.blockchain_name + " first to receive tokens. NB. If you just followed, it may take up to 15 minutes to work.",
+                    text: "The recipient address in the Tweet is not valid",
                     duration: 15000,
-                    destination: process.env.twitter_url,
-                    newWindow: true,
                     close: true,
                     gravity: "top", // `top` or `bottom`
                     position: "right", // `left`, `center` or `right`
-                    backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+                    backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
                     stopOnFocus: false, // Prevents dismissing of toast on hover
                     onClick: function() {} // Callback after click
                 }
                 response = toastObjectFail;
                 res.send(response);
             }
-
-        } else {
-            var toastObjectFail = {
-                avatar: blockchainLogoUrl,
-                text: "Sorry, rate limit!",
-                duration: 6000,
-                close: true,
-                gravity: "top", // `top` or `bottom`
-                position: "right", // `left`, `center` or `right`
-                backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
-                stopOnFocus: false, // Prevents dismissing of toast on hover
-                onClick: function() {} // Callback after click
-            }
-            response = toastObjectFail;
-            res.send(response);
-        }
-    });
+        });
+    }
 });
 
 
@@ -442,21 +494,25 @@ if (process.env.https == "yes") {
         console.log("Welcome to faucet; using https");
         console.log("Host:" + process.env.host + "\nPort: " + server_port);
         // Do initial follower harvest
+
         doTheyFollow().then(followResult => {
             console.log('Checking followers, please wait ...');
         });
         // Repeat the follower harvest automatically now on; at time intervals
         seeWhoFollows();
+
     });
 } else if (process.env.https == "no") {
     app.listen(server_port, () => {
         console.log(`Listening to requests on http://localhost:${server_port}`);
         // Do initial follower harvest
+        /*
         doTheyFollow().then(followResult => {
             console.log('Checking followers, please wait ...');
         });
         // Repeat the follower harvest automatically now on; at time intervals
         seeWhoFollows();
+        */
     });
 } else {
     console.log("ERROR: Please set the https setting in the .env config file");
