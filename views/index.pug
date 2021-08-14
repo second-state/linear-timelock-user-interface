@@ -6,7 +6,13 @@ block layout-content
     div.Message.center
       div.Title
         h3 Please enter your Tweet URL
-        p Tweet must contain a valid public key in order for funds to be sent 
+        p Tweet must contain a valid public key.
+        p Your Twitter account must also follow
+        a(
+          href="https://parastate.io"
+          target="_blank"
+        ) ParaState's Twitter account
+        p In order for funds to be sent.
         input(
             id="tweet_url"
             type="text"

@@ -46,7 +46,7 @@ h1 {
 }
 
 a {
-  color: inherit;
+  color: blue;
   text-decoration: none;
   cursor: pointer;
   user-select: none;
