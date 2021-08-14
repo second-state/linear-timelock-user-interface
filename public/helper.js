@@ -56,7 +56,7 @@ function onButtonClickTwitter(_tweet_url) {
             fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + tweetId;
         } else {
             //fullUrl = "http://localhost:8001/api/twitter/" + "incorrect";
-            fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + 'false';
+            fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + "incorrect";
         }
         console.log("Full URL: " + fullUrl);
         var xhr = new XMLHttpRequest();
