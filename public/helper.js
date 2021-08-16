@@ -49,8 +49,9 @@ function onButtonClickTwitter(_tweet_url) {
         var pattern = /https\:\/\/twitter.com\/.*\/status\/[0-9]*/;
         var resultRegex = pattern.exec(_tweet_url);
         if (resultRegex != null){
+            clean_tweet_url = _tweet_url.split('?')[0];
             var pattern_id = /[0-9]*$/;
-            var resultRegex_id = pattern_id.exec(_tweet_url);
+            var resultRegex_id = pattern_id.exec(clean_tweet_url);
             var tweetId = resultRegex_id[0];
             //fullUrl = "http://localhost:8001/api/twitter/" + tweetId;
             fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + tweetId;
