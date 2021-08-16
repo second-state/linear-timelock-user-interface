@@ -46,7 +46,7 @@ function onButtonClickTwitter(_tweet_url) {
     var toastResponse;
     var fullUrl;
     return new Promise(function(resolve, reject) {
-        var pattern = /https\:\/\/twitter.com\/.*\/status\/[0-9]*$/;
+        var pattern = /https\:\/\/twitter.com\/.*\/status\/[0-9]*/;
         var resultRegex = pattern.exec(_tweet_url);
         if (resultRegex != null){
             var pattern_id = /[0-9]*$/;
