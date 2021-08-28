@@ -24,7 +24,7 @@ const server_port = process.env.server_port || "8001";
 const user_rate_limit = process.env.user_rate_limit;
 const rate_limit_duration = process.env.rate_limit_duration;
 
-const endpointURL = "https://api.twitter.com/2/tweets?ids=";
+const endpointURL = "https://api.twitter.com/1.1/statuses/show.json";
 
 
 // Web page rate limit
@@ -99,9 +99,9 @@ app.get("/faucet", (req, res) => {
 function removeLine(_handle) {
     var data = fs.readFileSync(path.join(process.env.data_dir, "data.txt"), 'utf-8');
     var reg = new RegExp('^' + _handle + '.*\n');
-    console.log(reg);
+    //console.log(reg);
     var newValue = data.replace(reg, '');
-    console.log(newValue);
+    //console.log(newValue);
     fs.writeFileSync(path.join(process.env.data_dir, "data.txt"), newValue, 'utf-8');
 }
 
@@ -142,10 +142,10 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
         res.send(response);
     } else {
         getRequest(tweet_id).then(result => {
-            console.log("Result: " + JSON.stringify(result));
-            handle = result.data[0].author_id;
+            //console.log("Result: " + JSON.stringify(result));
+            handle = result.user.id;
             console.log("ID of handle: " + handle);
-            text = result.data[0].text;
+            text = result.text;
             console.log("Text: " + text);
             var resultRegex = ethRegex.exec(text);
             console.log("Eth address: " + resultRegex);
@@ -161,10 +161,10 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                 }
                 if (timestamp == undefined || goodToGo == true) {
                     if (Web3.utils.isAddress(recipientAddress)) {
-                        // In case you want to see the followers in full
+                        //In case you want to see the followers in full
                         //for(var i = 0, size = listOfFollowers.length; i < size ; i++){
-                        //   var item = listOfFollowers[i];
-                        //       console.log(item);
+                           //var item = listOfFollowers[i];
+                           //    console.log(i + ": " + item);
                         //}
                         console.log("Checking to see if handle: " + handle + ", is in that list above.");
                         if (listOfFollowers.includes(handle)) {
@@ -228,7 +228,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                         } else {
                             var toastObjectFail = {
                                 avatar: blockchainLogoUrl,
-                                text: "Click here and follow " + process.env.blockchain_name + " first to receive tokens. NB. If you just followed, it may take up to 15 minutes to work.",
+                                text: "Click here and follow " + process.env.blockchain_name + " first to receive tokens. NB. If you just followed, it may take 2 minutes to work.",
                                 duration: 15000,
                                 destination: process.env.twitter_url,
                                 newWindow: true,
@@ -368,56 +368,65 @@ app.post('/api/:recipient_address', function(req, res) {
 
 // ******** TWITTER START ********
 
+async function getRequest(_id) {
+    const params = {
+        "id": _id,
+        "trim_user": "true",
+    }
+    const res = await needle('get', endpointURL, params, {
+        headers: {
+            "authorization": `Bearer ${twitter_token}`
+        }
+    })
+    if (res.body) {
+        return res.body;
+    } else {
+        throw new Error('Unsuccessful request');
+    }
+}
+
+
 var listOfFollowers = [];
 
 // Set the user id of the blockchain twitter account that users must follow
-const ti = process.env.twitter_id;
-const urlForFollowers = 'https://api.twitter.com/2/users/' + ti + '/followers';
 
-const getFollowers = async() => {
-    let users = [];
-    let params = {
-        "max_results": 1000,
-        "user.fields": "created_at"
+const urlForFollowers = 'https://api.twitter.com/1.1/followers/ids.json';
+
+const getFollowers = async () => {
+  let users = [];
+  let params = {
+    "max_results": 5000,
+    "user_id": process.env.twitter_id,
+    "cursor": -1
+  }
+
+  const options = {
+    headers: {
+      "authorization": `Bearer ${twitter_token}`
     }
+  }
 
-    const options = {
-        headers: {
-            "User-Agent": "v2FollowersJS",
-            "authorization": `Bearer ${twitter_token}`
-        }
+  let hasNextPage = true;
+  let nextToken = null;
+  console.log("Retrieving followers...");
+  while (hasNextPage) {
+    let resp = await getPage(params, options);
+    //console.log("*** Response body: " + JSON.stringify(resp));
+    if (resp.next_cursor > 0) {
+      users.push(...resp.ids);
+      params.cursor = resp.next_cursor;
+    } else {
+      users.push(...resp.ids);
+      hasNextPage = false;
     }
-
-    let hasNextPage = true;
-    let nextToken = null;
-    console.log("Retrieving followers...");
-    while (hasNextPage) {
-        let resp = await getPage(params, options, nextToken);
-        if (resp && resp.meta && resp.meta.result_count && resp.meta.result_count > 0) {
-            if (resp.data) {
-                users.push.apply(users, resp.data);
-            }
-            if (resp.meta.next_token) {
-                nextToken = resp.meta.next_token;
-            } else {
-                hasNextPage = false;
-            }
-        } else {
-            hasNextPage = false;
-        }
-    }
-
-    //console.log(users);
-    //console.log(`Got ${users.length} users.`);
-    return users;
-
+  }
+  //console.log(users);
+  //console.log(`Got ${users.length} users.`);
+  console.log("Number of followers is: " + users.length);
+  return users;
 }
 
-const getPage = async(params, options, nextToken) => {
-    if (nextToken) {
-        params.pagination_token = nextToken;
-    }
-
+const getPage = async(params, options) => {
     try {
         const resp = await needle('get', urlForFollowers, params, options);
 
@@ -431,39 +440,19 @@ const getPage = async(params, options, nextToken) => {
     }
 }
 
-async function getRequest(_ids) {
-    const params = {
-        "ids": _ids,
-        "tweet.fields": "author_id",
-    }
-    const res = await needle('get', endpointURL, params, {
-        headers: {
-            "User-Agent": "v2TweetLookupJS",
-            "authorization": `Bearer ${twitter_token}`
-        }
-    })
-    if (res.body) {
-        return res.body;
-    } else {
-        throw new Error('Unsuccessful request');
-    }
-}
-
 async function doTheyFollow() {
-    getFollowers().then(result => {
-        if (result.length > 0) {
-            listOfFollowers = [];
-            result.forEach(({
-                id
-            }) => {
-                listOfFollowers.push(id);
-            });
-            console.log("Updated list of followers");
-            //console.log(listOfFollowers);
-        } else {
-            console.log("List from Twitter was empty so leaving followers as is for now");
-        }
-    });
+  getFollowers().then(result => {
+    console.log(result);
+    if (result.length > 0) {
+      listOfFollowers = [];
+      for (var i = 0; i < result.length; i++) {
+        listOfFollowers.push(result[i]);
+      }
+      console.log("Updated list of followers");
+    } else {
+      console.log("List from Twitter was empty so leaving followers as is for now");
+    }
+  });
 }
 
 async function sleep(ms) {
@@ -472,8 +461,8 @@ async function sleep(ms) {
 
 async function seeWhoFollows() {
     while (true) {
-        console.log('Sleeping for 15 minutes...');
-        await sleep(900000);
+        console.log('Sleeping for a couple of minutes...');
+        await sleep(120000);
         console.log('Running again ...');
         doTheyFollow().then(followResult => {
             console.log('Checking followers, please wait ...');
@@ -506,13 +495,13 @@ if (process.env.https == "yes") {
     app.listen(server_port, () => {
         console.log(`Listening to requests on http://localhost:${server_port}`);
         // Do initial follower harvest
-        /*
+        
         doTheyFollow().then(followResult => {
             console.log('Checking followers, please wait ...');
         });
         // Repeat the follower harvest automatically now on; at time intervals
         seeWhoFollows();
-        */
+        
     });
 } else {
     console.log("ERROR: Please set the https setting in the .env config file");

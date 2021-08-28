@@ -53,11 +53,11 @@ function onButtonClickTwitter(_tweet_url) {
             var pattern_id = /[0-9]*$/;
             var resultRegex_id = pattern_id.exec(clean_tweet_url);
             var tweetId = resultRegex_id[0];
-            //fullUrl = "http://localhost:8001/api/twitter/" + tweetId;
-            fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + tweetId;
+            fullUrl = "http://localhost:8001/api/twitter/" + tweetId;
+            //fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + tweetId;
         } else {
-            //fullUrl = "http://localhost:8001/api/twitter/" + "incorrect";
-            fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + "incorrect";
+            fullUrl = "http://localhost:8001/api/twitter/" + "incorrect";
+            //fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter/" + "incorrect";
         }
         console.log("Full URL: " + fullUrl);
         var xhr = new XMLHttpRequest();
