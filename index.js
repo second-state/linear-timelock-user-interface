@@ -107,6 +107,12 @@ function removeLine(_handle) {
     fs.writeFileSync(path.join(process.env.data_dir, "data.txt"), newValue, 'utf-8');
 }
 
+app.post('/api/telegram/:todo', function(req, res) {
+
+    // TODO dispence tokens based on Telegram call from helper.js file
+
+});
+
 
 
 app.post('/api/twitter/:tweet_id', function(req, res) {
