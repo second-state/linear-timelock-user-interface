@@ -93,6 +93,8 @@ app.get("/faucet", (req, res) => {
     res.render("index", {
         title: "Home",
         blockchain_name: process.env.blockchain_name,
+        token_amount_in_wei: process.env.token_amount_in_wei,
+        rate_limit_duration: process.env.rate_limit_duration,
     });
 });
 
@@ -501,6 +503,7 @@ if (process.env.https == "yes") {
         });
         // Repeat the follower harvest automatically now on; at time intervals
         seeWhoFollows();
+        
         
     });
 } else {
