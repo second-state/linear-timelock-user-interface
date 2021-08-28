@@ -126,6 +126,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
     var tokenAmountInWei = process.env.token_amount_in_wei;
     var blockchainLogoUrl = process.env.blockchain_logo_url;
     var ethRegex = /0x[a-fA-F0-9]{40}/
+    var handleRegex = /(?<!^)@_parastate/
     var tweet_id = req.params.tweet_id;
     var goodToGo = false;
     var response;
@@ -150,111 +151,124 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
         res.send(response);
     } else {
         getRequest(tweet_id).then(result => {
-            //console.log("Result: " + JSON.stringify(result));
+            console.log("Full result: " + JSON.stringify(result));
             handle = result.user.id;
             console.log("ID of handle: " + handle);
-            text = result.text;
+            text = result.full_text;
             console.log("Text: " + text);
             var resultRegex = ethRegex.exec(text);
             console.log("Eth address: " + resultRegex);
-            
-            if (resultRegex != null) {
-                var recipientAddress = resultRegex[0];
-                var new_timestamp = Math.floor(new Date().getTime() / 1000);
-                var timestamp = myCache.get(handle);
-                console.log("Timestamp of " + handle + " is " + timestamp);
-                if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
-                    goodToGo = true;
-                    removeLine(handle);
-                }
-                if (timestamp == undefined || goodToGo == true) {
-                    if (Web3.utils.isAddress(recipientAddress)) {
-                        //In case you want to see the followers in full
-                        //for(var i = 0, size = listOfFollowers.length; i < size ; i++){
-                           //var item = listOfFollowers[i];
-                           //    console.log(i + ": " + item);
-                        //}
-                        console.log("Checking to see if handle: " + handle + ", is in that list above.");
-                        if (listOfFollowers.includes(handle)) {
-                            myCache.set(handle, new_timestamp, 0);
-                            fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + '\n', function(err) {
-                                if (err) throw err;
-                                console.log("Updated timestamp saved");
-                            });
-                            console.log("Recipient address: " + recipientAddress);
+            var resultHandleRegex = handleRegex.exec(text);
+            console.log("Handle is: " + resultHandleRegex);
+            if (resultHandleRegex != null) {
+                if (resultRegex != null) {
+                    var recipientAddress = resultRegex[0];
+                    var new_timestamp = Math.floor(new Date().getTime() / 1000);
+                    var timestamp = myCache.get(handle);
+                    console.log("Timestamp of " + handle + " is " + timestamp);
+                    if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
+                        goodToGo = true;
+                        removeLine(handle);
+                    }
+                    if (timestamp == undefined || goodToGo == true) {
+                        if (Web3.utils.isAddress(recipientAddress)) {
+                            console.log("Checking to see if handle: " + handle + ", is in that list above.");
+                            if (listOfFollowers.includes(handle)) {
+                                myCache.set(handle, new_timestamp, 0);
+                                fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + '\n', function(err) {
+                                    if (err) throw err;
+                                    console.log("Updated timestamp saved");
+                                });
+                                console.log("Recipient address: " + recipientAddress);
 
-                            var transactionObject = {
-                                chainId: blockchainChainId,
-                                from: faucetPublicKey,
-                                gasPrice: gasPrice,
-                                gas: gasLimit,
-                                to: recipientAddress,
-                                value: tokenAmountInWei,
-                            }
-                            web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
-                                if (!error) {
-                                    web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
-                                        if (!error) {
-                                            var toastObjectSuccess = {
-                                                avatar: blockchainLogoUrl,
-                                                text: "Click to see Tx",
-                                                duration: 6000,
-                                                destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-                                                newWindow: true,
-                                                close: true,
-                                                gravity: "top", // `top` or `bottom`
-                                                position: "right", // `left`, `center` or `right`
-                                                backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
-                                                stopOnFocus: false, // Prevents dismissing of toast on hover
-                                                onClick: function() {} // Callback after click
-                                            }
-                                            response = toastObjectSuccess;
-                                            res.send(response);
-                                        } else {
-                                            var toastObjectFail = {
-                                                avatar: blockchainLogoUrl,
-                                                text: "Transaction failed!",
-                                                duration: 6000,
-                                                destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-                                                newWindow: true,
-                                                close: true,
-                                                gravity: "top", // `top` or `bottom`
-                                                position: "right", // `left`, `center` or `right`
-                                                backgroundColor: "linear-gradient(to right, #800000, #1B1B00)",
-                                                stopOnFocus: false, // Prevents dismissing of toast on hover
-                                                onClick: function() {} // Callback after click
-                                            }
-                                            response = toastObjectFail;
-                                            console.log("Send signed transaction failed: " + error);
-                                            res.send(response);
-                                        }
-                                    });
-                                } else {
-                                    console.log(error);
+                                var transactionObject = {
+                                    chainId: blockchainChainId,
+                                    from: faucetPublicKey,
+                                    gasPrice: gasPrice,
+                                    gas: gasLimit,
+                                    to: recipientAddress,
+                                    value: tokenAmountInWei,
                                 }
-                            });
+                                web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+                                    if (!error) {
+                                        web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+                                            if (!error) {
+                                                var toastObjectSuccess = {
+                                                    avatar: blockchainLogoUrl,
+                                                    text: "Click to see Tx",
+                                                    duration: 6000,
+                                                    destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+                                                    newWindow: true,
+                                                    close: true,
+                                                    gravity: "top", // `top` or `bottom`
+                                                    position: "right", // `left`, `center` or `right`
+                                                    backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
+                                                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                                                    onClick: function() {} // Callback after click
+                                                }
+                                                response = toastObjectSuccess;
+                                                res.send(response);
+                                            } else {
+                                                var toastObjectFail = {
+                                                    avatar: blockchainLogoUrl,
+                                                    text: "Transaction failed!",
+                                                    duration: 6000,
+                                                    destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+                                                    newWindow: true,
+                                                    close: true,
+                                                    gravity: "top", // `top` or `bottom`
+                                                    position: "right", // `left`, `center` or `right`
+                                                    backgroundColor: "linear-gradient(to right, #800000, #1B1B00)",
+                                                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                                                    onClick: function() {} // Callback after click
+                                                }
+                                                response = toastObjectFail;
+                                                console.log("Send signed transaction failed: " + error);
+                                                res.send(response);
+                                            }
+                                        });
+                                    } else {
+                                        console.log(error);
+                                    }
+                                });
+                            } else {
+                                var toastObjectFail = {
+                                    avatar: blockchainLogoUrl,
+                                    text: "Click here and follow " + process.env.blockchain_name + " first to receive tokens. NB. If you just followed, it may take 2 minutes to work.",
+                                    duration: 15000,
+                                    destination: process.env.twitter_url,
+                                    newWindow: true,
+                                    close: true,
+                                    gravity: "top", // `top` or `bottom`
+                                    position: "right", // `left`, `center` or `right`
+                                    backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+                                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                                    onClick: function() {} // Callback after click
+                                }
+                                response = toastObjectFail;
+                                res.send(response);
+                            }
                         } else {
                             var toastObjectFail = {
                                 avatar: blockchainLogoUrl,
-                                text: "Click here and follow " + process.env.blockchain_name + " first to receive tokens. NB. If you just followed, it may take 2 minutes to work.",
+                                text: "The recipient address in the Tweet is not valid",
                                 duration: 15000,
-                                destination: process.env.twitter_url,
-                                newWindow: true,
                                 close: true,
                                 gravity: "top", // `top` or `bottom`
                                 position: "right", // `left`, `center` or `right`
-                                backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+                                backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
                                 stopOnFocus: false, // Prevents dismissing of toast on hover
                                 onClick: function() {} // Callback after click
                             }
                             response = toastObjectFail;
                             res.send(response);
                         }
+
                     } else {
                         var toastObjectFail = {
                             avatar: blockchainLogoUrl,
-                            text: "The recipient address in the Tweet is not valid",
-                            duration: 15000,
+                            text: "Sorry, rate limit!",
+                            duration: 6000,
                             close: true,
                             gravity: "top", // `top` or `bottom`
                             position: "right", // `left`, `center` or `right`
@@ -265,12 +279,11 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                         response = toastObjectFail;
                         res.send(response);
                     }
-
                 } else {
                     var toastObjectFail = {
                         avatar: blockchainLogoUrl,
-                        text: "Sorry, rate limit!",
-                        duration: 6000,
+                        text: "The recipient address in the Tweet is not valid",
+                        duration: 15000,
                         close: true,
                         gravity: "top", // `top` or `bottom`
                         position: "right", // `left`, `center` or `right`
@@ -278,13 +291,13 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                         stopOnFocus: false, // Prevents dismissing of toast on hover
                         onClick: function() {} // Callback after click
                     }
-                    response = toastObjectFail;
-                    res.send(response);
+                response = toastObjectFail;
+                res.send(response);
                 }
             } else {
                 var toastObjectFail = {
                     avatar: blockchainLogoUrl,
-                    text: "The recipient address in the Tweet is not valid",
+                    text: "You must mention " + process.env.twitter_handle + " somewhere in your tweet (except at the start)",
                     duration: 15000,
                     close: true,
                     gravity: "top", // `top` or `bottom`
@@ -293,9 +306,9 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                     stopOnFocus: false, // Prevents dismissing of toast on hover
                     onClick: function() {} // Callback after click
                 }
-                response = toastObjectFail;
-                res.send(response);
-            }
+            response = toastObjectFail;
+            res.send(response);
+        }
         });
     }
 });
@@ -380,6 +393,7 @@ async function getRequest(_id) {
     const params = {
         "id": _id,
         "trim_user": "true",
+        "tweet_mode": "extended"
     }
     const res = await needle('get', endpointURL, params, {
         headers: {
