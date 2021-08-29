@@ -533,13 +533,13 @@ if (process.env.https == "yes") {
     app.listen(server_port, () => {
         console.log(`Listening to requests on http://localhost:${server_port}`);
         // Do initial follower harvest
-        
+        /*
         doTheyFollow().then(followResult => {
             console.log('Checking followers, please wait ...');
         });
         // Repeat the follower harvest automatically now on; at time intervals
         seeWhoFollows();
-        
+        */
         
     });
 } else {

@@ -1,6 +1,9 @@
 extends layout
 block layout-content
-  div.View.WelcomeView
+  script(src = "jquery.min.js")
+  script(src = "helper.js")
+  .container.View.WelcomeView
+    .row
     h1.Banner #{blockchain_name}
     div.Message.center
       div.Title
@@ -19,21 +22,24 @@ block layout-content
             class="full_width"
             value="https://twitter.com/testing_one_/status/1431755736707526660"
         )
-        br 
         br
-        button.clearButton(onclick="clearTwitterInput()", id=clear_input) Clear
-    script(src = "jquery.min.js")
-    script(src = "helper.js")
-    div.NavButtons
-      button.NavButton.center(onclick="onButtonClickTwitter($('#tweet_url').val())", id=button_send_tokens) Send me tokens!
-    a(
-      href="https://parastate.io"
-      target="_blank"
-    )
-      img(
-        class="bottom_left"
-        src="ps.jpg"
-        a="href"
-        target="_blank"
-      )
-    p.bottom_right #{token_amount_in_wei} Wei per #{rate_limit_duration} minute [s]
+        br
+        .row
+          .col
+            a(
+              href="https://parastate.io"
+              target="_blank"
+            )
+              img(
+                class="bottom_left"
+                src="ps.jpg"
+                a="href"
+                target="_blank"
+              )
+        .col
+          button.clearButton(onclick="clearTwitterInput()", id=clear_input) Clear
+          br 
+          div.NavButtons
+            button.NavButton.center(onclick="onButtonClickTwitter($('#tweet_url').val())", id=button_send_tokens) Send me tokens!
+        .col
+          p.bottom_right #{token_amount_in_wei} Wei per #{rate_limit_duration} minute [s]

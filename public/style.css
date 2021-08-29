@@ -55,11 +55,11 @@ a {
 #root {
   display: flex;
   flex-direction: column;
+  background: url("background_wide.jpg") left bottom;
 }
 
 .WelcomeView {
-  background: url("background_wide.jpg") left bottom;
-  background-size: cover;
+  width:  100%;
 }
 
 .full_width{
