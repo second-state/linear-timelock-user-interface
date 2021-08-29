@@ -3,10 +3,10 @@ function onButtonClick(_address) {
     return new Promise(function(resolve, reject) {
 
         // Use this for local testing
-        // var fullUrl = "http://localhost:8001/api/" + _address;
+        var fullUrl = "http://localhost:8001/api/" + _address;
 
         // Use this for prod
-        var fullUrl = "https://testnet.faucet.parastate.io:8001/api/" + _address;
+        //var fullUrl = "https://testnet.faucet.parastate.io:8001/api/" + _address;
 
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {

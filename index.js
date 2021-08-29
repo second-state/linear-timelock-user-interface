@@ -98,13 +98,17 @@ app.get("/faucet", (req, res) => {
     });
 });
 
-function removeLine(_handle) {
-    var data = fs.readFileSync(path.join(process.env.data_dir, "data.txt"), 'utf-8');
-    var reg = new RegExp('^' + _handle + '.*\n');
+async function removeLine(_handle) {
+    console.log("Removing line ...");
+    var data = await fs.readFileSync(path.join(process.env.data_dir, "data.txt"), 'utf-8');
+    console.log("Data: " + data);
+    var reg = new RegExp('^' + _handle + '.*\n', 'gm');
+    console.log("Reg: " + reg);
     //console.log(reg);
     var newValue = data.replace(reg, '');
-    //console.log(newValue);
-    fs.writeFileSync(path.join(process.env.data_dir, "data.txt"), newValue, 'utf-8');
+    console.log("New value: " + newValue);
+    var done = await fs.writeFileSync(path.join(process.env.data_dir, "data.txt"), newValue, 'utf-8');
+    console.log("Done: " + done);
 }
 
 app.post('/api/telegram/:todo', function(req, res) {
@@ -166,8 +170,10 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                     var new_timestamp = Math.floor(new Date().getTime() / 1000);
                     var timestamp = myCache.get(handle);
                     console.log("Timestamp of " + handle + " is " + timestamp);
+                    console.log("Testing to see if new timestamp minus old is more than limit duration");
                     if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
                         goodToGo = true;
+                        console.log("Removing line and setting good to go to true");
                         removeLine(handle);
                     }
                     if (timestamp == undefined || goodToGo == true) {
@@ -464,7 +470,7 @@ const getPage = async(params, options) => {
 
 async function doTheyFollow() {
   getFollowers().then(result => {
-    console.log(result);
+    //console.log(result);
     if (result.length > 0) {
       listOfFollowers = [];
       for (var i = 0; i < result.length; i++) {
