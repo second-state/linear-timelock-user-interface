@@ -26,6 +26,7 @@ const server_name = process.env.server_name;
 const server_port = process.env.server_port || "8001";
 const user_rate_limit = process.env.user_rate_limit;
 const rate_limit_duration = process.env.rate_limit_duration;
+const twitter_handle = process.env.twitter_handle;
 
 const endpointURL = "https://api.twitter.com/1.1/statuses/show.json";
 
@@ -98,6 +99,7 @@ app.get("/faucet", (req, res) => {
         blockchain_name: process.env.blockchain_name,
         token_amount_in_wei: process.env.token_amount_in_wei,
         rate_limit_duration: process.env.rate_limit_duration,
+        twitter_handle: process.env.twitter_handle,
     });
 });
 
