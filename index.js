@@ -11,12 +11,15 @@ const needle = require('needle');
 const helmet = require("helmet");
 const express = require("express");
 const readline = require('readline');
+const BigNumber = require('bignumber.js')
 const rateLimit = require("express-rate-limit");
 
 /**
  * App Variables
  */
 const twitter_token = process.env.twitter_bearer_token;
+
+var listOfFollowers = [];
 
 const app = express();
 const server_name = process.env.server_name;
@@ -156,8 +159,9 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
     } else {
         getRequest(tweet_id).then(result => {
             console.log("Full result: " + JSON.stringify(result));
-            handle = result.user.id_str;
+            handle = result.user.id;
             console.log("ID of handle: " + handle);
+            console.log("ID STRING of handle: " + handle.toString());
             text = result.full_text;
             console.log("Text: " + text);
             var resultRegex = ethRegex.exec(text);
@@ -179,7 +183,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                     if (timestamp == undefined || goodToGo == true) {
                         if (Web3.utils.isAddress(recipientAddress)) {
                             console.log("Checking to see if handle: " + handle + ", is in that list above.");
-                            if (listOfFollowers.includes(handle)) {
+                            if (listOfFollowers.includes(handle.toString())) {
                                 myCache.set(handle, new_timestamp, 0);
                                 fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + '\n', function(err) {
                                     if (err) throw err;
@@ -413,9 +417,6 @@ async function getRequest(_id) {
     }
 }
 
-
-var listOfFollowers = [];
-
 // Set the user id of the blockchain twitter account that users must follow
 
 const urlForFollowers = 'https://api.twitter.com/1.1/followers/ids.json';
@@ -441,10 +442,16 @@ const getFollowers = async () => {
     let resp = await getPage(params, options);
     //console.log("*** Response body: " + JSON.stringify(resp));
     if (resp.next_cursor > 0) {
-      users.push(...resp.ids);
+        for(var iter = 0; iter < resp.ids.length; iter ++){
+            var temp = new BigNumber(resp.ids[iter]);
+            users.push(temp.toString());
+        }
       params.cursor = resp.next_cursor;
     } else {
-      users.push(...resp.ids);
+            for(var iter = 0; iter < resp.ids.length; iter ++){
+                var temp = new BigNumber(resp.ids[iter]);
+                users.push(temp.toString());
+            }
       hasNextPage = false;
     }
   }
@@ -474,8 +481,9 @@ async function doTheyFollow() {
     if (result.length > 0) {
       listOfFollowers = [];
       for (var i = 0; i < result.length; i++) {
-        listOfFollowers.push(result[i]);
-      }
+            var temp = new BigNumber(result[i]);
+            listOfFollowers.push(temp.toString());
+        }
       console.log("Updated list of followers");
     } else {
       console.log("List from Twitter was empty so leaving followers as is for now");
