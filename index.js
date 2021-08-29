@@ -156,7 +156,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
     } else {
         getRequest(tweet_id).then(result => {
             console.log("Full result: " + JSON.stringify(result));
-            handle = result.user.id;
+            handle = result.user.id_str;
             console.log("ID of handle: " + handle);
             text = result.full_text;
             console.log("Text: " + text);
