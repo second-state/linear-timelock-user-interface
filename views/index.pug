@@ -3,43 +3,35 @@ block layout-content
   script(src = "jquery.min.js")
   script(src = "helper.js")
   .container.View.WelcomeView
-    .row
     h1.Banner #{blockchain_name}
     div.Message.center
-      div.Title
-        h3 Please enter your Tweet URL
-        p - Tweet must mention #{twitter_handle}
-        p - Tweet must contain a valid public key
-        p - Your Twitter account must also follow
-        a(
-          href="https://parastate.io"
-          target="_blank"
-        ) ParaState's Twitter account
-        p In order for funds to be sent.
-        input(
-            id="tweet_url"
-            type="text"
-            class="full_width"
-            value="https://twitter.com/testing_one_/status/1431755736707526660"
+      a(
+        href="https://parastate.io"
+        target="_blank"
+      )
+        img(
+          src="ps.jpg"
         )
-        br
-        br
-        .row
-          .col
-            a(
-              href="https://parastate.io"
-              target="_blank"
-            )
-              img(
-                class="bottom_left"
-                src="ps.jpg"
-                a="href"
-                target="_blank"
-              )
-        .col
-          button.clearButton(onclick="clearTwitterInput()", id=clear_input) Clear
-          br 
-          div.NavButtons
-            button.NavButton.center(onclick="onButtonClickTwitter($('#tweet_url').val())", id=button_send_tokens) Send me tokens!
-        .col
-          p.bottom_right #{token_amount_in_wei} Wei per #{rate_limit_duration} minute [s]
+      div.Title
+      p Please enter Tweet URL (must mention #{twitter_handle} & contain a valid public key)
+      p Account must follow
+      a(
+        href="https://parastate.io"
+        target="_blank"
+      ) ParaState
+      br
+      br
+      input(
+          id="tweet_url"
+          type="text"
+          class="full_width"
+          value="https://twitter.com/testing_one_/status/1431755736707526660"
+      )
+      br
+      br
+      button.clearButton(onclick="clearTwitterInput()", id=clear_input) Clear
+      br 
+      div.NavButtons
+      button.NavButton.center(onclick="onButtonClickTwitter($('#tweet_url').val())", id=button_send_tokens) Submit
+      br
+      p #{token_amount_in_wei} Wei per #{rate_limit_duration} minute [s]

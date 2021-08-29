@@ -55,8 +55,11 @@ a {
 #root {
   display: flex;
   flex-direction: column;
-  background: url("background_wide.jpg") left bottom;
+  background: url("background_wide.jpg") no-repeat;
+  background-size: cover;
 }
+
+
 
 .WelcomeView {
   width:  100%;
@@ -82,6 +85,7 @@ text-align: center;
   -webkit-filter: drop-shadow(10px 10px 10px #);
   filter: drop-shadow(10px 10px 10px #5a5a5a);
   background-repeat: no-repeat;
+  background-image: url(ps.jpg);
 }
 
 .bottom_right {
@@ -167,8 +171,8 @@ text-align: center;
   justify-content: center;
   align-items: center;
 
-  height: 25px;
-  width: 50px;
+  height: 20px;
+  width: 60%;
 
   background: #99d6ff;
 
@@ -188,14 +192,14 @@ text-align: center;
   justify-content: center;
   align-items: center;
 
-  height: 75px;
-  width: 175px;
+  height: 30px;
+  width: 60%;
 
   background: #00ab66;
 
   border-radius: 30px;
 
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   color: white;
 
@@ -203,4 +207,19 @@ text-align: center;
 
   border-bottom: var(--ui-shadow-border);
   box-shadow: var(--ui-shadow);
+}
+
+@media (max-width: 767.98px) {
+  body {
+    font-size: 12px!important;
+  }
+  h1 {
+    font-size: 30px!important;
+  }
+  h2 {
+    font-size: 20px!important;
+  }
+  h1 {
+    font-size: 15px!important;
+  }
 }
