@@ -487,7 +487,7 @@ const getPage = async(params, options) => {
         }
         return resp.body;
     } catch (err) {
-        throw new Error(`Request failed: ${err}`);
+        console.log("Unable to access Twitter at this stage in time ... rate limit issue at Twitter");
     }
 }
 
