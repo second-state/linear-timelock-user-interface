@@ -140,7 +140,7 @@ npm run prod
 
 Users will visit the site and paste in their public key
 
-![home page](https://github.com/ParaState/universal-blockchain-faucet/raw/main/home_page.png)
+![home page](https://github.com/ParaState/universal-blockchain-faucet/raw/main/home_page_v1_twitter.png)
 
 ### HTTP Request Response
 

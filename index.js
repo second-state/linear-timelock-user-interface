@@ -525,6 +525,12 @@ async function seeWhoFollows() {
 
 }
 
+/**
+ * Telegram Bot 
+**/
+const TelegramBot = require('node-telegram-bot-api');
+const token = process.env.telegram_bot_token;
+const bot = new TelegramBot(token, {polling: true});
 
 /**
  * Server Activation
@@ -547,14 +553,14 @@ if (process.env.https == "yes") {
     app.listen(server_port, () => {
         console.log(`Listening to requests on http://localhost:${server_port}`);
         // Do initial follower harvest
-        
+        /*
         doTheyFollow().then(followResult => {
             console.log('Checking followers, please wait ...');
         });
         // Repeat the follower harvest automatically now on; at time intervals
         seeWhoFollows();
         
-        
+        */
     });
 } else {
     console.log("ERROR: Please set the https setting in the .env config file");
