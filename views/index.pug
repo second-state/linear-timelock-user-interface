@@ -3,23 +3,10 @@ block layout-content
   script(src = "jquery.min.js")
   script(src = "helper.js")
   .container.View.WelcomeView
-    h1.Banner #{blockchain_name}
+    h1.Banner #{blockchain_name} Faucet
     div.Message.center
-      a(
-        href="https://parastate.io"
-        target="_blank"
-      )
-        img(
-          src="ps.jpg"
-        )
       div.Title
-      p Enter Tweet URL: Must mention #{twitter_handle} & contain a valid public key. Also your account must follow
-      a(
-        href="https://parastate.io"
-        target="_blank"
-      ) ParaState
-      br
-      br
+      p Enter Tweet URL
       input(
           id="tweet_url"
           type="text"
@@ -28,9 +15,24 @@ block layout-content
       )
       br
       br
-      button.clearButton(onclick="clearTwitterInput()", id=clear_input) Clear
+      button.clearButton(onclick="clearTwitterInput()", id="clear_input") Clear
       br 
       div.NavButtons
-      button.NavButton.center(onclick="onButtonClickTwitter($('#tweet_url').val())", id=button_send_tokens) Submit
-      br
-      p #{token_amount_in_wei} Wei per #{rate_limit_duration} minute [s]
+      button.NavButton.center(id="button_send_tokens", onclick="onButtonClickTwitter($('#tweet_url').val())") Submit
+      hr
+      p Note: Tweet must mention #{twitter_handle} & contain a valid public key. Also your account must follow
+      a(
+        href="https://parastate.io"
+        target="_blank"
+      ) ParaState
+      hr
+      p Dispences #{token_amount_in_wei} Wei per #{rate_limit_duration} minute [s]
+      hr
+      p Powered by
+      a(
+        href="https://parastate.io"
+        target="_blank"
+      )
+        img(
+          src="ps.jpg"
+        )

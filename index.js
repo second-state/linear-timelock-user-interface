@@ -35,7 +35,7 @@ const endpointURL = "https://api.twitter.com/1.1/statuses/show.json";
 const web_page_limiter = rateLimit({
     windowMs: ((parseInt(rate_limit_duration) * 60) * 1000),
     max: parseInt(user_rate_limit),
-    message: '<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="shortcut icon" href="favicon.ico"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="theme-color" content="#000000"><title>Home | Rate Limit Exceeded</title><link rel="stylesheet" href="style.css"></head><body><div id="root"><div class="View WelcomeView"><h1 class="Banner">Rate Limit Exceeded</h1><div class="Message center"><div class="Title"><h3>Sorry!</h3></div></div><div class="center"><img src="rate_limit.png"></img></div><div class="Message center"><p>Rate limit exceeded, Please try again later.</p></div></div></div></body></html>'
+    message: '<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="shortcut icon" href="favicon.ico"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="theme-color" content="#000000"><title>Home | Rate Limit Exceeded</title><link rel="stylesheet" href="style.css"></head><body><div id="root"><div class="View WelcomeView"><h1 class="Banner">Rate Limit Exceeded</h1><br /><div class="Message center"><div class="Title"><h3>Sorry!</h3></div></div><div class="center"><img src="rate_limit.png"></img></div><div class="Message center"><p>Rate limit exceeded, Please try again later.</p></div></div></div></body></html>'
 });
 
 // API rate limit
@@ -174,25 +174,38 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                 if (resultRegex != null) {
                     var recipientAddress = resultRegex[0];
                     var new_timestamp = Math.floor(new Date().getTime() / 1000);
-                    var timestamp = myCache.get(handle);
-                    console.log("Timestamp of " + handle + " is " + timestamp);
-                    console.log("Testing to see if new timestamp minus old is more than limit duration");
-                    if ((new_timestamp - timestamp) > (parseInt(rate_limit_duration) * 60)) {
+                    // Rate limit data
+                    var duration;
+                    var times;
+                    var rObject = myCache.get(handle);
+                    if (rObject == undefined) {
+                        duration = new_timestamp;
+                        times = 0;
+                    } else {
+                        duration = rObject.duration;
+                        times = rObject.times;
+                    }
+                    if ((new_timestamp - duration) > (parseInt(rate_limit_duration) * 60)) {
+                        times = 0;
+                    }
+                    if (times <= parseInt(user_rate_limit)) {
                         goodToGo = true;
                         console.log("Removing line and setting good to go to true");
                         removeLine(handle);
                     }
-                    if (timestamp == undefined || goodToGo == true) {
+                    if (rObject == undefined || goodToGo == true) {
                         if (Web3.utils.isAddress(recipientAddress)) {
                             console.log("Checking to see if handle: " + handle + ", is in that list above.");
                             if (listOfFollowers.includes(handle.toString())) {
-                                myCache.set(handle, new_timestamp, 0);
-                                fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + '\n', function(err) {
+                                var cacheObjectToStore = {};
+                                cacheObjectToStore["duration"] = new_timestamp;
+                                cacheObjectToStore["times"] = times + 1;
+                                myCache.set(handle, cacheObjectToStore, 0);
+                                fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + "," + times + '\n', function(err) {
                                     if (err) throw err;
                                     console.log("Updated timestamp saved");
                                 });
                                 console.log("Recipient address: " + recipientAddress);
-
                                 var transactionObject = {
                                     chainId: blockchainChainId,
                                     from: faucetPublicKey,
@@ -533,13 +546,13 @@ if (process.env.https == "yes") {
     app.listen(server_port, () => {
         console.log(`Listening to requests on http://localhost:${server_port}`);
         // Do initial follower harvest
-        /*
+        
         doTheyFollow().then(followResult => {
             console.log('Checking followers, please wait ...');
         });
         // Repeat the follower harvest automatically now on; at time intervals
         seeWhoFollows();
-        */
+        
         
     });
 } else {
@@ -561,6 +574,9 @@ const readInterface = readline.createInterface({
 console.log("Loading data into cache");
 readInterface.on('line', function(line) {
     var split_data = line.split(",");
-    console.log("Loading " + split_data[0] + ": " + split_data[1] + ".");
-    myCache.set(split_data[0], split_data[1], 0);
+    console.log("Loading " + split_data[0] + "," + split_data[1] + "," +  split_data[2]);
+    var cacheObject = {};
+    cacheObject["duration"] = split_data[1];
+    cacheObject["times"] = split_data[2]
+    myCache.set(split_data[0], cacheObject, 0);
 });

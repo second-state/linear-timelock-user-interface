@@ -40,8 +40,14 @@ function clearTwitterInput() {
     document.getElementById("tweet_url").value = '';
 }
 
-
 function onButtonClickTwitter(_tweet_url) {
+    console.log("Disabling button");
+    document.getElementById("button_send_tokens").disabled = true;
+    document.getElementById("button_send_tokens").style.background = '#808080';
+    setTimeout(function() {
+        document.getElementById("button_send_tokens").disabled = false;
+        document.getElementById("button_send_tokens").style.background = '#00ab66';
+    }, 6000);
     console.log("Tweet URL: " + _tweet_url);
     var toastResponse;
     var fullUrl;

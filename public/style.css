@@ -113,7 +113,7 @@ text-align: center;
   height: 100%;
   width: 100%;
 
-  padding: 20px;
+  padding: 5px;
 
   background-size: cover;
 
@@ -132,7 +132,7 @@ text-align: center;
 
   overflow: hidden;
   background: white;
-  padding: 15px;
+  padding: 5px;
 
   font-family: "Share Tech Mono", monospace;
 
@@ -149,7 +149,7 @@ text-align: center;
 }
 
 .Message > .Title {
-  padding-bottom: 20px;
+  padding-bottom: 5px;
 }
 
 .Message > .Details {
