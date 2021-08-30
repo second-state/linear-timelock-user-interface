@@ -100,6 +100,7 @@ app.get("/faucet", (req, res) => {
         token_amount_in_wei: process.env.token_amount_in_wei,
         rate_limit_duration: process.env.rate_limit_duration,
         twitter_handle: process.env.twitter_handle,
+        user_rate_limit: process.env.user_rate_limit,
     });
 });
 
