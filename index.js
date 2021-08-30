@@ -183,8 +183,8 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                         duration = new_timestamp;
                         times = 0;
                     } else {
-                        duration = rObject.duration;
-                        times = rObject.times;
+                        duration = parseInt(rObject.duration);
+                        times = parseInt(rObject.times);
                     }
                     if ((new_timestamp - duration) > (parseInt(rate_limit_duration) * 60)) {
                         times = 0;
