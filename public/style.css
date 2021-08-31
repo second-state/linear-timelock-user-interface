@@ -59,7 +59,9 @@ a {
   background-size: cover;
 }
 
-
+.small {
+  font-size: 10px;
+}
 
 .WelcomeView {
   width:  100%;
@@ -222,4 +224,7 @@ text-align: center;
   h1 {
     font-size: 15px!important;
   }
+  .small {
+  font-size: 6px!important;
+}
 }
