@@ -211,6 +211,10 @@ text-align: center;
   box-shadow: var(--ui-shadow);
 }
 
+  .small_image {
+    width: 150px;
+  }
+
 @media (max-width: 767.98px) {
   body {
     font-size: 12px!important;
@@ -227,4 +231,7 @@ text-align: center;
   .small {
   font-size: 6px!important;
 }
+  .small_image {
+    width: 80px!important;
+  }
 }
