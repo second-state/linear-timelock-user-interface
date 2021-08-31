@@ -117,12 +117,6 @@ async function removeLine(_handle) {
     console.log("Done: " + done);
 }
 
-app.post('/api/telegram/:todo', function(req, res) {
-
-    // TODO dispence tokens based on Telegram call from helper.js file
-
-});
-
 
 
 app.post('/api/twitter/:tweet_id', function(req, res) {
@@ -339,7 +333,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
     }
 });
 
-
+/*
 // Address access
 app.post('/api/:recipient_address', function(req, res) {
     var response;
@@ -406,6 +400,8 @@ app.post('/api/:recipient_address', function(req, res) {
         }
     });
 });
+
+*/
 
 /**
  * Repeat API dump to memory so we can quickly ask questions via memory 
@@ -525,24 +521,7 @@ async function seeWhoFollows() {
 
 }
 
-/**
- * Telegram Bot 
-**/
-console.log("Starting Telegram Bot");
-const TelegramBot = require('node-telegram-bot-api');
-const token = process.env.telegram_bot_token;
-const bot = new TelegramBot(token, {polling: true});
-bot.onText(/\/faucet (.+)/, (msg, match) => {
-    // The user's id who sent the command
-    //const chatId = msg.chat.id
 
-    // The message which they sent
-    const resp = match[1]
-    console.log("Message recieved: " + resp);
-
-    // Optional message to send back to original user
-    //bot.sendMessage(chatId, resp)
-})
 
 /**
  * Server Activation
@@ -598,4 +577,123 @@ readInterface.on('line', function(line) {
     cacheObject["duration"] = split_data[1];
     cacheObject["times"] = split_data[2]
     myCache.set(split_data[0], cacheObject, 0);
+});
+
+console.log("Starting Telegram Bot");
+
+const TelegramBot = require('node-telegram-bot-api');
+const token = process.env.telegram_bot_token;
+const bot = new TelegramBot(token, {
+  polling: true
+});
+console.log("Config set");
+
+/*
+
+// Specific command where the user types in /faucet followed by a message
+
+*/
+
+bot.onText(/\/faucet (.+)/, (msg, match) => {
+  console.log("here");
+  // The user's id who sent the command
+  const chatId = msg.chat.id;
+  const fromId = msg.from.id;
+  console.log("ChatId: " + chatId);
+  console.log("Message object is :" + JSON.stringify(msg));
+
+  // The message which they sent
+  const resp = match[1]
+
+  // Variables for the transaction
+  var rate_limit_duration = process.env.rate_limit_duration;
+  var user_rate_limit = process.env.user_rate_limit;
+  var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url;
+  var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url;
+  var faucetPublicKey = process.env.faucet_public_key;
+  var faucetPrivateKey = process.env.faucet_private_key;
+  var blockchainChainId = process.env.blockchain_chain_id;
+  var gasPrice = process.env.gas_price;
+  var gasLimit = process.env.gas_limit;
+  var tokenAmountInWei = process.env.token_amount_in_wei;
+  var ethRegex = /0x[a-fA-F0-9]{40}/;
+  var goodToGo = false;
+  var response;
+  var text;
+  text = resp;
+  var new_timestamp = Math.floor(new Date().getTime() / 1000);
+    // Rate limit data
+    var duration;
+    var times;
+    var rObject = myCache.get(fromId);
+    if (rObject == undefined) {
+      duration = new_timestamp;
+      times = 0;
+    } else {
+      duration = parseInt(rObject.duration);
+      times = parseInt(rObject.times);
+    }
+    if ((new_timestamp - duration) > (parseInt(rate_limit_duration) * 60)) {
+      times = 0;
+    }
+    new_times = times + 1;
+    console.log("Checking new times: " + new_times + " vs limit of " + user_rate_limit);
+    console.log("*** Good to go: " + goodToGo);
+    if (new_times <= parseInt(user_rate_limit)) {
+      goodToGo = true;
+    }
+
+      var cacheObjectToStore = {};
+      cacheObjectToStore["duration"] = new_timestamp;
+      cacheObjectToStore["times"] = new_times;
+      myCache.set(fromId, cacheObjectToStore, 0);
+      removeLine(fromId);
+      fs.appendFile(path.join(process.env.data_dir, "data.txt"), fromId + "," + new_timestamp + "," + new_times + '\n', function(err) {
+        if (err) throw err;
+        console.log("Updated timestamp saved");
+      });
+
+  console.log("Text: " + text);
+  var resultRegex = ethRegex.exec(text);
+  console.log("Eth address: " + resultRegex);
+
+
+    if (rObject == undefined || goodToGo == true) {
+          if (resultRegex != null) {
+    var recipientAddress = resultRegex[0];
+      if (Web3.utils.isAddress(recipientAddress)) {
+        console.log("Recipient address: " + recipientAddress);
+        var transactionObject = {
+          chainId: blockchainChainId,
+          from: faucetPublicKey,
+          gasPrice: gasPrice,
+          gas: gasLimit,
+          to: recipientAddress,
+          value: tokenAmountInWei,
+        }
+        web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+          if (!error) {
+            web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+              if (!error) {
+                bot.sendMessage(chatId, "Transaction sent " + tokenAmountInWei + " Wei, to address: " + recipientAddress + ". See " + blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash + " for more info.");
+              } else {
+                bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
+              }
+            });
+          } else {
+            console.log(error);
+          }
+        });
+
+      } else {
+        bot.sendMessage(chatId, "Address is not valid!");
+      }
+        } else {
+    bot.sendMessage(chatId, "Address is not valid!");
+  }
+    } else {
+      bot.sendMessage(chatId, "Sorry, rate limit");
+    }
+
+
 });
