@@ -1,38 +1,46 @@
 extends layout
-
 block layout-content
-  div.View.WelcomeView
-    h1.Banner #{blockchain_name}
+  script(src = "jquery.min.js")
+  script(src = "helper.js")
+  .container.View.WelcomeView
+    h1.Banner #{blockchain_name} Faucet
     div.Message.center
       div.Title
-        h3 Please enter your Tweet URL
-        p Tweet must contain a valid public key.
-        p Your Twitter account must also follow
-        a(
-          href="https://parastate.io"
-          target="_blank"
-        ) ParaState's Twitter account
-        p In order for funds to be sent.
-        input(
-            id="tweet_url"
-            type="text"
-            class="full_width"
-            value="https://twitter.com/testing_one_/status/1425321665378938880"
-        )
-        br 
-        br
-        button.clearButton(onclick="clearTwitterInput()", id=clear_input) Clear
-    script(src = "jquery.min.js")
-    script(src = "helper.js")
-    div.NavButtons
-      button.NavButton.center(onclick="onButtonClickTwitter($('#tweet_url').val())", id=button_send_tokens) Send me tokens!
-    a(
-      href="https://parastate.io"
-      target="_blank"
-    )
-      img(
-        class="bottom_left"
-        src="ps.jpg"
-        a="href"
+      p Enter Tweet URL
+      input(
+          id="tweet_url"
+          type="text"
+          class="full_width"
+          value="https://twitter.com/testing_one_/status/1431755736707526660"
+      )
+      br
+      br
+      button.clearButton(onclick="clearTwitterInput()", id="clear_input") Clear
+      br 
+      div.NavButtons
+      button.NavButton.center(id="button_send_tokens", onclick="onButtonClickTwitter($('#tweet_url').val())") Submit
+      hr
+      p Mention #{twitter_handle} & provide your address & follow 
+      a(
+        href="https://parastate.io"
+        target="_blank"
+      ) ParaState
+      hr
+      p Dispences #{token_amount_in_wei} Wei, #{user_rate_limit} time[s] per #{rate_limit_duration} minute[s]
+      hr
+      a(
+        href="https://parastate.io"
         target="_blank"
       )
+        img.center.small_image(
+          src="ps.jpeg"
+        )
+      br
+      a(
+        href="https://t.me/joinchat/FFwdJTS7jF02OTdl"
+        target="_blank"
+      )
+        img.center(
+          src="sticker_image.png"
+        )
+        

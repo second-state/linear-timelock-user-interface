@@ -3,10 +3,10 @@
 # What does it do?
 
 This software provides Ethereum compatible blockchain tokens; think of this as a "Faucet as a Service".
-It provides a web page interface (where users can paste in their public key).
+It provides a web page interface (where users can paste in a social media post URL).
 It also provides an RPC endpoint (which can be called manually or programatically).
 This software has specific rate limiting built in.
-Just as with settings like `token_amount_in_wei`, `blockchain_rpc`, `blockchain_chain_id` and so forth, the aforementioned rate limiting (`user_rate_limit` & `rate_limit_duration` is completely configurable i.e. one token per hour or 10 tokens per day etc.
+Just as with settings like `token_amount_in_wei`, `blockchain_rpc`, `blockchain_chain_id` and so forth, the aforementioned rate limiting (`user_rate_limit` & `rate_limit_duration`) is completely configurable i.e. one token per hour or 10 tokens per day etc.
 
 # What problem does it solve?
 
@@ -14,29 +14,12 @@ At present blockchain faucets are prone to being spammed; even in cases where th
 
 # How does it work?
 
-This node application allows users to paste in their Ethereum compatible address (future version will accept a link to a social media post with address also). 
+This node application allows users to paste in a Tweet URL
 
 This application transfers the blockchain token from the faucet to the user's account.
 
-Future versions of this application will optionally collect some information (as per social media's public APIs) about the user i.e. when their account was created, etc in order to determine if the users are legitimate or just bots. Like everything else this will also be configurable.
-
 # What is configurable
-A lot of parameters will be configurable. This is good for security (separate config file) and also allows this code to be reused for other projects. Configurations will eventially include:
-- faucet_private_key
-- faucet_public_key
-- blockchain_rpc
-- blockchain_chain_id
-- hash_tags_to_check
-- collect_api_data
-- user_rate_limit
-- rate_limit_duration
-- token_amount_in_wei
-- blockchain_logo_url
-- blockchain_name
-- blockchain_description
-- blockchain_block_explorer_url
-- blockchain_block_explorer_address_url
-- blockchain_block_explorer_transaction_url
+As many parameters as possible will be configurable. This is good for security (separate config file) and also allows this code to be reused for other projects. 
 
 ## How to host it (as a faucet for your own blockchain network)
 
@@ -63,7 +46,7 @@ cd universal-blockchain-faucet
 
 ### Configure 
 
-Create a new file called `.env` and add the following text
+Create a new file called `.env` and add the following text (fill out your specific config options)
 
 ```python
 # A throw away practice key (never store large amounts in this address for obvious reasons)
@@ -98,11 +81,13 @@ https=yes
 host=0.0.0.0
 data_dir=/media/nvme/universal-faucet-data
 twitter_bearer_token=
-# Twitter Id. This is the id of the blockchain's twitter account that wants to be followed as part of disbersing tokens (you can use a site like https://tweeterid.com/ to convert a @ handle to an id)
-twitter_id=
+# Twitter Id of the blockchain you can use a site like tweeterid com to convert a handle to an id
+twitter_id=1320374428979527681
 twitter_handle=@_parastate
-# The full profile URL of the blockchain's twitter account i.e. https://twitter.com/_parastate
-twitter_url=
+twitter_url=https://twitter.com/_parastate
+telegram_bot_token=
+telegram_bot_name=
+username_faucet_bot=
 ```
 
 ### Data directory
@@ -136,17 +121,9 @@ npm run prod
 
 ### Web site
 
-Users will visit the site and paste in their public key
+Users will visit the site and paste in their Twitter URL
 
-![home page](https://github.com/ParaState/universal-blockchain-faucet/raw/main/home_page.png)
-
-### HTTP Request Response
-
-Users can also use requests to perform the same task. For example the following HTTP Post request can be used (where `0xF9A8917c7fFb04822daDC861E9e66E69cecCD248` is the users public key).
-
-```bash
-curl --location --request POST 'http://localhost:8001/api/0xF9A8917c7fFb04822daDC861E9e66E69cecCD248'
-```
+![home page](./home_page_v1_twitter.png)
 
 ### Rate limiting
 
