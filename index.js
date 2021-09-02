@@ -1287,10 +1287,12 @@ bot.onText(/\/drip_cstate (.+)/, (msg, match) => {
                   web3.eth.getTransaction(sent_tx.toString(), function(error, tx_object) {
                     if (!error) {
                         // Get before balance
+                        setTimeout(function() {
                         getBalance(contract, recipientAddress, accountState, "after").then(result => {
                           console.log("Checking account balance after transaction");
                           bot.sendMessage(chatId, "Balance before was: " + accountState.getBalanceBefore() + "\nThen transaction sent " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " cSTATE, \nto address: " + recipientAddress + "\nBalance after is now: " + accountState.getBalanceAfter() + "\n\nSee " + blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash + " for more info. \n\nBy the way, you can check your cSTATE balance by typing /balance_cstate followed by your address!");
                         });
+                         }, 1000);
                     } else {
                       console.log(error);
                     }
