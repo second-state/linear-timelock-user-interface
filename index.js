@@ -1197,6 +1197,7 @@ bot.onText(/\/drip_cstate (.+)/, (msg, match) => {
   var gasPrice = process.env.gas_price;
   var gasLimit = process.env.gas_limit;
   var tokenAmountInWei = process.env.token_amount_in_wei;
+  var erc20TokenAmountInWei = process.env.erc20_token_amount_in_wei;
   var ethRegex = /0x[a-fA-F0-9]{40}/;
   var goodToGo = false;
   var response;
@@ -1269,7 +1270,7 @@ bot.onText(/\/drip_cstate (.+)/, (msg, match) => {
         console.log("Contract address: " + contract_address);
         contract = new web3.eth.Contract(erc20_abi, contract_address);
         console.log("Contract: " + contract);
-        var transferObjectEncoded = contract.methods.transfer(recipientAddress, web3.utils.fromWei(tokenAmountInWei, 'ether')).encodeABI();
+        var transferObjectEncoded = contract.methods.transfer(recipientAddress, web3.utils.fromWei(erc20TokenAmountInWei, 'ether')).encodeABI();
         // Create transaction object
         var transactionObject = {
           to: contract_address,
@@ -1288,7 +1289,7 @@ bot.onText(/\/drip_cstate (.+)/, (msg, match) => {
                         // Get before balance
                         getBalance(contract, recipientAddress, accountState, "after").then(result => {
                           console.log("Checking account balance after transaction");
-                          bot.sendMessage(chatId, "Balance before was: " + accountState.getBalanceBefore() + "\nThen transaction sent " + tokenAmountInWei + " Wei, \nto address: " + recipientAddress + "\nBalance after is now: " + accountState.getBalanceAfter() + "\n\nSee " + blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash + " for more info. \n\nBy the way, you can check your cSTATE balance by typing /balance_cstate followed by your address!");
+                          bot.sendMessage(chatId, "Balance before was: " + accountState.getBalanceBefore() + "\nThen transaction sent " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " cSTATE, \nto address: " + recipientAddress + "\nBalance after is now: " + accountState.getBalanceAfter() + "\n\nSee " + blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash + " for more info. \n\nBy the way, you can check your cSTATE balance by typing /balance_cstate followed by your address!");
                         });
                     } else {
                       console.log(error);
