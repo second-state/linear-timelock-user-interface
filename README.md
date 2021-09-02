@@ -50,14 +50,14 @@ Create a new file called `.env` and add the following text (fill out your specif
 
 ```python
 # A throw away practice key (never store large amounts in this address for obvious reasons)
-faucet_private_key=xx123xx
-faucet_public_key=0x2C67EE088F309438B27DAC19D76B4Eb860232871
+faucet_private_key=
+faucet_public_key=
 blockchain_rpc=https://rpc.parastate.io:8545
 blockchain_chain_id=123
 # How many times a user can use this server per duration period
-user_rate_limit=10
+user_rate_limit=1
 # The duration period in minutes i.e. 1440 is 24 hours
-rate_limit_duration=1
+rate_limit_duration=5
 # The amount of wei to be sent per airdrop i.e. 1000000000000000000 (to send 1 ETH)
 token_amount_in_wei=1000000000000000
 blockchain_logo_url=https://pbs.twimg.com/profile_images/1357246244540751873/zhVBBG5-_400x400.jpg
@@ -73,14 +73,15 @@ gas_price=5000000000
 # Override gas limit
 gas_limit=8000000
 # Flavour of client's web3 i.e. oeth (Oasis Ethereum), cmt (CyberMiles), eth (Ethereum), state (ParaState), dot (Polkadot)
-web3_flavour=eth
-server_name=testnet.faucet.parastate.io
+server_name=localhost
 server_port=8001
 # Are you using HTTPS (letsencrypt)? yes/no
 https=yes
 host=0.0.0.0
-data_dir=/media/nvme/universal-faucet-data
+data_dir=/Users/tpmccallum/universal-faucet-data
 twitter_bearer_token=
+twitter_api_key=
+twitter_api_secret_key=
 # Twitter Id of the blockchain you can use a site like tweeterid com to convert a handle to an id
 twitter_id=1320374428979527681
 twitter_handle=@_parastate
@@ -88,6 +89,9 @@ twitter_url=https://twitter.com/_parastate
 telegram_bot_token=
 telegram_bot_name=
 username_faucet_bot=
+erc20_name=cSTATE
+erc20_symbol=CST
+erc20_address=0x4f2b81ac898f7b809c4f6f8e4f57b2b116a36262
 ```
 
 ### Data directory
