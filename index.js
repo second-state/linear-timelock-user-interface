@@ -1093,7 +1093,7 @@ console.log("**Getting events from logs: " + events + "**");
 var contract_address_test = process.env.erc20_address;
 var contract_test = new web3.eth.Contract(erc20_abi, contract_address);
 
-const events = await contract_test.getPastEvents('Transfer', {
+const events = contract_test.getPastEvents('Transfer', {
         filter: { from: contract_address_test, to: "0xe222Fe77BDfCee4ADA3b8Cd0E9a247caE0966164" },
         fromBlock: 0,
         toBlock: 'latest'
