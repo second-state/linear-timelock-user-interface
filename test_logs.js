@@ -375,13 +375,17 @@ console.log("**Getting events from logs ...");
 var contract_address = process.env.erc20_address;
 var contract = new web3.eth.Contract(erc20_abi, contract_address);
 
-const events = await contract.getPastEvents('Transfer', {
-        filter: { from: contract_address, to: "0xe222Fe77BDfCee4ADA3b8Cd0E9a247caE0966164" },
-        fromBlock: 0,
-        toBlock: 'latest'
-});
-
 }
+
+const events = await contract.getPastEvents('Transfer', {
+                  filter: {from: contract_address, to: _to_value},
+                  fromBlock: 0,
+                  toBlock: 'latest'
+              }, (error, events) => { 
+                  if (!error){
+                   console.log(events)
+               }
+                })
 
 getLogs().then(result => {
         console.log(result);
