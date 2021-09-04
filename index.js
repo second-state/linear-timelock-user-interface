@@ -1241,7 +1241,7 @@ bot.onText(/\/balance_cstate (.+)/, (msg, match) => {
   }
 });
 
-/ MESSAGE
+// MESSAGE
 // A bot message detector that dispences ERC20 contract and also checks account balance before and after the transfer
 
 bot.on('drip_cstate', (msg) => {
