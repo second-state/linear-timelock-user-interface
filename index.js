@@ -1241,9 +1241,16 @@ bot.onText(/\/balance_cstate (.+)/, (msg, match) => {
   }
 });
 
+bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
+
+  // send a message to the chat acknowledging receipt of their message
+  bot.sendMessage(chatId, 'Received your message');
+});
+
 // MESSAGE
 // A bot message detector that dispences ERC20 contract and also checks account balance before and after the transfer
-
+/*
 bot.on('message', (msg) => {
   console.log("here - message");
   console.log("MESSAGE: " + JSON.stringify(msg));
@@ -1391,6 +1398,9 @@ bot.on('message', (msg) => {
     bot.sendMessage(chatId, "Sorry, rate limit, you can only have " + user_rate_limit + " request[s], every " + rate_limit_duration + " minute[s].");
   }
 });
+*/
+
+
 
 /*
 
