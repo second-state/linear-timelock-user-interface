@@ -1243,7 +1243,7 @@ bot.onText(/\/balance_cstate (.+)/, (msg, match) => {
 
 // Respond to any message with drip_cstate in the text
 
-bot.onText(/(.*) drip_cstate (.*)/, (msg, match) => {
+bot.onText(/^(\/drip_cstate(.*)|(.*)drip_cstate(.*))/, (msg, match) => {
   // The user's id who sent the command
   const chatId = msg.chat.id;
   const fromId = msg.from.id;
