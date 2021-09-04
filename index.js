@@ -1250,10 +1250,11 @@ bot.onText(/(.*) drip_cstate (.*)/, (msg, match) => {
   const userName = msg.from.username;
   const firstName = msg.from.first_name;
   //console.log("ChatId: " + chatId);
-  //console.log("Message object is :" + JSON.stringify(msg));
+  console.log("Message object is :" + JSON.stringify(msg));
 
   // The message which they sent
   const resp = match[1]
+  console.log("Resp :" + JSON.stringify(resp));
 
   // Variables for the transaction
   var rate_limit_duration = process.env.rate_limit_duration;
