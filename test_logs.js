@@ -369,26 +369,24 @@ const web3 = new Web3(new Web3.providers.HttpProvider(process.env.blockchain_rpc
 console.log("Web3: " + web3.version);
 
 async function getLogs() {
-// Testing get past events; this will be implemented 
-// ERC20 token variables
-console.log("**Getting events from logs ...");
-var contract_address = process.env.erc20_address;
-var contract = new web3.eth.Contract(erc20_abi, contract_address);
-
+  var contract_address = process.env.erc20_address;
+  var contract = new web3.eth.Contract(erc20_abi, contract_address);
+    const events = await contract.getPastEvents('Transfer', {
+      filter: {
+        to: "0xb44386d727E28586d2f89673C6474934da0d6ecE"
+      },
+      fromBlock: 660170,
+      toBlock: 'latest'
+    }, (error, events) => {
+      if (!error) {
+        console.log("Length: " + events.length);
+        console.log("Events: " + JSON.stringify(events));
+      } else {
+        console.log("Error ...: " + error);
+      }
+    })
 }
 
-const events = await contract.getPastEvents('Transfer', {
-                  filter: {from: contract_address, to: _to_value},
-                  fromBlock: 0,
-                  toBlock: 'latest'
-              }, (error, events) => { 
-                  if (!error){
-                   console.log(events)
-               }
-                })
-
 getLogs().then(result => {
-        console.log(result);
+  
 });
-
-

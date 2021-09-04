@@ -1094,6 +1094,8 @@ class AccountState {
     constructor(){
         this.balanceBefore;
         this.balanceAfter;
+        // Failsafe
+        this.alreadyFunded = true;
     }
 
     getBalanceBefore(){
@@ -1103,13 +1105,17 @@ class AccountState {
     getBalanceAfter(){
         return this.balanceAfter;
     }
-
+    getAlreadyFunded(){
+        return this.alreadyFunded;
+    }
     setBalanceBefore(_balanceBefore){
         this.balanceBefore = _balanceBefore;
     }
-
     setBalanceAfter(_balanceAfter){
         this.balanceAfter = _balanceAfter
+    }
+    setAlreadyFunded(_status){
+        this.alreadyFunded = _status;
     }
 }
 
@@ -1132,6 +1138,29 @@ async function getBalance(_contract_instance, _address, _account_state, _before_
       console.log("Error: ", err)
     }
   });
+}
+
+async function getLogs(_contract_instance, _address, _account_state) {
+  //Failsafe - set to true
+  _account_state.setAlreadyFunded(true);
+  const events = await _contract_instance.getPastEvents('Transfer', {
+    filter: {
+      to: _address,
+    },
+    fromBlock: 660170,
+    toBlock: 'latest'
+  }, (error, events) => {
+    if (!error) {
+      if (events.length > 0) {
+        _account_state.setAlreadyFunded(true);
+      } else {
+        if (events.length == 0) {
+          _account_state.setAlreadyFunded(false);
+        }
+      }
+      console.log("Events: " + JSON.stringify(events));
+    }
+  })
 }
 
 // A bot command that gives the balance of an external address
@@ -1251,63 +1280,59 @@ bot.onText(/\/drip_cstate (.+)/, (msg, match) => {
         // Account details
         var accountState = new AccountState();
 
-
         // ERC20 token variables
         contract_address = process.env.erc20_address;
         console.log("Contract address: " + contract_address);
         contract = new web3.eth.Contract(erc20_abi, contract_address);
         console.log("Contract: " + contract);
-
 
         // Get before balance
         getBalance(contract, recipientAddress, accountState, "before").then(result => {
           console.log("Checking account balance before transaction");
-        bot.sendMessage(chatId, "Hey " +  firstName + " (" + userName + "), just checking your cState balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " +  accountState.getBalanceBefore() + " cState\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " cSTATE now ... please wait a minute!");
-        });
+          getLogs(contract, recipientAddress, accountState).then(result => {
+            bot.sendMessage(chatId, "Hey " + firstName + " (" + userName + "), just checking your cState balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " + accountState.getBalanceBefore() + " cState\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " cSTATE now ... please wait a minute!");
 
-        // ERC20 token variables
-        sender = process.env.faucet_public_key;
-        console.log("Sender: " + sender);
-        contract_address = process.env.erc20_address;
-        console.log("Contract address: " + contract_address);
-        contract = new web3.eth.Contract(erc20_abi, contract_address);
-        console.log("Contract: " + contract);
-        var transferObjectEncoded = contract.methods.transfer(recipientAddress, web3.utils.fromWei(erc20TokenAmountInWei, 'ether')).encodeABI();
-        // Create transaction object
-        var transactionObject = {
-          to: contract_address,
-          from: sender,
-          gasPrice: gasPrice,
-          gas: gasLimit,
-          data: transferObjectEncoded
-        };
-        web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
-          if (!error) {
-            web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+            // ERC20 token variables
+            sender = process.env.faucet_public_key;
+            console.log("Sender: " + sender);
+            var transferObjectEncoded = contract.methods.transfer(recipientAddress, web3.utils.fromWei(erc20TokenAmountInWei, 'ether')).encodeABI();
+            // Create transaction object
+            var transactionObject = {
+              to: contract_address,
+              from: sender,
+              gasPrice: gasPrice,
+              gas: gasLimit,
+              data: transferObjectEncoded
+            };
+            web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
               if (!error) {
-                setTimeout(function() {
-                  web3.eth.getTransaction(sent_tx.toString(), function(error, tx_object) {
-                    if (!error) {
-                        // Get before balance
-                        setTimeout(function() {
-                        getBalance(contract, recipientAddress, accountState, "after").then(result => {
-                          console.log("Checking account balance after transaction");
-                          bot.sendMessage(chatId, "Balance before was: " + accountState.getBalanceBefore() + "\nThen transaction sent " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " cSTATE, \nto address: " + recipientAddress + "\nBalance after is now: " + accountState.getBalanceAfter() + "\n\nSee " + blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash + " for more info. \n\nBy the way, you can check your cSTATE balance by typing /balance_cstate followed by your address!");
-                        });
-                         }, 1000);
-                    } else {
-                      console.log(error);
-                    }
-                  });
-                }, 5000);
+                web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+                  if (!error) {
+                    setTimeout(function() {
+                      web3.eth.getTransaction(sent_tx.toString(), function(error, tx_object) {
+                        if (!error) {
+                          // Get before balance
+                          setTimeout(function() {
+                            getBalance(contract, recipientAddress, accountState, "after").then(result => {
+                              console.log("Checking account balance after transaction");
+                              bot.sendMessage(chatId, "Balance before was: " + accountState.getBalanceBefore() + "\nThen transaction sent " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " cSTATE, \nto address: " + recipientAddress + "\nBalance after is now: " + accountState.getBalanceAfter() + "\n\nSee " + blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash + " for more info. \n\nBy the way, you can check your cSTATE balance by typing /balance_cstate followed by your address!");
+                            });
+                          }, 1000);
+                        } else {
+                          console.log(error);
+                        }
+                      });
+                    }, 5000);
 
+                  } else {
+                    bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
+                  }
+                });
               } else {
-                bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
+                console.log(error);
               }
             });
-          } else {
-            console.log(error);
-          }
+          });
         });
 
       } else {
