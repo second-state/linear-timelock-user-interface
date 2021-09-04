@@ -377,6 +377,10 @@ Now, any visitors to your site (regardless if they visit `http` or `https` on th
 
 # Telegram
 
+To create new bot you must ask the BotFather the following command
+
+`/newbot`
+
 To allow all messages through you must ask the following command of the BotFather and then select `Disable`
 
 `/setprivacy`
