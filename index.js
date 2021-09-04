@@ -1290,6 +1290,7 @@ bot.onText(/\/drip_cstate (.+)/, (msg, match) => {
         getBalance(contract, recipientAddress, accountState, "before").then(result => {
           console.log("Checking account balance before transaction");
           getLogs(contract, recipientAddress, accountState).then(result => {
+            if (accountState.getAlreadyFunded == false){
             bot.sendMessage(chatId, "Hey " + firstName + " (" + userName + "), just checking your cState balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " + accountState.getBalanceBefore() + " cState\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " cSTATE now ... please wait a minute!");
 
             // ERC20 token variables
@@ -1332,7 +1333,11 @@ bot.onText(/\/drip_cstate (.+)/, (msg, match) => {
                 console.log(error);
               }
             });
+        } else {
+            bot.sendMessage(chatId, "Sorry! The address " + recipientAddress + " has already been funded. You have hit the rate limit.");
+        }
           });
+        
         });
 
       } else {
