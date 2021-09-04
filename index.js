@@ -1249,12 +1249,12 @@ bot.onText(/(.*) drip_cstate (.*)/, (msg, match) => {
   const fromId = msg.from.id;
   const userName = msg.from.username;
   const firstName = msg.from.first_name;
-  //console.log("ChatId: " + chatId);
+  const text = msg.text;
   console.log("Message object is :" + JSON.stringify(msg));
 
   // The message which they sent
-  const resp = match[1]
-  console.log("Resp :" + JSON.stringify(resp));
+  //const resp = match[1]
+  //console.log("Resp :" + JSON.stringify(resp));
 
   // Variables for the transaction
   var rate_limit_duration = process.env.rate_limit_duration;
@@ -1271,8 +1271,6 @@ bot.onText(/(.*) drip_cstate (.*)/, (msg, match) => {
   var ethRegex = /0x[a-fA-F0-9]{40}/;
   var goodToGo = false;
   var response;
-  var text;
-  text = resp;
   var new_timestamp = Math.floor(new Date().getTime() / 1000);
   // Rate limit data
   var duration;
