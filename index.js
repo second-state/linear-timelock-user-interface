@@ -1197,10 +1197,18 @@ bot.onText(/\/faucet (.+)/, (msg, match) => {
 });
 */
 
+bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
+
+  // send a message to the chat acknowledging receipt of their message
+  bot.sendMessage(chatId, 'Received your message');
+});
+
+
 
 /* cSTATE
 
-*/
+
 // A bot command that gives the balance of an external address
 
 bot.onText(/\/balance_cstate (.+)/, (msg, match) => {
@@ -1241,12 +1249,6 @@ bot.onText(/\/balance_cstate (.+)/, (msg, match) => {
   }
 });
 
-bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-
-  // send a message to the chat acknowledging receipt of their message
-  bot.sendMessage(chatId, 'Received your message');
-});
 
 // MESSAGE
 // A bot message detector that dispences ERC20 contract and also checks account balance before and after the transfer
@@ -1407,7 +1409,7 @@ bot.on('message', (msg) => {
 // Specific cSTATE commands which dispense ERC20 tokens via Telegram 
 
 */
-
+/*
 // COMMAND
 // A bot command that dispences ERC20 contract and also checks account balance before and after the transfer
 bot.onText(/\/drip_cstate (.+)/, (msg, match) => {
