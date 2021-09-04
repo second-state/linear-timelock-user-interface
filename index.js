@@ -1559,3 +1559,4 @@ bot.onText(/\/drip_cstate (.+)/, (msg, match) => {
     bot.sendMessage(chatId, "Sorry, rate limit, you can only have " + user_rate_limit + " request[s], every " + rate_limit_duration + " minute[s].");
   }
 });
+*/
