@@ -1246,7 +1246,7 @@ bot.onText(/\/balance_cstate (.+)/, (msg, match) => {
 
 bot.on('message', (msg) => {
   console.log("here - message");
-  console.log("MESSAGE: " + msg);
+  console.log("MESSAGE: " + JSON.stringify(msg));
   // The user's id who sent the command
   const chatId = msg.chat.id;
   const fromId = msg.from.id;
