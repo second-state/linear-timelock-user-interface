@@ -1401,18 +1401,18 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
                           setTimeout(function() {
                             web3.eth.getTransaction(sent_tx.toString(), function(error, tx_object) {
                               if (!error) {
-                                // Get before balance
-                                setTimeout(function() {
-                                  getBalance(contract, recipientAddress, accountState, "after").then(result => {
-                                    console.log("Checking account balance after transaction");
-                                    bot.sendMessage(chatId, "Balance before was: " + accountState.getBalanceBefore() + "\nThen transaction sent " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " SLOT, \nto address: " + recipientAddress + "\nBalance after is now: " + accountState.getBalanceAfter() + "\n\nSee " + blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash + " for more info. \n\nBy the way, you can check your SLOT balance by typing /balance_slot followed by your address!");
-                                  });
-                                }, 1000);
+                                // Get after balance
+                                //setTimeout(function() {
+                                  //getBalance(contract, recipientAddress, accountState, "after").then(result => {
+                                    //console.log("Checking account balance after transaction");
+                                    bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent SLOT to your address.\n " + recipientAddress + "\n\nPlease note, you can check your SLOT balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
+                                  //});
+                                //}, 5000);
                               } else {
                                 console.log(error);
                               }
                             });
-                          }, 5000);
+                          }, 10000);
 
                         } else {
                           bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
