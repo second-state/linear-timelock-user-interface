@@ -88,11 +88,12 @@ async function getLogs(_contract_instance, _address, _account_state) {
     var incrementer = _account_state.getContractBlockNumber();
     var lower;
     var upper;
+    var batchSize = 2000;
     var fin = false;
     while (fin == false) {
-      if (incrementer + 100 <= _account_state.getLatestBlockNumber()) {
+      if (incrementer + batchSize <= _account_state.getLatestBlockNumber()) {
         lower = incrementer;
-        upper = incrementer + 100;
+        upper = incrementer + batchSize;
       } else {
         lower = incrementer;
         upper = _account_state.getLatestBlockNumber();
@@ -116,7 +117,7 @@ async function getLogs(_contract_instance, _address, _account_state) {
               _account_state.setAlreadyFunded(false);
             }
             console.log("No logs yet ...");
-            incrementer = incrementer + 100;
+            incrementer = incrementer + batchSize;
           }
         }
       })
