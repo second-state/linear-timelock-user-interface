@@ -79,26 +79,45 @@ async function getBalance(_contract_instance, _address, _account_state, _before_
 async function getLogs(_contract_instance, _address, _account_state) {
   //Failsafe - set to true
   _account_state.setAlreadyFunded(true);
-  const events = await _contract_instance.getPastEvents('Transfer', {
-    filter: {
-      to: _address,
-    },
-    fromBlock: _account_state.getContractBlockNumber(),
-    toBlock: 'latest'
-  }, (error, events) => {
-    if (!error) {
-      if (events.length > 0) {
-        _account_state.setAlreadyFunded(true);
+  web3.eth.getBlockNumber().then(lbn => {
+    var incrementer = _account_state.getContractBlockNumber();
+    var lower;
+    var upper;
+    var fin = false;
+    while (fin == false) {
+      if (incrementer + 100 <= lbn) {
+        lower = incrementer;
+        upper = incrementer + 100;
       } else {
-        if (events.length == 0) {
-          _account_state.setAlreadyFunded(false);
-        }
+        lower = incrementer;
+        upper = lbn;
+        fin = true;
       }
-      //console.log("Events: " + JSON.stringify(events));
+      console.log("Check logs between block " + lower + " and block " + upper + ".");
+      var events = await _contract_instance.getPastEvents('Transfer', {
+        filter: {
+          to: _address,
+        },
+        fromBlock: lower,
+        toBlock: upper,
+      }, (error, events) => {
+        if (!error) {
+          if (events.length > 0) {
+            _account_state.setAlreadyFunded(true);
+            fin = true;
+            console.log("Found a log");
+          } else {
+            if (events.length == 0) {
+              _account_state.setAlreadyFunded(false);
+            }
+            console.log("No logs yet ...");
+            incrementer = incrementer + 100;
+          }
+        }
+      })
     }
-  })
+  });
 }
-
 /** 
  * ERC20 Variables
  */
