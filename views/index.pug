@@ -19,6 +19,9 @@ block layout-content
       br 
       div.NavButtons
       button.NavButton.center(id="button_send_tokens", onclick="onButtonClickTwitter($('#tweet_url').val())") Submit
+      br 
+      .progress
+        #pb.progress-bar.progress-bar-striped.progress-bar-animated(role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 0%')
       hr
       p Mention #{twitter_handle} & provide your address & follow 
       a(

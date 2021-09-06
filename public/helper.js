@@ -43,13 +43,12 @@ function clearTwitterInput() {
 }
 
 function onButtonClickTwitter(_tweet_url) {
+    document.getElementById("pb").style.width = '0%';
     console.log("Disabling button");
     document.getElementById("button_send_tokens").disabled = true;
     document.getElementById("button_send_tokens").style.background = '#808080';
-    setTimeout(function() {
-        document.getElementById("button_send_tokens").disabled = false;
-        document.getElementById("button_send_tokens").style.background = '#00ab66';
-    }, 6000);
+    document.getElementById("pb").style.transition = "all 10s linear 0s";
+    document.getElementById("pb").style.width = '80%';
     console.log("Tweet URL: " + _tweet_url);
     var toastResponse;
     var fullUrl;
@@ -86,8 +85,11 @@ function onButtonClickTwitter(_tweet_url) {
             } else {
                 var toastResponse = this.responseText;
             }
+            document.getElementById("pb").style.width = '100%';
             var toastObject = JSON.parse(toastResponse);
             Toastify(toastObject).showToast();
+            document.getElementById("button_send_tokens").disabled = false;
+            document.getElementById("button_send_tokens").style.background = '#00ab66';
             resolve();
         };
         xhr.onerror = reject;
