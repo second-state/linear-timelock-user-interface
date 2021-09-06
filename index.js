@@ -688,7 +688,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                   console.log("Contract block number set to " + accountState.getContractBlockNumber());
                   web3.eth.getBlockNumber().then(lbn => {
                     accountState.setLatestBlockNumber(lbn);
-                    console.log("Latest block number set to " + accountState.getLatestBlockNumber();
+                    console.log("Latest block number set to " + accountState.getLatestBlockNumber());
                   });
                 });
 
@@ -1249,7 +1249,7 @@ bot.onText(/\/balance_cstate (.+)/, (msg, match) => {
     console.log("Contract block number set to " + accountState.getContractBlockNumber());
     web3.eth.getBlockNumber().then(lbn => {
       accountState.setLatestBlockNumber(lbn);
-      console.log("Latest block number set to " + accountState.getLatestBlockNumber();
+      console.log("Latest block number set to " + accountState.getLatestBlockNumber());
     });
   });
   console.log("here");
@@ -1372,7 +1372,7 @@ bot.onText(/^(\/drip_cstate(.*)|(.*)drip_cstate(.*))/, (msg, match) => {
           console.log("Contract block number set to " + accountState.getContractBlockNumber());
           web3.eth.getBlockNumber().then(lbn => {
             accountState.setLatestBlockNumber(lbn);
-            console.log("Latest block number set to " + accountState.getLatestBlockNumber();
+            console.log("Latest block number set to " + accountState.getLatestBlockNumber());
           });
         });
 
