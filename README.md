@@ -89,10 +89,10 @@ twitter_url=https://twitter.com/_parastate
 telegram_bot_token=
 telegram_bot_name=
 username_faucet_bot=
-erc20_name=cSTATE
-erc20_symbol=CST
-erc20_address=0x3c623782acadff7b6d8bba40736d0bd6e39a9bed
-erc20_tx=0xde408885da5e9654f790486b16e646d95b6336575b22286acd49dfda5a8d21a9
+erc20_name=Slot Token
+erc20_symbol=SLOT
+erc20_address=0x282d93490e1f2129b94add74d68187206bf94585
+erc20_tx=0x109ff8f54574ece2f7b082cd56f368b1c8343b452c855aa2110b9ea88982b9ba
 ```
 
 ### Data directory
