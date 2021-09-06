@@ -83,7 +83,7 @@ async function getLogs(_contract_instance, _address, _account_state) {
     filter: {
       to: _address,
     },
-    fromBlock: 694776,
+    fromBlock: _account_state.getContractBlockNumber(),
     toBlock: 'latest'
   }, (error, events) => {
     if (!error) {
