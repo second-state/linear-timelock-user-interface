@@ -1,3 +1,4 @@
+/*
 function onButtonClick(_address) {
     var toastResponse;
     return new Promise(function(resolve, reject) {
@@ -35,6 +36,7 @@ function onButtonClick(_address) {
         xhr.send();
     });
 }
+*/
 
 function clearTwitterInput() {
     document.getElementById("tweet_url").value = '';
@@ -92,14 +94,4 @@ function onButtonClickTwitter(_tweet_url) {
         xhr.open('POST', fullUrl);
         xhr.send();
     });
-}
-
-
-function clearTwitterInput() {
-    document.getElementById("tweet_url").value = '';
-}
-
-
-function onButtonClickTelegram() {
-  //TODO interact with Telegram API and create new Telegram endpoint in index.js file to process this input
 }

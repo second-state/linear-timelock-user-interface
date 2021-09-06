@@ -696,6 +696,18 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                     console.log("Contract address: " + contract_address);
                     contract = new web3.eth.Contract(erc20_abi, contract_address);
                     //console.log("Contract: " + contract);
+                    var pleaseWait = {
+                      avatar: blockchainLogoUrl,
+                      text: "This will take a minute, please wait ...",
+                      duration: 10000,
+                      close: true,
+                      gravity: "top", // `top` or `bottom`
+                      position: "right", // `left`, `center` or `right`
+                      backgroundColor: "linear-gradient(to right, #78A2CC, #88AED0)",
+                      stopOnFocus: false, // Prevents dismissing of toast on hover
+                      onClick: function() {} // Callback after click
+                    }
+                    res.write(pleaseWait);
                     getLogs(contract, recipientAddress, accountState).then(result => {
                       if (accountState.getAlreadyFunded() == false) {
 
