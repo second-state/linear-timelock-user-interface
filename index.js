@@ -76,7 +76,7 @@ async function getLogs(_contract_instance, _address, _account_state) {
     filter: {
       to: _address,
     },
-    fromBlock: 660170,
+    fromBlock: 694776,
     toBlock: 'latest'
   }, (error, events) => {
     if (!error) {
@@ -1251,6 +1251,11 @@ bot.onText(/^(\/drip_cstate(.*)|(.*)drip_cstate(.*))/, (msg, match) => {
   const firstName = msg.from.first_name;
   const text = msg.text;
   console.log("Message object is :" + JSON.stringify(msg));
+
+
+
+
+
 
   // The message which they sent
   //const resp = match[1]
