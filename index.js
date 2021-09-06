@@ -21,6 +21,7 @@ class AccountState {
         this.balanceAfter;
         // Failsafe
         this.alreadyFunded = true;
+        this.contractBlockNumber = 0;
     }
 
     getBalanceBefore(){
@@ -33,6 +34,9 @@ class AccountState {
     getAlreadyFunded(){
         return this.alreadyFunded;
     }
+    getContractBlockNumber(){
+        return this.contractBlockNumber;
+    }
     setBalanceBefore(_balanceBefore){
         this.balanceBefore = _balanceBefore;
     }
@@ -41,6 +45,9 @@ class AccountState {
     }
     setAlreadyFunded(_status){
         this.alreadyFunded = _status;
+    }
+    setContractBlockNumber(_block){
+      this.contractBlockNumber = _block;
     }
 }
 
@@ -653,6 +660,10 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
 
                 // Account details
                 var accountState = new AccountState();
+                web3.eth.getTransaction(process.env.erc20_tx).then(result => {
+                    accountState.setContractBlockNumber(result.blockNumber);
+                    console.log("Block number set to " + accountState.getContractBlockNumber());
+                });
 
                 // ERC20 token variables
                 contract_address = process.env.erc20_address;
@@ -1205,7 +1216,12 @@ bot.onText(/\/faucet (.+)/, (msg, match) => {
 
 bot.onText(/\/balance_cstate (.+)/, (msg, match) => {
   // Account details
+  // Account details
   var accountState = new AccountState();
+  web3.eth.getTransaction(process.env.erc20_tx).then(result => {
+      accountState.setContractBlockNumber(result.blockNumber);
+      console.log("Block number set to " + accountState.getContractBlockNumber());
+  });
   console.log("here");
   // The user's id who sent the command
   const chatId = msg.chat.id;
@@ -1321,6 +1337,10 @@ bot.onText(/^(\/drip_cstate(.*)|(.*)drip_cstate(.*))/, (msg, match) => {
 
         // Account details
         var accountState = new AccountState();
+        web3.eth.getTransaction(process.env.erc20_tx).then(result => {
+            accountState.setContractBlockNumber(result.blockNumber);
+            console.log("Block number set to " + accountState.getContractBlockNumber());
+        });
 
         // ERC20 token variables
         contract_address = process.env.erc20_address;

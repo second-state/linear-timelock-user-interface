@@ -413,8 +413,9 @@ async function getLogs(_contract_instance, _address, _account_state) {
   const events = await _contract_instance.getPastEvents('Transfer', {
     filter: {
       to: _address,
+      from: "0x445b1693022ca7bc4251e4a134823ec0e2cf9850",
     },
-    fromBlock: 694776,
+    fromBlock: 660170,
     toBlock: 'latest'
   }, (error, events) => {
     if (!error) {

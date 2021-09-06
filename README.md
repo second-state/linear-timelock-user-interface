@@ -91,7 +91,8 @@ telegram_bot_name=
 username_faucet_bot=
 erc20_name=cSTATE
 erc20_symbol=CST
-erc20_address=0x4f2b81ac898f7b809c4f6f8e4f57b2b116a36262
+erc20_address=0x3c623782acadff7b6d8bba40736d0bd6e39a9bed
+erc20_tx=0xde408885da5e9654f790486b16e646d95b6336575b22286acd49dfda5a8d21a9
 ```
 
 ### Data directory
