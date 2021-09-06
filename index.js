@@ -22,12 +22,12 @@ class AccountState {
         // Failsafe
         this.alreadyFunded = true;
         this.contractBlockNumber = 0;
+        this.latestBlockNumber;
     }
 
     getBalanceBefore(){
         return this.balanceBefore;
     }
-
     getBalanceAfter(){
         return this.balanceAfter;
     }
@@ -36,6 +36,9 @@ class AccountState {
     }
     getContractBlockNumber(){
         return this.contractBlockNumber;
+    }
+    getLatestBlockNumber(){
+        return this.latestBlockNumber;
     }
     setBalanceBefore(_balanceBefore){
         this.balanceBefore = _balanceBefore;
@@ -48,6 +51,9 @@ class AccountState {
     }
     setContractBlockNumber(_block){
       this.contractBlockNumber = _block;
+    }
+    setLatestBlockNumber(_latest){
+      this.latestBlockNumber = _latest
     }
 }
 
@@ -79,18 +85,17 @@ async function getBalance(_contract_instance, _address, _account_state, _before_
 async function getLogs(_contract_instance, _address, _account_state) {
   //Failsafe - set to true
   _account_state.setAlreadyFunded(true);
-  web3.eth.getBlockNumber().then(lbn => {
     var incrementer = _account_state.getContractBlockNumber();
     var lower;
     var upper;
     var fin = false;
     while (fin == false) {
-      if (incrementer + 100 <= lbn) {
+      if (incrementer + 100 <= _account_state.getLatestBlockNumber()) {
         lower = incrementer;
         upper = incrementer + 100;
       } else {
         lower = incrementer;
-        upper = lbn;
+        upper = _account_state.getLatestBlockNumber();
         fin = true;
       }
       console.log("Check logs between block " + lower + " and block " + upper + ".");
@@ -116,7 +121,6 @@ async function getLogs(_contract_instance, _address, _account_state) {
         }
       })
     }
-  });
 }
 /** 
  * ERC20 Variables
@@ -680,8 +684,12 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                 // Account details
                 var accountState = new AccountState();
                 web3.eth.getTransaction(process.env.erc20_tx).then(result => {
-                    accountState.setContractBlockNumber(result.blockNumber);
-                    console.log("Block number set to " + accountState.getContractBlockNumber());
+                  accountState.setContractBlockNumber(result.blockNumber);
+                  console.log("Contract block number set to " + accountState.getContractBlockNumber());
+                  web3.eth.getBlockNumber().then(lbn => {
+                    accountState.setLatestBlockNumber(lbn);
+                    console.log("Latest block number set to " + accountState.getLatestBlockNumber();
+                  });
                 });
 
                 // ERC20 token variables
@@ -1235,11 +1243,14 @@ bot.onText(/\/faucet (.+)/, (msg, match) => {
 
 bot.onText(/\/balance_cstate (.+)/, (msg, match) => {
   // Account details
-  // Account details
   var accountState = new AccountState();
   web3.eth.getTransaction(process.env.erc20_tx).then(result => {
-      accountState.setContractBlockNumber(result.blockNumber);
-      console.log("Block number set to " + accountState.getContractBlockNumber());
+    accountState.setContractBlockNumber(result.blockNumber);
+    console.log("Contract block number set to " + accountState.getContractBlockNumber());
+    web3.eth.getBlockNumber().then(lbn => {
+      accountState.setLatestBlockNumber(lbn);
+      console.log("Latest block number set to " + accountState.getLatestBlockNumber();
+    });
   });
   console.log("here");
   // The user's id who sent the command
@@ -1357,8 +1368,12 @@ bot.onText(/^(\/drip_cstate(.*)|(.*)drip_cstate(.*))/, (msg, match) => {
         // Account details
         var accountState = new AccountState();
         web3.eth.getTransaction(process.env.erc20_tx).then(result => {
-            accountState.setContractBlockNumber(result.blockNumber);
-            console.log("Block number set to " + accountState.getContractBlockNumber());
+          accountState.setContractBlockNumber(result.blockNumber);
+          console.log("Contract block number set to " + accountState.getContractBlockNumber());
+          web3.eth.getBlockNumber().then(lbn => {
+            accountState.setLatestBlockNumber(lbn);
+            console.log("Latest block number set to " + accountState.getLatestBlockNumber();
+          });
         });
 
         // ERC20 token variables
