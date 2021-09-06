@@ -47,7 +47,7 @@ function onButtonClickTwitter(_tweet_url) {
     console.log("Disabling button");
     document.getElementById("button_send_tokens").disabled = true;
     document.getElementById("button_send_tokens").style.background = '#808080';
-    document.getElementById("pb").style.transition = "all 20s linear 0s";
+    document.getElementById("pb").style.transition = "all 30s linear 0s";
     document.getElementById("pb").style.width = '80%';
     console.log("Tweet URL: " + _tweet_url);
     var toastResponse;
@@ -85,6 +85,7 @@ function onButtonClickTwitter(_tweet_url) {
             } else {
                 var toastResponse = this.responseText;
             }
+            document.getElementById("pb").style.transition = "all 1s linear 0s";
             document.getElementById("pb").style.width = '100%';
             document.getElementById("pb").classList.remove("progress-bar-animated");
             var toastObject = JSON.parse(toastResponse);
