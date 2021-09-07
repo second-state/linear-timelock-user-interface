@@ -1294,7 +1294,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
   const text = msg.text;
   console.log("Message object is :" + JSON.stringify(msg));
   // Check to see if the user is a member of Telegram
-  bot.getChatMember("@ParaState", message.from.id).then(result => {
+  bot.getChatMember("@ParaState", msg.from.id).then(result => {
   if(result.status == "member"){
   // The message which they sent
   //const resp = match[1]
