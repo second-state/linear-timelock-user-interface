@@ -1293,10 +1293,9 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
   const firstName = msg.from.first_name;
   const text = msg.text;
   console.log("Message object is :" + JSON.stringify(msg));
-
-
-
-
+  // Check to see if the user is a member of Telegram
+  bot.getChatMember("@ParaState", message.from.id).then(result => {
+  if(result.status == "member"){
   // The message which they sent
   //const resp = match[1]
   //console.log("Resp :" + JSON.stringify(resp));
@@ -1361,6 +1360,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
 
         // Account details
         var accountState = new AccountState();
+
         web3.eth.getTransaction(process.env.erc20_tx).then(result => {
           accountState.setContractBlockNumber(result.blockNumber);
           console.log("Contract block number set to " + accountState.getContractBlockNumber());
@@ -1377,10 +1377,10 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
 
             // Get before balance
             getBalance(contract, recipientAddress, accountState, "before").then(result => {
-              console.log("Checking account balance before transaction");
+              console.log("Checking " + process.env.erc20_name + " account balance before transaction");
               getLogs(contract, recipientAddress, accountState).then(result => {
                 if (accountState.getAlreadyFunded() == false) {
-                  bot.sendMessage(chatId, "Hey " + firstName + " (" + userName + "), just checking your SLOT balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " + accountState.getBalanceBefore() + " SLOT\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " SLOT now ... please wait a minute!");
+                  bot.sendMessage(chatId, "Hey " + firstName + " (" + userName + "), just checking your " + process.env.erc20_name + " balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " + accountState.getBalanceBefore() + " SLOT\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " SLOT now ... please wait a minute!");
 
                   // ERC20 token variables
                   sender = process.env.faucet_public_key;
@@ -1405,7 +1405,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
                                 //setTimeout(function() {
                                   //getBalance(contract, recipientAddress, accountState, "after").then(result => {
                                     //console.log("Checking account balance after transaction");
-                                    bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent SLOT to your address.\n " + recipientAddress + "\n\nPlease note, you can check your SLOT balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
+                                    bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
                                   //});
                                 //}, 5000);
                               } else {
@@ -1440,4 +1440,11 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
   } else {
     bot.sendMessage(chatId, "Sorry, rate limit, you can only have " + user_rate_limit + " request[s], every " + rate_limit_duration + " minute[s].");
   }
+
+    } else {
+      bot.sendMessage(chatId, "Sorry " + firstName + " you have to first be a member of the ParaState group to participate." );
+    }
+  }, reason => {
+    console.error(reason); // Error!
+  });
 });

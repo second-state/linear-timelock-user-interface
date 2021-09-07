@@ -8,9 +8,12 @@ const bot = new TelegramBot(token, {
 });
 console.log("Config set");
 
+bot.onText(/\/test (.+)/, (message, match) => {
 // Check to see if user is member of Telegram groups first
-var temp = new BigNumber(1186346396);
-console.log(temp.toNumber());
-bot.getChatMember(-570968317, temp.toNumber() , (res) => {
-    console.log(res);
+bot.getChatMember("@ParaState", message.from.id).then(result => {
+  console.log(result);
+  console.log(result.status);
+}, reason => {
+  console.error(reason); // Error!
+});
 });
