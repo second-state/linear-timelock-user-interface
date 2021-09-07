@@ -415,7 +415,7 @@ async function getLogs(_contract_instance, _address, _account_state) {
       to: _address,
       from: "0x445b1693022ca7bc4251e4a134823ec0e2cf9850",
     },
-    fromBlock: 660170,
+    fromBlock: 707000,
     toBlock: 'latest'
   }, (error, events) => {
     if (!error) {

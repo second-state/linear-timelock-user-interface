@@ -70,10 +70,10 @@ async function getBalance(_contract_instance, _address, _account_state, _before_
   const result = await _contract_instance.methods.balanceOf(_address).call(function(err, res) {
     if (!err) {
       if (_before_or_after == "before") {
-        _account_state.setBalanceBefore(res);
+        _account_state.setBalanceBefore(web3.utils.fromWei(res, 'ether'));
       } else {
         if (_before_or_after == "after") {
-          _account_state.setBalanceAfter(res);
+          _account_state.setBalanceAfter(web3.utils.fromWei(res, 'ether'));
         }
       }
     } else {
@@ -714,7 +714,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                         // ERC20 token variables
                         sender = process.env.faucet_public_key;
                         console.log("Sender: " + sender);
-                        var transferObjectEncoded = contract.methods.transfer(recipientAddress, web3.utils.fromWei(erc20TokenAmountInWei, 'ether')).encodeABI();
+                        var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
                         // Create transaction object
                         var transactionObject = {
                           to: contract_address,
@@ -1296,7 +1296,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
   // Check to see if the user is a member of Telegram
   bot.getChatMember("@ParaState", msg.from.id).then(result => {
   if(result.status == "member"){
-  // The message which they sent
+  // The msg which they sent
   //const resp = match[1]
   //console.log("Resp :" + JSON.stringify(resp));
 
@@ -1385,7 +1385,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
                   // ERC20 token variables
                   sender = process.env.faucet_public_key;
                   console.log("Sender: " + sender);
-                  var transferObjectEncoded = contract.methods.transfer(recipientAddress, web3.utils.fromWei(erc20TokenAmountInWei, 'ether')).encodeABI();
+                  var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
                   // Create transaction object
                   var transactionObject = {
                     to: contract_address,
