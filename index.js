@@ -509,8 +509,12 @@ var listOfFollowers = [];
 const app = express();
 const server_name = process.env.server_name;
 const server_port = process.env.server_port || "8001";
-const user_rate_limit = process.env.user_rate_limit;
-const rate_limit_duration = process.env.rate_limit_duration;
+var user_rate_limit = process.env.user_rate_limit;
+var rate_limit_duration = process.env.rate_limit_duration;
+
+var aUsersAccountRateLimit = process.env.a_users_account_rate_limit;
+var aUsersAccountRateDuration = process.env.a_users_account_rate_duration;
+
 const twitter_handle = process.env.twitter_handle;
 
 const endpointURL = "https://api.twitter.com/1.1/statuses/show.json";
@@ -606,6 +610,12 @@ async function removeLine(_handle) {
 
 
 app.post('/api/twitter/:tweet_id', function(req, res) {
+  var user_rate_limit = process.env.user_rate_limit;
+  var rate_limit_duration = process.env.rate_limit_duration;
+
+  var aUsersAccountRateLimit = process.env.a_users_account_rate_limit;
+  var aUsersAccountRateDuration = process.env.a_users_account_rate_duration;
+
   var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url
   var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url
   var faucetPublicKey = process.env.faucet_public_key;
@@ -1100,23 +1110,25 @@ if (process.env.https == "yes") {
     app.listen(server_port, () => {
         console.log(`Listening to requests on http://localhost:${server_port}`);
         // Do initial follower harvest
-        /*
+        
         doTheyFollow().then(followResult => {
             console.log('Checking followers, please wait ...');
         });
         // Repeat the follower harvest automatically now on; at time intervals
         seeWhoFollows();
         
-        */
+        
     });
 } else {
     console.log("ERROR: Please set the https setting in the .env config file");
 }
 
-// Node Cache
+/* Node Cache Start
+*/
 const NodeCache = require("node-cache");
+
+// DATA.TXT
 const myCache = new NodeCache();
-//const myCacheFollwers = new NodeCache();
 
 // START Load data from data file
 const readInterface = readline.createInterface({
@@ -1134,6 +1146,35 @@ readInterface.on('line', function(line) {
     cacheObject["times"] = split_data[2]
     myCache.set(split_data[0], cacheObject, 0);
 });
+
+// SUCCESS.TXT
+const a_user_myCache = new NodeCache();
+
+// START Load data from data file
+const user_readInterface = readline.createInterface({
+    input: fs.createReadStream(path.join(process.env.data_dir, 'success.txt')),
+    output: false,
+    console: false
+});
+
+console.log("Loading data into cache");
+user_readInterface.on('line', function(line) {
+    var split_data = line.split(",");
+    console.log("Loading " + split_data[0] + "," + split_data[1] + "," +  split_data[2]);
+    var cacheObject = {};
+    cacheObject["duration"] = split_data[1];
+    cacheObject["times"] = split_data[2]
+    a_user_myCache.set(split_data[0], cacheObject, 0);
+});
+
+/* Node Cache End
+*/
+
+
+
+/*
+TELEGRAM BOT START
+*/
 
 console.log("Starting Telegram Bot");
 
@@ -1165,8 +1206,10 @@ bot.onText(/\/faucet (.+)/, (msg, match) => {
   const resp = match[1]
 
   // Variables for the transaction
-  var rate_limit_duration = process.env.rate_limit_duration;
   var user_rate_limit = process.env.user_rate_limit;
+  var rate_limit_duration = process.env.rate_limit_duration;
+  var aUsersAccountRateLimit = process.env.a_users_account_rate_limit;
+  var aUsersAccountRateDuration = process.env.a_users_account_rate_duration;
   var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url;
   var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url;
   var faucetPublicKey = process.env.faucet_public_key;
@@ -1263,6 +1306,12 @@ bot.onText(/\/faucet (.+)/, (msg, match) => {
 // A bot command that gives the balance of an external address
 
 bot.onText(/\/balance_slot (.+)/, (msg, match) => {
+  var new_timestamp = Math.floor(new Date().getTime() / 1000);
+  var goodToGo = false;
+
+  var user_rate_limit = process.env.user_rate_limit;
+  var rate_limit_duration = process.env.rate_limit_duration;
+
   // Account details
   var accountState = new AccountState();
 
@@ -1274,6 +1323,28 @@ bot.onText(/\/balance_slot (.+)/, (msg, match) => {
   const firstName = msg.from.first_name;
   //console.log("ChatId: " + chatId);
   //console.log("Message object is :" + JSON.stringify(msg));
+  // Rate limit data
+  var duration;
+  var times;
+  var rObject = myCache.get(fromId);
+  if (rObject == undefined) {
+    duration = new_timestamp;
+    times = 0;
+  } else {
+    duration = parseInt(rObject.duration);
+    times = parseInt(rObject.times);
+  }
+  if ((new_timestamp - duration) > (parseInt(rate_limit_duration) * 60)) {
+    times = 0;
+  }
+  new_times = times + 1;
+  console.log("Checking new times: " + new_times + " vs limit of " + user_rate_limit);
+  console.log("*** Good to go: " + goodToGo);
+  if (new_times <= parseInt(user_rate_limit)) {
+    goodToGo = true;
+  }
+
+  if (rObject == undefined || goodToGo == true) {
 
   // The message which they sent
   const resp = match[1];
@@ -1291,6 +1362,15 @@ bot.onText(/\/balance_slot (.+)/, (msg, match) => {
         contract = new web3.eth.Contract(erc20_abi, contract_address);
         console.log("Contract: " + contract);
         getBalance(contract, recipientAddress, accountState, "after").then(result => {
+            var cacheObjectToStore = {};
+            cacheObjectToStore["duration"] = new_timestamp;
+            cacheObjectToStore["times"] = new_times;
+            myCache.set(fromId, cacheObjectToStore, 0);
+            removeLine(fromId);
+            fs.appendFile(path.join(process.env.data_dir, "data.txt"), fromId + "," + new_timestamp + "," + new_times + '\n', function(err) {
+              if (err) throw err;
+              console.log("Updated timestamp saved");
+            });
             bot.sendMessage(chatId, "Address " + recipientAddress + " has " + accountState.getBalanceAfter() + " SLOT tokens!");
         });
       } else {
@@ -1299,6 +1379,9 @@ bot.onText(/\/balance_slot (.+)/, (msg, match) => {
   } else {
     bot.sendMessage(chatId, "Address is not valid!");
   }
+} else {
+  bot.sendMessage(chatId, "Rate limit exceeded!");
+}
 });
 
 // Respond to any message with drip_slot in the text
@@ -1319,8 +1402,12 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
   //console.log("Resp :" + JSON.stringify(resp));
 
   // Variables for the transaction
-  var rate_limit_duration = process.env.rate_limit_duration;
   var user_rate_limit = process.env.user_rate_limit;
+  var rate_limit_duration = process.env.rate_limit_duration;
+
+  var aUsersAccountRateLimit = process.env.a_users_account_rate_limit;
+  var aUsersAccountRateDuration = process.env.a_users_account_rate_duration;
+
   var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url;
   var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url;
   var faucetPublicKey = process.env.faucet_public_key;
@@ -1334,6 +1421,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
   var goodToGo = false;
   var response;
   var new_timestamp = Math.floor(new Date().getTime() / 1000);
+
   // Rate limit data
   var duration;
   var times;
@@ -1456,7 +1544,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
       bot.sendMessage(chatId, "Address is not valid!");
     }
   } else {
-    bot.sendMessage(chatId, "Sorry, rate limit, you can only have " + user_rate_limit + " request[s], every " + rate_limit_duration + " minute[s].");
+    bot.sendMessage(chatId, "Sorry, rate limit, this user can only have " + user_rate_limit + " request[s], every " + rate_limit_duration + " minute[s].");
   }
 
     } else {

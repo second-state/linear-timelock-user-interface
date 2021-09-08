@@ -58,6 +58,10 @@ blockchain_chain_id=123
 user_rate_limit=1
 # The duration period in minutes i.e. 1440 is 24 hours
 rate_limit_duration=5
+# How many times a user's account i.e. Twitter or Telegram can use this server per duration period
+a_users_account_rate_limit=1
+# The duration period in minutes i.e. 1440 is 24 hours
+a_users_account_rate_duration=525600
 # The amount of wei to be sent per airdrop i.e. 1000000000000000000 (to send 1 ETH)
 token_amount_in_wei=1000000000000000
 blockchain_logo_url=https://pbs.twimg.com/profile_images/1357246244540751873/zhVBBG5-_400x400.jpg
@@ -100,14 +104,15 @@ erc20_tx=0x109ff8f54574ece2f7b082cd56f368b1c8343b452c855aa2110b9ea88982b9ba
 Create a data directory which is the same as what you just set in the `.env` file
 
 ```bash
-sudo mkdir -p /media/nvme/universal-faucet-data
-sudo chown -R $USER:$USER /media/nvme/universal-faucet-data
+sudo mkdir -p /Users/tpmccallum/universal-faucet-data
+sudo chown -R $USER:$USER /Users/tpmccallum/universal-faucet-data
 ```
 
-### Create the data file
+### Create the data files
 
 ```bash
-touch /media/nvme/universal-faucet-data/data.txt
+touch /Users/tpmccallum/universal-faucet-data/data.txt
+touch /Users/tpmccallum/universal-faucet-data/success.txt
 ```
 
 ### Install node dependencies automatically
