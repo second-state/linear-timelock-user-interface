@@ -95,6 +95,7 @@ function onButtonClickTwitter(_tweet_url) {
             Toastify(toastObject).showToast();
             document.getElementById("button_send_tokens").disabled = false;
             document.getElementById("button_send_tokens").style.background = '#00ab66';
+            document.getElementById("pb").style.width = '0%';
             resolve();
         };
         xhr.onerror = reject;
