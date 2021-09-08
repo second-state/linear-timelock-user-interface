@@ -607,6 +607,19 @@ async function removeLine(_handle) {
     console.log("Done: " + done);
 }
 
+async function uRemoveLine(_handle) {
+    console.log("Removing line ...");
+    var data = await fs.readFileSync(path.join(process.env.data_dir, "success.txt"), 'utf-8');
+    console.log("Data: " + data);
+    var reg = new RegExp('^' + _handle + '.*\n', 'gm');
+    console.log("Reg: " + reg);
+    //console.log(reg);
+    var newValue = data.replace(reg, '');
+    console.log("New value: " + newValue);
+    var done = await fs.writeFileSync(path.join(process.env.data_dir, "success.txt"), newValue, 'utf-8');
+    console.log("Done: " + done);
+}
+
 
 
 app.post('/api/twitter/:tweet_id', function(req, res) {
@@ -1419,6 +1432,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
   var erc20TokenAmountInWei = process.env.erc20_token_amount_in_wei;
   var ethRegex = /0x[a-fA-F0-9]{40}/;
   var goodToGo = false;
+  var goodToGo2 = false;
   var response;
   var new_timestamp = Math.floor(new Date().getTime() / 1000);
 
@@ -1453,12 +1467,34 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
     console.log("Updated timestamp saved");
   });
 
+  // Rate limit data 2
+  var duration2;
+  var times2;
+  var urObject = a_user_myCache.get(fromId);
+  if (urObject == undefined) {
+    duration2 = new_timestamp;
+    times2 = 0;
+  } else {
+    duration2 = parseInt(urObject.duration);
+    times2 = parseInt(urObject.times);
+  }
+  if ((new_timestamp - duration2) > (parseInt(aUsersAccountRateDuration) * 60)) {
+    times2 = 0;
+  }
+  new_times_2 = times2 + 1;
+  console.log("Checking new times: " + new_times_2 + " vs limit of " + aUsersAccountRateLimit);
+  console.log("*** Good to go: " + goodToGo2);
+  if (new_times_2 <= parseInt(aUsersAccountRateLimit)) {
+    goodToGo2 = true;
+  }
+
   console.log("Text: " + text);
   var resultRegex = ethRegex.exec(text);
   console.log("Eth address: " + resultRegex);
 
 
   if (rObject == undefined || goodToGo == true) {
+      if (urObject == undefined || goodToGo2 == true) {
     if (resultRegex != null) {
       var recipientAddress = resultRegex[0];
       if (Web3.utils.isAddress(recipientAddress)) {
@@ -1507,13 +1543,16 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
                           setTimeout(function() {
                             web3.eth.getTransaction(sent_tx.toString(), function(error, tx_object) {
                               if (!error) {
-                                // Get after balance
-                                //setTimeout(function() {
-                                  //getBalance(contract, recipientAddress, accountState, "after").then(result => {
-                                    //console.log("Checking account balance after transaction");
+                                    var cacheObjectToStore2 = {};
+                                    cacheObjectToStore2["duration"] = new_timestamp;
+                                    cacheObjectToStore2["times"] = new_times_2;
+                                    a_user_myCache.set(fromId, cacheObjectToStore2, 0);
+                                    uRemoveLine(fromId);
+                                    fs.appendFile(path.join(process.env.data_dir, "success.txt"), fromId + "," + new_timestamp + "," + new_times_2 + '\n', function(err) {
+                                      if (err) throw err;
+                                      console.log("Updated timestamp saved");
+                                    });
                                     bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
-                                  //});
-                                //}, 5000);
                               } else {
                                 console.log(error);
                               }
@@ -1543,6 +1582,10 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
     } else {
       bot.sendMessage(chatId, "Address is not valid!");
     }
+      } else {
+    bot.sendMessage(chatId, "Sorry, rate limit, this user can only have " + user_rate_limit + " token, every " + rate_limit_duration + " minute[s].");
+  }
+
   } else {
     bot.sendMessage(chatId, "Sorry, rate limit, this user can only have " + user_rate_limit + " request[s], every " + rate_limit_duration + " minute[s].");
   }
