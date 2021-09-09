@@ -585,6 +585,7 @@ app.get('/', (req, res) => {
 app.get("/faucet", (req, res) => {
     res.render("index", {
         title: "Home",
+        erc20_address: process.env.erc20_address,
         blockchain_name: process.env.blockchain_name,
         token_amount_in_wei: process.env.token_amount_in_wei,
         erc20_token_amount_in_wei: process.env.erc20_token_amount_in_wei,
