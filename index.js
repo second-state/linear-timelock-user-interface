@@ -643,6 +643,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
   var handleRegex = /(?<!^)@_parastate/
   var tweet_id = req.params.tweet_id;
   var goodToGo = false;
+  var goodToGo2 = false;
   var response;
   var handle;
   var text;
@@ -685,6 +686,55 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
       } else {
         console.log("Full result: " + JSON.stringify(result));
         handle = result.user.id;
+        var new_timestamp = Math.floor(new Date().getTime() / 1000);
+        // Rate limit data TRY
+        var duration;
+        var times;
+        var rObject = myCache.get(handle);
+        if (rObject == undefined) {
+          duration = new_timestamp;
+          times = 0;
+        } else {
+          duration = parseInt(rObject.duration);
+          times = parseInt(rObject.times);
+        }
+        if ((new_timestamp - duration) > (parseInt(rate_limit_duration) * 60)) {
+          times = 0;
+        }
+        var new_times = times + 1;
+        console.log("Checking new times: " + new_times + " vs limit of " + user_rate_limit);
+        console.log("*** Good to go: " + goodToGo);
+        if (new_times <= parseInt(user_rate_limit)) {
+          goodToGo = true;
+        }
+        var cacheObjectToStore = {};
+        cacheObjectToStore["duration"] = new_timestamp;
+        cacheObjectToStore["times"] = new_times;
+        myCache.set(handle, cacheObjectToStore, 0);
+        removeLine(handle);
+        fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + "," + new_times + '\n', function(err) {
+          if (err) throw err;
+          console.log("Updated timestamp saved");
+        });
+        var duration2;
+        var times2;
+        var urObject = a_user_myCache.get(handle);
+        if (urObject == undefined) {
+          duration2 = new_timestamp;
+          times2 = 0;
+        } else {
+          duration2 = parseInt(urObject.duration);
+          times2 = parseInt(urObject.times);
+        }
+        if ((new_timestamp - duration2) > (parseInt(aUsersAccountRateDuration) * 60)) {
+          times2 = 0;
+        }
+        var new_times_2 = times2 + 1;
+        console.log("Checking new times: " + new_times_2 + " vs limit of " + aUsersAccountRateLimit);
+        console.log("*** Good to go: " + goodToGo2);
+        if (new_times_2 <= parseInt(aUsersAccountRateLimit)) {
+          goodToGo2 = true;
+        }
         console.log("ID of handle: " + handle);
         console.log("ID STRING of handle: " + handle.toString());
         text = result.full_text;
@@ -693,152 +743,141 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
         console.log("Eth address: " + resultRegex);
         var resultHandleRegex = handleRegex.exec(text);
         console.log("Handle is: " + resultHandleRegex);
-        if (resultHandleRegex != null) {
-          if (resultRegex != null) {
-            var recipientAddress = resultRegex[0];
-            var new_timestamp = Math.floor(new Date().getTime() / 1000);
-            // Rate limit data
-            var duration;
-            var times;
-            var rObject = myCache.get(handle);
-            if (rObject == undefined) {
-              duration = new_timestamp;
-              times = 0;
-            } else {
-              duration = parseInt(rObject.duration);
-              times = parseInt(rObject.times);
-            }
-            if ((new_timestamp - duration) > (parseInt(rate_limit_duration) * 60)) {
-              times = 0;
-            }
-            if (times <= parseInt(user_rate_limit)) {
-              goodToGo = true;
-              console.log("Removing line and setting good to go to true");
-              removeLine(handle);
-            }
-            if (rObject == undefined || goodToGo == true) {
-              if (Web3.utils.isAddress(recipientAddress)) {
-                console.log("Checking to see if handle: " + handle + ", is in that list above.");
-                if (listOfFollowers.includes(handle.toString())) {
-                  // Add logic for AccountDetails here
-                  //**************************************************************
+        var recipientAddress = resultRegex[0];
+        if (rObject == undefined || goodToGo == true) {
+          if (urObject == undefined || goodToGo2 == true) {
+            if (resultHandleRegex != null) {
+              if (resultRegex != null) {
+                if (Web3.utils.isAddress(recipientAddress)) {
+                  console.log("Checking to see if handle: " + handle + ", is in that list above.");
+                  if (listOfFollowers.includes(handle.toString())) {
+                    // Account details
+                    var accountState = new AccountState();
+                    web3.eth.getTransaction(process.env.erc20_tx).then(result => {
+                      accountState.setContractBlockNumber(result.blockNumber);
+                      console.log("Contract block number set to " + accountState.getContractBlockNumber());
+                      web3.eth.getBlockNumber().then(lbn => {
+                        accountState.setLatestBlockNumber(lbn);
+                        console.log("Latest block number set to " + accountState.getLatestBlockNumber());
 
-                  // Account details
-                  var accountState = new AccountState();
-                  web3.eth.getTransaction(process.env.erc20_tx).then(result => {
-                    accountState.setContractBlockNumber(result.blockNumber);
-                    console.log("Contract block number set to " + accountState.getContractBlockNumber());
-                    web3.eth.getBlockNumber().then(lbn => {
-                      accountState.setLatestBlockNumber(lbn);
-                      console.log("Latest block number set to " + accountState.getLatestBlockNumber());
+                        // ERC20 token variables
+                        contract_address = process.env.erc20_address;
+                        console.log("Contract address: " + contract_address);
+                        contract = new web3.eth.Contract(erc20_abi, contract_address);
+                        //console.log("Contract: " + contract);
 
-                      // ERC20 token variables
-                      contract_address = process.env.erc20_address;
-                      console.log("Contract address: " + contract_address);
-                      contract = new web3.eth.Contract(erc20_abi, contract_address);
-                      //console.log("Contract: " + contract);
-
-                      getLogs(contract, recipientAddress, accountState).then(result => {
-                        if (accountState.getAlreadyFunded() == false) {
-
-                          //**************************************************************
-                          var cacheObjectToStore = {};
-                          cacheObjectToStore["duration"] = new_timestamp;
-                          cacheObjectToStore["times"] = times + 1;
-                          myCache.set(handle, cacheObjectToStore, 0);
-                          fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + "," + times + '\n', function(err) {
-                            if (err) throw err;
-                            console.log("Updated timestamp saved");
-                          });
-
-
-                          // ERC20 token variables
-                          sender = process.env.faucet_public_key;
-                          console.log("Sender: " + sender);
-                          var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
-                          // Create transaction object
-                          var transactionObject = {
-                            to: contract_address,
-                            from: sender,
-                            gasPrice: gasPrice,
-                            gas: gasLimit,
-                            data: transferObjectEncoded
-                          };
-
-                          web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
-                            if (!error) {
-                              web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
-                                if (!error) {
-                                  var toastObjectSuccess = {
-                                    avatar: blockchainLogoUrl,
-                                    text: "Click to see Tx",
-                                    duration: 6000,
-                                    destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-                                    newWindow: true,
-                                    close: true,
-                                    gravity: "top", // `top` or `bottom`
-                                    position: "right", // `left`, `center` or `right`
-                                    backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
-                                    stopOnFocus: false, // Prevents dismissing of toast on hover
-                                    onClick: function() {} // Callback after click
+                        getLogs(contract, recipientAddress, accountState).then(result => {
+                          if (accountState.getAlreadyFunded() == false) {
+                            var cacheObjectToStore2 = {};
+                            cacheObjectToStore2["duration"] = new_timestamp;
+                            cacheObjectToStore2["times"] = new_times_2;
+                            a_user_myCache.set(handle, cacheObjectToStore2, 0);
+                            uRemoveLine(handle);
+                            fs.appendFile(path.join(process.env.data_dir, "success.txt"), handle + "," + new_timestamp + "," + new_times_2 + '\n', function(err) {
+                              if (err) throw err;
+                              console.log("Updated timestamp saved");
+                            });
+                            // ERC20 token variables
+                            sender = process.env.faucet_public_key;
+                            console.log("Sender: " + sender);
+                            var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
+                            // Create transaction object
+                            var transactionObject = {
+                              to: contract_address,
+                              from: sender,
+                              gasPrice: gasPrice,
+                              gas: gasLimit,
+                              data: transferObjectEncoded
+                            };
+                            web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+                              if (!error) {
+                                web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+                                  if (!error) {
+                                    var toastObjectSuccess = {
+                                      avatar: blockchainLogoUrl,
+                                      text: "Click to see Tx",
+                                      duration: 6000,
+                                      destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+                                      newWindow: true,
+                                      close: true,
+                                      gravity: "top", // `top` or `bottom`
+                                      position: "right", // `left`, `center` or `right`
+                                      backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
+                                      stopOnFocus: false, // Prevents dismissing of toast on hover
+                                      onClick: function() {} // Callback after click
+                                    }
+                                    response = toastObjectSuccess;
+                                    res.send(response);
+                                  } else {
+                                    var toastObjectFail = {
+                                      avatar: blockchainLogoUrl,
+                                      text: "Transaction failed!",
+                                      duration: 6000,
+                                      destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+                                      newWindow: true,
+                                      close: true,
+                                      gravity: "top", // `top` or `bottom`
+                                      position: "right", // `left`, `center` or `right`
+                                      backgroundColor: "linear-gradient(to right, #800000, #1B1B00)",
+                                      stopOnFocus: false, // Prevents dismissing of toast on hover
+                                      onClick: function() {} // Callback after click
+                                    }
+                                    response = toastObjectFail;
+                                    console.log("Send signed transaction failed: " + error);
+                                    res.send(response);
                                   }
-                                  response = toastObjectSuccess;
-                                  res.send(response);
-                                } else {
-                                  var toastObjectFail = {
-                                    avatar: blockchainLogoUrl,
-                                    text: "Transaction failed!",
-                                    duration: 6000,
-                                    destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-                                    newWindow: true,
-                                    close: true,
-                                    gravity: "top", // `top` or `bottom`
-                                    position: "right", // `left`, `center` or `right`
-                                    backgroundColor: "linear-gradient(to right, #800000, #1B1B00)",
-                                    stopOnFocus: false, // Prevents dismissing of toast on hover
-                                    onClick: function() {} // Callback after click
-                                  }
-                                  response = toastObjectFail;
-                                  console.log("Send signed transaction failed: " + error);
-                                  res.send(response);
-                                }
-                              });
-                            } else {
-                              console.log(error);
+                                });
+                              } else {
+                                console.log(error);
+                              }
+                            });
+                          } else {
+                            var toastObjectFail = {
+                              avatar: blockchainLogoUrl,
+                              text: "Sorry, the address of " + recipientAddress + " has already been funded.",
+                              duration: 15000,
+                              destination: process.env.twitter_url,
+                              newWindow: true,
+                              close: true,
+                              gravity: "top", // `top` or `bottom`
+                              position: "right", // `left`, `center` or `right`
+                              backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+                              stopOnFocus: false, // Prevents dismissing of toast on hover
+                              onClick: function() {} // Callback after click
                             }
-                          });
-                        } else {
-                          var toastObjectFail = {
-                            avatar: blockchainLogoUrl,
-                            text: "Sorry, the address of " + recipientAddress + " has already been funded.",
-                            duration: 15000,
-                            destination: process.env.twitter_url,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top", // `top` or `bottom`
-                            position: "right", // `left`, `center` or `right`
-                            backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
-                            stopOnFocus: false, // Prevents dismissing of toast on hover
-                            onClick: function() {} // Callback after click
+                            response = toastObjectFail;
+                            res.send(response);
                           }
-                          response = toastObjectFail;
-                          res.send(response);
-                        }
+                        });
                       });
                     });
-                  });
 
+                  } else {
+                    var toastObjectFail = {
+                      avatar: blockchainLogoUrl,
+                      text: "Click here and follow " + process.env.blockchain_name + " first to receive tokens. NB. If you just followed, it may take 2 minutes to work.",
+                      duration: 15000,
+                      destination: process.env.twitter_url,
+                      newWindow: true,
+                      close: true,
+                      gravity: "top", // `top` or `bottom`
+                      position: "right", // `left`, `center` or `right`
+                      backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+                      stopOnFocus: false, // Prevents dismissing of toast on hover
+                      onClick: function() {} // Callback after click
+                    }
+                    response = toastObjectFail;
+                    res.send(response);
+                  }
                 } else {
                   var toastObjectFail = {
                     avatar: blockchainLogoUrl,
-                    text: "Click here and follow " + process.env.blockchain_name + " first to receive tokens. NB. If you just followed, it may take 2 minutes to work.",
+                    text: "The recipient address in the Tweet is not valid",
                     duration: 15000,
-                    destination: process.env.twitter_url,
-                    newWindow: true,
                     close: true,
                     gravity: "top", // `top` or `bottom`
                     position: "right", // `left`, `center` or `right`
-                    backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+                    backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
                     stopOnFocus: false, // Prevents dismissing of toast on hover
                     onClick: function() {} // Callback after click
                   }
@@ -860,12 +899,11 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                 response = toastObjectFail;
                 res.send(response);
               }
-
             } else {
               var toastObjectFail = {
                 avatar: blockchainLogoUrl,
-                text: "Sorry, rate limit!",
-                duration: 6000,
+                text: "You must mention " + process.env.twitter_handle + " somewhere in your tweet (except at the start)",
+                duration: 15000,
                 close: true,
                 gravity: "top", // `top` or `bottom`
                 position: "right", // `left`, `center` or `right`
@@ -876,11 +914,12 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
               response = toastObjectFail;
               res.send(response);
             }
+
           } else {
             var toastObjectFail = {
               avatar: blockchainLogoUrl,
-              text: "The recipient address in the Tweet is not valid",
-              duration: 15000,
+              text: "Sorry, rate limit for this Twitter user!",
+              duration: 6000,
               close: true,
               gravity: "top", // `top` or `bottom`
               position: "right", // `left`, `center` or `right`
@@ -894,8 +933,8 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
         } else {
           var toastObjectFail = {
             avatar: blockchainLogoUrl,
-            text: "You must mention " + process.env.twitter_handle + " somewhere in your tweet (except at the start)",
-            duration: 15000,
+            text: "Sorry, rate limit!",
+            duration: 6000,
             close: true,
             gravity: "top", // `top` or `bottom`
             position: "right", // `left`, `center` or `right`
@@ -906,6 +945,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
           response = toastObjectFail;
           res.send(response);
         }
+
       }
     });
   }
@@ -1409,189 +1449,189 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
   console.log("Message object is :" + JSON.stringify(msg));
   // Check to see if the user is a member of Telegram
   bot.getChatMember("@ParaState", msg.from.id).then(result => {
-  if(result.status == "member"){
-  // The msg which they sent
-  //const resp = match[1]
-  //console.log("Resp :" + JSON.stringify(resp));
+    if (result.status == "member") {
+      // The msg which they sent
+      //const resp = match[1]
+      //console.log("Resp :" + JSON.stringify(resp));
 
-  // Variables for the transaction
-  var user_rate_limit = process.env.user_rate_limit;
-  var rate_limit_duration = process.env.rate_limit_duration;
+      // Variables for the transaction
+      var user_rate_limit = process.env.user_rate_limit;
+      var rate_limit_duration = process.env.rate_limit_duration;
 
-  var aUsersAccountRateLimit = process.env.a_users_account_rate_limit;
-  var aUsersAccountRateDuration = process.env.a_users_account_rate_duration;
+      var aUsersAccountRateLimit = process.env.a_users_account_rate_limit;
+      var aUsersAccountRateDuration = process.env.a_users_account_rate_duration;
 
-  var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url;
-  var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url;
-  var faucetPublicKey = process.env.faucet_public_key;
-  var faucetPrivateKey = process.env.faucet_private_key;
-  var blockchainChainId = process.env.blockchain_chain_id;
-  var gasPrice = process.env.gas_price;
-  var gasLimit = process.env.gas_limit;
-  var tokenAmountInWei = process.env.token_amount_in_wei;
-  var erc20TokenAmountInWei = process.env.erc20_token_amount_in_wei;
-  var ethRegex = /0x[a-fA-F0-9]{40}/;
-  var goodToGo = false;
-  var goodToGo2 = false;
-  var response;
-  var new_timestamp = Math.floor(new Date().getTime() / 1000);
+      var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url;
+      var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url;
+      var faucetPublicKey = process.env.faucet_public_key;
+      var faucetPrivateKey = process.env.faucet_private_key;
+      var blockchainChainId = process.env.blockchain_chain_id;
+      var gasPrice = process.env.gas_price;
+      var gasLimit = process.env.gas_limit;
+      var tokenAmountInWei = process.env.token_amount_in_wei;
+      var erc20TokenAmountInWei = process.env.erc20_token_amount_in_wei;
+      var ethRegex = /0x[a-fA-F0-9]{40}/;
+      var goodToGo = false;
+      var goodToGo2 = false;
+      var response;
+      var new_timestamp = Math.floor(new Date().getTime() / 1000);
 
-  // Rate limit data
-  var duration;
-  var times;
-  var rObject = myCache.get(fromId);
-  if (rObject == undefined) {
-    duration = new_timestamp;
-    times = 0;
-  } else {
-    duration = parseInt(rObject.duration);
-    times = parseInt(rObject.times);
-  }
-  if ((new_timestamp - duration) > (parseInt(rate_limit_duration) * 60)) {
-    times = 0;
-  }
-  new_times = times + 1;
-  console.log("Checking new times: " + new_times + " vs limit of " + user_rate_limit);
-  console.log("*** Good to go: " + goodToGo);
-  if (new_times <= parseInt(user_rate_limit)) {
-    goodToGo = true;
-  }
+      // Rate limit data
+      var duration;
+      var times;
+      var rObject = myCache.get(fromId);
+      if (rObject == undefined) {
+        duration = new_timestamp;
+        times = 0;
+      } else {
+        duration = parseInt(rObject.duration);
+        times = parseInt(rObject.times);
+      }
+      if ((new_timestamp - duration) > (parseInt(rate_limit_duration) * 60)) {
+        times = 0;
+      }
+      new_times = times + 1;
+      console.log("Checking new times: " + new_times + " vs limit of " + user_rate_limit);
+      console.log("*** Good to go: " + goodToGo);
+      if (new_times <= parseInt(user_rate_limit)) {
+        goodToGo = true;
+      }
 
-  var cacheObjectToStore = {};
-  cacheObjectToStore["duration"] = new_timestamp;
-  cacheObjectToStore["times"] = new_times;
-  myCache.set(fromId, cacheObjectToStore, 0);
-  removeLine(fromId);
-  fs.appendFile(path.join(process.env.data_dir, "data.txt"), fromId + "," + new_timestamp + "," + new_times + '\n', function(err) {
-    if (err) throw err;
-    console.log("Updated timestamp saved");
-  });
+      var cacheObjectToStore = {};
+      cacheObjectToStore["duration"] = new_timestamp;
+      cacheObjectToStore["times"] = new_times;
+      myCache.set(fromId, cacheObjectToStore, 0);
+      removeLine(fromId);
+      fs.appendFile(path.join(process.env.data_dir, "data.txt"), fromId + "," + new_timestamp + "," + new_times + '\n', function(err) {
+        if (err) throw err;
+        console.log("Updated timestamp saved");
+      });
 
-  // Rate limit data 2
-  var duration2;
-  var times2;
-  var urObject = a_user_myCache.get(fromId);
-  if (urObject == undefined) {
-    duration2 = new_timestamp;
-    times2 = 0;
-  } else {
-    duration2 = parseInt(urObject.duration);
-    times2 = parseInt(urObject.times);
-  }
-  if ((new_timestamp - duration2) > (parseInt(aUsersAccountRateDuration) * 60)) {
-    times2 = 0;
-  }
-  new_times_2 = times2 + 1;
-  console.log("Checking new times: " + new_times_2 + " vs limit of " + aUsersAccountRateLimit);
-  console.log("*** Good to go: " + goodToGo2);
-  if (new_times_2 <= parseInt(aUsersAccountRateLimit)) {
-    goodToGo2 = true;
-  }
+      // Rate limit data 2
+      var duration2;
+      var times2;
+      var urObject = a_user_myCache.get(fromId);
+      if (urObject == undefined) {
+        duration2 = new_timestamp;
+        times2 = 0;
+      } else {
+        duration2 = parseInt(urObject.duration);
+        times2 = parseInt(urObject.times);
+      }
+      if ((new_timestamp - duration2) > (parseInt(aUsersAccountRateDuration) * 60)) {
+        times2 = 0;
+      }
+      new_times_2 = times2 + 1;
+      console.log("Checking new times: " + new_times_2 + " vs limit of " + aUsersAccountRateLimit);
+      console.log("*** Good to go: " + goodToGo2);
+      if (new_times_2 <= parseInt(aUsersAccountRateLimit)) {
+        goodToGo2 = true;
+      }
 
-  console.log("Text: " + text);
-  var resultRegex = ethRegex.exec(text);
-  console.log("Eth address: " + resultRegex);
-
-
-  if (rObject == undefined || goodToGo == true) {
-      if (urObject == undefined || goodToGo2 == true) {
-    if (resultRegex != null) {
-      var recipientAddress = resultRegex[0];
-      if (Web3.utils.isAddress(recipientAddress)) {
-        console.log("Recipient address: " + recipientAddress);
-
-        // Account details
-        var accountState = new AccountState();
-
-        web3.eth.getTransaction(process.env.erc20_tx).then(result => {
-          accountState.setContractBlockNumber(result.blockNumber);
-          console.log("Contract block number set to " + accountState.getContractBlockNumber());
-          web3.eth.getBlockNumber().then(lbn => {
-            accountState.setLatestBlockNumber(lbn);
-            console.log("Latest block number set to " + accountState.getLatestBlockNumber());
+      console.log("Text: " + text);
+      var resultRegex = ethRegex.exec(text);
+      console.log("Eth address: " + resultRegex);
 
 
-            // ERC20 token variables
-            contract_address = process.env.erc20_address;
-            console.log("Contract address: " + contract_address);
-            contract = new web3.eth.Contract(erc20_abi, contract_address);
-            console.log("Contract: " + contract);
+      if (rObject == undefined || goodToGo == true) {
+        if (urObject == undefined || goodToGo2 == true) {
+          if (resultRegex != null) {
+            var recipientAddress = resultRegex[0];
+            if (Web3.utils.isAddress(recipientAddress)) {
+              console.log("Recipient address: " + recipientAddress);
 
-            // Get before balance
-            getBalance(contract, recipientAddress, accountState, "before").then(result => {
-              console.log("Checking " + process.env.erc20_name + " account balance before transaction");
-              getLogs(contract, recipientAddress, accountState).then(result => {
-                if (accountState.getAlreadyFunded() == false) {
-                  bot.sendMessage(chatId, "Hey " + firstName + " (" + userName + "), just checking your " + process.env.erc20_name + " balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " + accountState.getBalanceBefore() + " SLOT\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " SLOT now ... please wait a minute!");
+              // Account details
+              var accountState = new AccountState();
+
+              web3.eth.getTransaction(process.env.erc20_tx).then(result => {
+                accountState.setContractBlockNumber(result.blockNumber);
+                console.log("Contract block number set to " + accountState.getContractBlockNumber());
+                web3.eth.getBlockNumber().then(lbn => {
+                  accountState.setLatestBlockNumber(lbn);
+                  console.log("Latest block number set to " + accountState.getLatestBlockNumber());
+
 
                   // ERC20 token variables
-                  sender = process.env.faucet_public_key;
-                  console.log("Sender: " + sender);
-                  var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
-                  // Create transaction object
-                  var transactionObject = {
-                    to: contract_address,
-                    from: sender,
-                    gasPrice: gasPrice,
-                    gas: gasLimit,
-                    data: transferObjectEncoded
-                  };
-                  web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
-                    if (!error) {
-                      web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
-                        if (!error) {
-                          setTimeout(function() {
-                            web3.eth.getTransaction(sent_tx.toString(), function(error, tx_object) {
+                  contract_address = process.env.erc20_address;
+                  console.log("Contract address: " + contract_address);
+                  contract = new web3.eth.Contract(erc20_abi, contract_address);
+                  console.log("Contract: " + contract);
+
+                  // Get before balance
+                  getBalance(contract, recipientAddress, accountState, "before").then(result => {
+                    console.log("Checking " + process.env.erc20_name + " account balance before transaction");
+                    getLogs(contract, recipientAddress, accountState).then(result => {
+                      if (accountState.getAlreadyFunded() == false) {
+                        bot.sendMessage(chatId, "Hey " + firstName + " (" + userName + "), just checking your " + process.env.erc20_name + " balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " + accountState.getBalanceBefore() + " SLOT\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " SLOT now ... please wait a minute!");
+
+                        // ERC20 token variables
+                        sender = process.env.faucet_public_key;
+                        console.log("Sender: " + sender);
+                        var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
+                        // Create transaction object
+                        var transactionObject = {
+                          to: contract_address,
+                          from: sender,
+                          gasPrice: gasPrice,
+                          gas: gasLimit,
+                          data: transferObjectEncoded
+                        };
+                        web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+                          if (!error) {
+                            web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
                               if (!error) {
-                                    var cacheObjectToStore2 = {};
-                                    cacheObjectToStore2["duration"] = new_timestamp;
-                                    cacheObjectToStore2["times"] = new_times_2;
-                                    a_user_myCache.set(fromId, cacheObjectToStore2, 0);
-                                    uRemoveLine(fromId);
-                                    fs.appendFile(path.join(process.env.data_dir, "success.txt"), fromId + "," + new_timestamp + "," + new_times_2 + '\n', function(err) {
-                                      if (err) throw err;
-                                      console.log("Updated timestamp saved");
-                                    });
-                                    bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
+                                setTimeout(function() {
+                                  web3.eth.getTransaction(sent_tx.toString(), function(error, tx_object) {
+                                    if (!error) {
+                                      var cacheObjectToStore2 = {};
+                                      cacheObjectToStore2["duration"] = new_timestamp;
+                                      cacheObjectToStore2["times"] = new_times_2;
+                                      a_user_myCache.set(fromId, cacheObjectToStore2, 0);
+                                      uRemoveLine(fromId);
+                                      fs.appendFile(path.join(process.env.data_dir, "success.txt"), fromId + "," + new_timestamp + "," + new_times_2 + '\n', function(err) {
+                                        if (err) throw err;
+                                        console.log("Updated timestamp saved");
+                                      });
+                                      bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
+                                    } else {
+                                      console.log(error);
+                                    }
+                                  });
+                                }, 10000);
+
                               } else {
-                                console.log(error);
+                                bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
                               }
                             });
-                          }, 10000);
+                          } else {
+                            console.log(error);
+                          }
+                        });
+                      } else {
+                        bot.sendMessage(chatId, "Sorry! The address " + recipientAddress + " has already been funded. You have hit the rate limit.");
+                      }
+                    });
 
-                        } else {
-                          bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
-                        }
-                      });
-                    } else {
-                      console.log(error);
-                    }
                   });
-                } else {
-                  bot.sendMessage(chatId, "Sorry! The address " + recipientAddress + " has already been funded. You have hit the rate limit.");
-                }
+
+                });
               });
+            } else {
+              bot.sendMessage(chatId, "Address is not valid!");
+            }
+          } else {
+            bot.sendMessage(chatId, "Address is not valid!");
+          }
+        } else {
+          bot.sendMessage(chatId, "Sorry, rate limit, this user can only have " + aUsersAccountRateLimit + " token, every " + aUsersAccountRateDuration + " minute[s].");
+        }
 
-            });
-
-          });
-        });
       } else {
-        bot.sendMessage(chatId, "Address is not valid!");
+        bot.sendMessage(chatId, "Sorry, rate limit, this user can only have " + user_rate_limit + " request[s], every " + rate_limit_duration + " minute[s].");
       }
-    } else {
-      bot.sendMessage(chatId, "Address is not valid!");
-    }
-      } else {
-    bot.sendMessage(chatId, "Sorry, rate limit, this user can only have " + user_rate_limit + " token, every " + rate_limit_duration + " minute[s].");
-  }
-
-  } else {
-    bot.sendMessage(chatId, "Sorry, rate limit, this user can only have " + user_rate_limit + " request[s], every " + rate_limit_duration + " minute[s].");
-  }
 
     } else {
-      bot.sendMessage(chatId, "Sorry " + firstName + " you have to first be a member of the ParaState group to participate." );
+      bot.sendMessage(chatId, "Sorry " + firstName + " you have to first be a member of the ParaState group to participate.");
     }
   }, reason => {
     console.error(reason); // Error!
