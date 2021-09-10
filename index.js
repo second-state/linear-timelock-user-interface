@@ -88,7 +88,7 @@ async function getLogs(_contract_instance, _address, _account_state) {
   var incrementer = _account_state.getContractBlockNumber();
   var lower;
   var upper;
-  var batchSize = 5000;
+  var batchSize = 3500;
   var fin = false;
   var fundedObject = myCacheFunded.get(_address);
   console.log("Funded object: " + fundedObject);
