@@ -85,11 +85,14 @@ async function getBalance(_contract_instance, _address, _account_state, _before_
 async function getLogs(_contract_instance, _address, _account_state) {
   //Failsafe - set to true
   _account_state.setAlreadyFunded(true);
-    var incrementer = _account_state.getContractBlockNumber();
-    var lower;
-    var upper;
-    var batchSize = 2000;
-    var fin = false;
+  var incrementer = _account_state.getContractBlockNumber();
+  var lower;
+  var upper;
+  var batchSize = 5000;
+  var fin = false;
+  var fundedObject = myCacheFunded.get(_address);
+  console.log("Funded object: " + fundedObject);
+  if (fundedObject == undefined) {
     while (fin == false) {
       if (incrementer + batchSize <= _account_state.getLatestBlockNumber()) {
         lower = incrementer;
@@ -110,6 +113,8 @@ async function getLogs(_contract_instance, _address, _account_state) {
         if (!error) {
           if (events.length > 0) {
             _account_state.setAlreadyFunded(true);
+            var o = {"f": 1};
+            myCacheFunded.set(_address, o, 0);
             fin = true;
             console.log("Found a log");
           } else {
@@ -122,6 +127,10 @@ async function getLogs(_contract_instance, _address, _account_state) {
         }
       })
     }
+  } else {
+    _account_state.setAlreadyFunded(true);
+    console.log("Found a log");
+  }
 }
 /** 
  * ERC20 Variables
@@ -1220,6 +1229,9 @@ user_readInterface.on('line', function(line) {
     cacheObject["times"] = split_data[2]
     a_user_myCache.set(split_data[0], cacheObject, 0);
 });
+
+// TEMP Funded Cache to fasttrack getlogs
+const myCacheFunded = new NodeCache();
 
 /* Node Cache End
 */
