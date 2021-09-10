@@ -1412,14 +1412,14 @@ bot.onText(/\/balance_slot (.+)/, (msg, match) => {
 
   if (rObject == undefined || goodToGo == true) {
 
-  // The message which they sent
-  const resp = match[1];
-  var text;
-  text = resp;
-  var ethRegex = /0x[a-fA-F0-9]{40}/;
-  var resultRegex = ethRegex.exec(text);
-  if (resultRegex != null) {
-    var recipientAddress = resultRegex[0];
+    // The message which they sent
+    const resp = match[1];
+    var text;
+    text = resp;
+    var ethRegex = /0x[a-fA-F0-9]{40}/;
+    var resultRegex = ethRegex.exec(text);
+    if (resultRegex != null) {
+      var recipientAddress = resultRegex[0];
       if (Web3.utils.isAddress(recipientAddress)) {
         console.log("Recipient address: " + recipientAddress);
         // ERC20 token variables
@@ -1428,26 +1428,26 @@ bot.onText(/\/balance_slot (.+)/, (msg, match) => {
         contract = new web3.eth.Contract(erc20_abi, contract_address);
         console.log("Contract: " + contract);
         getBalance(contract, recipientAddress, accountState, "after").then(result => {
-            var cacheObjectToStore = {};
-            cacheObjectToStore["duration"] = new_timestamp;
-            cacheObjectToStore["times"] = new_times;
-            myCache.set(fromId, cacheObjectToStore, 0);
-            removeLine(fromId);
-            fs.appendFile(path.join(process.env.data_dir, "data.txt"), fromId + "," + new_timestamp + "," + new_times + '\n', function(err) {
-              if (err) throw err;
-              console.log("Updated timestamp saved");
-            });
-            bot.sendMessage(chatId, "Address " + recipientAddress + " has " + accountState.getBalanceAfter() + " SLOT tokens!");
+          var cacheObjectToStore = {};
+          cacheObjectToStore["duration"] = new_timestamp;
+          cacheObjectToStore["times"] = new_times;
+          myCache.set(fromId, cacheObjectToStore, 0);
+          removeLine(fromId);
+          fs.appendFile(path.join(process.env.data_dir, "data.txt"), fromId + "," + new_timestamp + "," + new_times + '\n', function(err) {
+            if (err) throw err;
+            console.log("Updated timestamp saved");
+          });
+          bot.sendMessage(chatId, "Address " + recipientAddress + " has " + accountState.getBalanceAfter() + " SLOT tokens!");
         });
       } else {
         bot.sendMessage(chatId, "Address is not valid!");
       }
+    } else {
+      bot.sendMessage(chatId, "Address is not valid!");
+    }
   } else {
-    bot.sendMessage(chatId, "Address is not valid!");
+    bot.sendMessage(chatId, "Rate limit exceeded!");
   }
-} else {
-  bot.sendMessage(chatId, "Rate limit exceeded!");
-}
 });
 
 // Respond to any message with drip_slot in the text
@@ -1550,87 +1550,97 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
         if (urObject == undefined || goodToGo2 == true) {
           if (resultRegex != null) {
             var recipientAddress = resultRegex[0];
-            if (Web3.utils.isAddress(recipientAddress)) {
-              console.log("Recipient address: " + recipientAddress);
+            var fundedObject = myCacheFunded.get(_address);
+            console.log("Funded object: " + fundedObject);
+            if (fundedObject == undefined) {
+              if (Web3.utils.isAddress(recipientAddress)) {
+                console.log("Recipient address: " + recipientAddress);
 
-              // Account details
-              var accountState = new AccountState();
+                // Account details
+                var accountState = new AccountState();
 
-              web3.eth.getTransaction(process.env.erc20_tx).then(result => {
-                accountState.setContractBlockNumber(result.blockNumber);
-                console.log("Contract block number set to " + accountState.getContractBlockNumber());
-                web3.eth.getBlockNumber().then(lbn => {
-                  accountState.setLatestBlockNumber(lbn);
-                  console.log("Latest block number set to " + accountState.getLatestBlockNumber());
+                web3.eth.getTransaction(process.env.erc20_tx).then(result => {
+                  accountState.setContractBlockNumber(result.blockNumber);
+                  console.log("Contract block number set to " + accountState.getContractBlockNumber());
+                  web3.eth.getBlockNumber().then(lbn => {
+                    accountState.setLatestBlockNumber(lbn);
+                    console.log("Latest block number set to " + accountState.getLatestBlockNumber());
 
 
-                  // ERC20 token variables
-                  contract_address = process.env.erc20_address;
-                  console.log("Contract address: " + contract_address);
-                  contract = new web3.eth.Contract(erc20_abi, contract_address);
-                  console.log("Contract: " + contract);
+                    // ERC20 token variables
+                    contract_address = process.env.erc20_address;
+                    console.log("Contract address: " + contract_address);
+                    contract = new web3.eth.Contract(erc20_abi, contract_address);
+                    console.log("Contract: " + contract);
 
-                  // Get before balance
-                  getBalance(contract, recipientAddress, accountState, "before").then(result => {
-                    console.log("Checking " + process.env.erc20_name + " account balance before transaction");
-                    getLogs(contract, recipientAddress, accountState).then(result => {
-                      if (accountState.getAlreadyFunded() == false) {
-                        bot.sendMessage(chatId, "Hey " + firstName + " (" + userName + "), just checking your " + process.env.erc20_name + " balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " + accountState.getBalanceBefore() + " SLOT\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " SLOT now ... please wait a minute!");
+                    // Get before balance
+                    getBalance(contract, recipientAddress, accountState, "before").then(result => {
+                      console.log("Checking " + process.env.erc20_name + " account balance before transaction");
+                      getLogs(contract, recipientAddress, accountState).then(result => {
+                        if (accountState.getAlreadyFunded() == false) {
+                          bot.sendMessage(chatId, "Hey " + firstName + " (" + userName + "), just checking your " + process.env.erc20_name + " balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " + accountState.getBalanceBefore() + " SLOT\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " SLOT now ... please wait a minute!");
 
-                        // ERC20 token variables
-                        sender = process.env.faucet_public_key;
-                        console.log("Sender: " + sender);
-                        var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
-                        // Create transaction object
-                        var transactionObject = {
-                          to: contract_address,
-                          from: sender,
-                          gasPrice: gasPrice,
-                          gas: gasLimit,
-                          data: transferObjectEncoded
-                        };
-                        web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
-                          if (!error) {
-                            web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
-                              if (!error) {
-                                setTimeout(function() {
-                                  web3.eth.getTransaction(sent_tx.toString(), function(error, tx_object) {
-                                    if (!error) {
-                                      var cacheObjectToStore2 = {};
-                                      cacheObjectToStore2["duration"] = new_timestamp;
-                                      cacheObjectToStore2["times"] = new_times_2;
-                                      a_user_myCache.set(fromId, cacheObjectToStore2, 0);
-                                      uRemoveLine(fromId);
-                                      fs.appendFile(path.join(process.env.data_dir, "success.txt"), fromId + "," + new_timestamp + "," + new_times_2 + '\n', function(err) {
-                                        if (err) throw err;
-                                        console.log("Updated timestamp saved");
-                                      });
-                                      bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
-                                    } else {
-                                      console.log(error);
-                                    }
-                                  });
-                                }, 10000);
+                          // ERC20 token variables
+                          sender = process.env.faucet_public_key;
+                          console.log("Sender: " + sender);
+                          var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
+                          // Create transaction object
+                          var transactionObject = {
+                            to: contract_address,
+                            from: sender,
+                            gasPrice: gasPrice,
+                            gas: gasLimit,
+                            data: transferObjectEncoded
+                          };
+                          web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+                            if (!error) {
+                              web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+                                if (!error) {
+                                  setTimeout(function() {
+                                    web3.eth.getTransaction(sent_tx.toString(), function(error, tx_object) {
+                                      if (!error) {
+                                        var cacheObjectToStore2 = {};
+                                        cacheObjectToStore2["duration"] = new_timestamp;
+                                        cacheObjectToStore2["times"] = new_times_2;
+                                        a_user_myCache.set(fromId, cacheObjectToStore2, 0);
+                                        uRemoveLine(fromId);
+                                        fs.appendFile(path.join(process.env.data_dir, "success.txt"), fromId + "," + new_timestamp + "," + new_times_2 + '\n', function(err) {
+                                          if (err) throw err;
+                                          console.log("Updated timestamp saved");
+                                        });
+                                        var o = {
+                                          "f": 1
+                                        };
+                                        myCacheFunded.set(_address, o, 0);
+                                        bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
+                                      } else {
+                                        console.log(error);
+                                      }
+                                    });
+                                  }, 10000);
 
-                              } else {
-                                bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
-                              }
-                            });
-                          } else {
-                            console.log(error);
-                          }
-                        });
-                      } else {
-                        bot.sendMessage(chatId, "Sorry! The address " + recipientAddress + " has already been funded. You have hit the rate limit.");
-                      }
+                                } else {
+                                  bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
+                                }
+                              });
+                            } else {
+                              console.log(error);
+                            }
+                          });
+                        } else {
+                          bot.sendMessage(chatId, "Sorry! The address " + recipientAddress + " has already been funded. You have hit the rate limit.");
+                        }
+                      });
+
                     });
 
                   });
-
                 });
-              });
+              } else {
+                bot.sendMessage(chatId, "Address is not valid!");
+              }
             } else {
-              bot.sendMessage(chatId, "Address is not valid!");
+              bot.sendMessage(chatId, "Address has already been funded!");
             }
           } else {
             bot.sendMessage(chatId, "Address is not valid!");
