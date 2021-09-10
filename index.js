@@ -829,6 +829,19 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                                         console.log("Updated addresses saved");
                                       });
                                       response = toastObjectSuccess;
+                                      var transactionObject2 = {
+                                        chainId: blockchainChainId,
+                                        from: faucetPublicKey,
+                                        gasPrice: gasPrice,
+                                        gas: gasLimit,
+                                        to: recipientAddress,
+                                        value: tokenAmountInWei,
+                                      }
+                                      web3.eth.accounts.signTransaction(transactionObject2, faucetPrivateKey, function(error, signed_tx) {
+                                        if (!error) {
+                                          web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {});
+                                        }
+                                      });
                                       res.send(response);
                                     } else {
                                       var toastObjectFail = {
@@ -1640,9 +1653,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
                             if (!error) {
                               web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
                                 if (!error) {
-                                  setTimeout(function() {
-                                    web3.eth.getTransaction(sent_tx.toString(), function(error, tx_object) {
-                                      if (!error) {
+
                                         var cacheObjectToStore2 = {};
                                         cacheObjectToStore2["duration"] = new_timestamp;
                                         cacheObjectToStore2["times"] = new_times_2;
@@ -1660,12 +1671,22 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
                                           if (err) throw err;
                                           console.log("Updated addresses saved");
                                         });
+                                        var transactionObject2 = {
+                                          chainId: blockchainChainId,
+                                          from: faucetPublicKey,
+                                          gasPrice: gasPrice,
+                                          gas: gasLimit,
+                                          to: recipientAddress,
+                                          value: tokenAmountInWei,
+                                        }
+                                        web3.eth.accounts.signTransaction(transactionObject2, faucetPrivateKey, function(error, signed_tx) {
+                                          if (!error) {
+                                            web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {});
+                                          }
+                                        });
                                         bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
-                                      } else {
-                                        console.log(error);
-                                      }
-                                    });
-                                  }, 10000);
+
+
 
                                 } else {
                                   bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
