@@ -1550,7 +1550,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
         if (urObject == undefined || goodToGo2 == true) {
           if (resultRegex != null) {
             var recipientAddress = resultRegex[0];
-            var fundedObject = myCacheFunded.get(_address);
+            var fundedObject = myCacheFunded.get(recipientAddress);
             console.log("Funded object: " + fundedObject);
             if (fundedObject == undefined) {
               if (Web3.utils.isAddress(recipientAddress)) {
@@ -1611,7 +1611,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
                                         var o = {
                                           "f": 1
                                         };
-                                        myCacheFunded.set(_address, o, 0);
+                                        myCacheFunded.set(recipientAddress, o, 0);
                                         bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
                                       } else {
                                         console.log(error);
