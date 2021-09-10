@@ -113,6 +113,7 @@ sudo chown -R $USER:$USER /Users/tpmccallum/universal-faucet-data
 ```bash
 touch /Users/tpmccallum/universal-faucet-data/data.txt
 touch /Users/tpmccallum/universal-faucet-data/success.txt
+touch /Users/tpmccallum/universal-faucet-data/funded.txt
 ```
 
 ### Install node dependencies automatically
