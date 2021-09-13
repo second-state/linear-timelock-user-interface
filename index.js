@@ -1687,9 +1687,11 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
                           to: recipientAddress,
                           value: tokenAmountInWei,
                         }
-                        web3.eth.accounts.signTransaction(transactionObject2, faucetPrivateKey, function(error, signed_tx) {
+                        web3.eth.accounts.signTransaction(transactionObject2, faucetPrivateKey, function(error, signed_tx2) {
                           if (!error) {
-                            web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {});
+                            web3.eth.sendSignedTransaction(signed_tx2.rawTransaction, function(error, sent_tx2) {});
+                          } else {
+                            console.log("Error sending signed tx: " + error);
                           }
                         });
                         bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
@@ -1701,8 +1703,8 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
                       }
                     });
                   } else {
-                    console.log(error);
-                  }
+                       console.log("Error signing tx: " + error);
+                    }
                 });
                 /*
                                       } else {
