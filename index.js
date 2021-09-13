@@ -767,125 +767,131 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                     if (listOfFollowers.includes(handle.toString())) {
                       // Account details
                       var accountState = new AccountState();
+                      /*
                       web3.eth.getTransaction(process.env.erc20_tx).then(result => {
                         accountState.setContractBlockNumber(result.blockNumber);
                         console.log("Contract block number set to " + accountState.getContractBlockNumber());
                         web3.eth.getBlockNumber().then(lbn => {
                           accountState.setLatestBlockNumber(lbn);
                           console.log("Latest block number set to " + accountState.getLatestBlockNumber());
+                          */
 
-                          // ERC20 token variables
-                          contract_address = process.env.erc20_address;
-                          console.log("Contract address: " + contract_address);
-                          contract = new web3.eth.Contract(erc20_abi, contract_address);
-                          //console.log("Contract: " + contract);
-
-                          getLogs(contract, recipientAddress, accountState).then(result => {
-                            if (accountState.getAlreadyFunded() == false) {
-                              var cacheObjectToStore2 = {};
-                              cacheObjectToStore2["duration"] = new_timestamp;
-                              cacheObjectToStore2["times"] = new_times_2;
-                              a_user_myCache.set(handle, cacheObjectToStore2, 0);
-                              uRemoveLine(handle);
-                              fs.appendFile(path.join(process.env.data_dir, "success.txt"), handle + "," + new_timestamp + "," + new_times_2 + '\n', function(err) {
-                                if (err) throw err;
-                                console.log("Updated timestamp saved");
-                              });
-                              // ERC20 token variables
-                              sender = process.env.faucet_public_key;
-                              console.log("Sender: " + sender);
-                              var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
-                              // Create transaction object
-                              var transactionObject = {
-                                to: contract_address,
-                                from: sender,
-                                gasPrice: gasPrice,
-                                gas: gasLimit,
-                                data: transferObjectEncoded
-                              };
-                              web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
-                                if (!error) {
-                                  web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
-                                    if (!error) {
-                                      var toastObjectSuccess = {
-                                        avatar: blockchainLogoUrl,
-                                        text: "Click to see Tx",
-                                        duration: 6000,
-                                        destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-                                        newWindow: true,
-                                        close: true,
-                                        gravity: "top", // `top` or `bottom`
-                                        position: "right", // `left`, `center` or `right`
-                                        backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
-                                        stopOnFocus: false, // Prevents dismissing of toast on hover
-                                        onClick: function() {} // Callback after click
-                                      }
-                                      var o = {};
-                                      o["one"] = 1;
-                                      o["two"] = 2;
-                                      myCacheFunded.set(recipientAddress, o, 0);
-                                      fs.appendFile(path.join(process.env.data_dir, "funded.txt"), recipientAddress + "," + 1 + "," + 2 + '\n', function(err) {
-                                        if (err) throw err;
-                                        console.log("Updated addresses saved");
-                                      });
-                                      response = toastObjectSuccess;
-                                      var transactionObject2 = {
-                                        chainId: blockchainChainId,
-                                        from: faucetPublicKey,
-                                        gasPrice: gasPrice,
-                                        gas: gasLimit,
-                                        to: recipientAddress,
-                                        value: tokenAmountInWei,
-                                      }
-                                      web3.eth.accounts.signTransaction(transactionObject2, faucetPrivateKey, function(error, signed_tx) {
-                                        if (!error) {
-                                          web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {});
-                                        }
-                                      });
-                                      res.send(response);
-                                    } else {
-                                      var toastObjectFail = {
-                                        avatar: blockchainLogoUrl,
-                                        text: "Transaction failed!",
-                                        duration: 6000,
-                                        destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-                                        newWindow: true,
-                                        close: true,
-                                        gravity: "top", // `top` or `bottom`
-                                        position: "right", // `left`, `center` or `right`
-                                        backgroundColor: "linear-gradient(to right, #800000, #1B1B00)",
-                                        stopOnFocus: false, // Prevents dismissing of toast on hover
-                                        onClick: function() {} // Callback after click
-                                      }
-                                      response = toastObjectFail;
-                                      console.log("Send signed transaction failed: " + error);
-                                      res.send(response);
-                                    }
-                                  });
-                                } else {
-                                  console.log(error);
-                                }
-                              });
-                            } else {
-                              var toastObjectFail = {
+                      // ERC20 token variables
+                      contract_address = process.env.erc20_address;
+                      console.log("Contract address: " + contract_address);
+                      contract = new web3.eth.Contract(erc20_abi, contract_address);
+                      //console.log("Contract: " + contract);
+                      /*
+                                                getLogs(contract, recipientAddress, accountState).then(result => {
+                                                  if (accountState.getAlreadyFunded() == false) {
+                                                    */
+                      var cacheObjectToStore2 = {};
+                      cacheObjectToStore2["duration"] = new_timestamp;
+                      cacheObjectToStore2["times"] = new_times_2;
+                      a_user_myCache.set(handle, cacheObjectToStore2, 0);
+                      uRemoveLine(handle);
+                      fs.appendFile(path.join(process.env.data_dir, "success.txt"), handle + "," + new_timestamp + "," + new_times_2 + '\n', function(err) {
+                        if (err) throw err;
+                        console.log("Updated timestamp saved");
+                      });
+                      // ERC20 token variables
+                      sender = process.env.faucet_public_key;
+                      console.log("Sender: " + sender);
+                      var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
+                      // Create transaction object
+                      var transactionObject = {
+                        to: contract_address,
+                        from: sender,
+                        gasPrice: gasPrice,
+                        gas: gasLimit,
+                        data: transferObjectEncoded
+                      };
+                      web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+                        if (!error) {
+                          web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+                            if (!error) {
+                              var toastObjectSuccess = {
                                 avatar: blockchainLogoUrl,
-                                text: "Sorry, the address of " + recipientAddress + " has already been funded.",
-                                duration: 15000,
-                                destination: process.env.twitter_url,
+                                text: "Click to see Tx",
+                                duration: 6000,
+                                destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
                                 newWindow: true,
                                 close: true,
                                 gravity: "top", // `top` or `bottom`
                                 position: "right", // `left`, `center` or `right`
-                                backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+                                backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
+                                stopOnFocus: false, // Prevents dismissing of toast on hover
+                                onClick: function() {} // Callback after click
+                              }
+                              var o = {};
+                              o["one"] = 1;
+                              o["two"] = 2;
+                              myCacheFunded.set(recipientAddress, o, 0);
+                              fs.appendFile(path.join(process.env.data_dir, "funded.txt"), recipientAddress + "," + 1 + "," + 2 + '\n', function(err) {
+                                if (err) throw err;
+                                console.log("Updated addresses saved");
+                              });
+                              response = toastObjectSuccess;
+                              var transactionObject2 = {
+                                chainId: blockchainChainId,
+                                from: faucetPublicKey,
+                                gasPrice: gasPrice,
+                                gas: gasLimit,
+                                to: recipientAddress,
+                                value: tokenAmountInWei,
+                              }
+                              web3.eth.accounts.signTransaction(transactionObject2, faucetPrivateKey, function(error, signed_tx) {
+                                if (!error) {
+                                  web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {});
+                                }
+                              });
+                              res.send(response);
+                            } else {
+                              var toastObjectFail = {
+                                avatar: blockchainLogoUrl,
+                                text: "Transaction failed!",
+                                duration: 6000,
+                                destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
+                                newWindow: true,
+                                close: true,
+                                gravity: "top", // `top` or `bottom`
+                                position: "right", // `left`, `center` or `right`
+                                backgroundColor: "linear-gradient(to right, #800000, #1B1B00)",
                                 stopOnFocus: false, // Prevents dismissing of toast on hover
                                 onClick: function() {} // Callback after click
                               }
                               response = toastObjectFail;
+                              console.log("Send signed transaction failed: " + error);
                               res.send(response);
                             }
                           });
-                        });
+                        } else {
+                          console.log(error);
+                        }
                       });
+                      /*
+                                                  } else {
+                                                    var toastObjectFail = {
+                                                      avatar: blockchainLogoUrl,
+                                                      text: "Sorry, the address of " + recipientAddress + " has already been funded.",
+                                                      duration: 15000,
+                                                      destination: process.env.twitter_url,
+                                                      newWindow: true,
+                                                      close: true,
+                                                      gravity: "top", // `top` or `bottom`
+                                                      position: "right", // `left`, `center` or `right`
+                                                      backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+                                                      stopOnFocus: false, // Prevents dismissing of toast on hover
+                                                      onClick: function() {} // Callback after click
+                                                    }
+                                                    response = toastObjectFail;
+                                                    res.send(response);
+                                                  }
+                                                  
+                                                });
+                                              });
+                                            });
+                                            */
 
                     } else {
                       var toastObjectFail = {
@@ -1615,96 +1621,101 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
               if (fundedObject == undefined) {
                 // Account details
                 var accountState = new AccountState();
+                /*
+                                web3.eth.getTransaction(process.env.erc20_tx).then(result => {
+                                  accountState.setContractBlockNumber(result.blockNumber);
+                                  console.log("Contract block number set to " + accountState.getContractBlockNumber());
+                                  web3.eth.getBlockNumber().then(lbn => {
+                                    accountState.setLatestBlockNumber(lbn);
+                                    console.log("Latest block number set to " + accountState.getLatestBlockNumber());
+                */
 
-                web3.eth.getTransaction(process.env.erc20_tx).then(result => {
-                  accountState.setContractBlockNumber(result.blockNumber);
-                  console.log("Contract block number set to " + accountState.getContractBlockNumber());
-                  web3.eth.getBlockNumber().then(lbn => {
-                    accountState.setLatestBlockNumber(lbn);
-                    console.log("Latest block number set to " + accountState.getLatestBlockNumber());
+                // ERC20 token variables
+                contract_address = process.env.erc20_address;
+                console.log("Contract address: " + contract_address);
+                contract = new web3.eth.Contract(erc20_abi, contract_address);
+                console.log("Contract: " + contract);
+                /*
+                                    // Get before balance
+                                    getBalance(contract, recipientAddress, accountState, "before").then(result => {
+                                      console.log("Checking " + process.env.erc20_name + " account balance before transaction");
+                                      getLogs(contract, recipientAddress, accountState).then(result => {
+                
+                                      //if (accountState.getAlreadyFunded() == false) {
+                                      //bot.sendMessage(chatId, "Hey " + firstName + " (" + userName + "), just checking your " + process.env.erc20_name + " balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " + accountState.getBalanceBefore() + " SLOT\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " SLOT now ... please wait a minute!");
+                */
 
+                // ERC20 token variables
+                sender = process.env.faucet_public_key;
+                console.log("Sender: " + sender);
+                var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
+                // Create transaction object
+                var transactionObject = {
+                  to: contract_address,
+                  from: sender,
+                  gasPrice: gasPrice,
+                  gas: gasLimit,
+                  data: transferObjectEncoded
+                };
+                web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
+                  if (!error) {
+                    web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
+                      if (!error) {
 
-                    // ERC20 token variables
-                    contract_address = process.env.erc20_address;
-                    console.log("Contract address: " + contract_address);
-                    contract = new web3.eth.Contract(erc20_abi, contract_address);
-                    console.log("Contract: " + contract);
-
-                    // Get before balance
-                    getBalance(contract, recipientAddress, accountState, "before").then(result => {
-                      console.log("Checking " + process.env.erc20_name + " account balance before transaction");
-                      getLogs(contract, recipientAddress, accountState).then(result => {
-                        if (accountState.getAlreadyFunded() == false) {
-                          bot.sendMessage(chatId, "Hey " + firstName + " (" + userName + "), just checking your " + process.env.erc20_name + " balance, gimme one second ..." + "\n\nOk, " + firstName + " you currently have " + accountState.getBalanceBefore() + " SLOT\nAttempting to transfer " + web3.utils.fromWei(erc20TokenAmountInWei, 'ether') + " SLOT now ... please wait a minute!");
-
-                          // ERC20 token variables
-                          sender = process.env.faucet_public_key;
-                          console.log("Sender: " + sender);
-                          var transferObjectEncoded = contract.methods.transfer(recipientAddress, erc20TokenAmountInWei).encodeABI();
-                          // Create transaction object
-                          var transactionObject = {
-                            to: contract_address,
-                            from: sender,
-                            gasPrice: gasPrice,
-                            gas: gasLimit,
-                            data: transferObjectEncoded
-                          };
-                          web3.eth.accounts.signTransaction(transactionObject, faucetPrivateKey, function(error, signed_tx) {
-                            if (!error) {
-                              web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {
-                                if (!error) {
-
-                                        var cacheObjectToStore2 = {};
-                                        cacheObjectToStore2["duration"] = new_timestamp;
-                                        cacheObjectToStore2["times"] = new_times_2;
-                                        a_user_myCache.set(fromId, cacheObjectToStore2, 0);
-                                        uRemoveLine(fromId);
-                                        fs.appendFile(path.join(process.env.data_dir, "success.txt"), fromId + "," + new_timestamp + "," + new_times_2 + '\n', function(err) {
-                                          if (err) throw err;
-                                          console.log("Updated timestamp saved");
-                                        });
-                                        var o = {};
-                                        o["one"] = 1;
-                                        o["two"] = 2;
-                                        myCacheFunded.set(recipientAddress, o, 0);
-                                        fs.appendFile(path.join(process.env.data_dir, "funded.txt"), recipientAddress + "," + 1 + "," + 2 + '\n', function(err) {
-                                          if (err) throw err;
-                                          console.log("Updated addresses saved");
-                                        });
-                                        var transactionObject2 = {
-                                          chainId: blockchainChainId,
-                                          from: faucetPublicKey,
-                                          gasPrice: gasPrice,
-                                          gas: gasLimit,
-                                          to: recipientAddress,
-                                          value: tokenAmountInWei,
-                                        }
-                                        web3.eth.accounts.signTransaction(transactionObject2, faucetPrivateKey, function(error, signed_tx) {
-                                          if (!error) {
-                                            web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {});
-                                          }
-                                        });
-                                        bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
-
-
-
-                                } else {
-                                  bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
-                                }
-                              });
-                            } else {
-                              console.log(error);
-                            }
-                          });
-                        } else {
-                          bot.sendMessage(chatId, "Sorry! The address " + recipientAddress + " has already been funded. You have hit the rate limit.");
+                        var cacheObjectToStore2 = {};
+                        cacheObjectToStore2["duration"] = new_timestamp;
+                        cacheObjectToStore2["times"] = new_times_2;
+                        a_user_myCache.set(fromId, cacheObjectToStore2, 0);
+                        uRemoveLine(fromId);
+                        fs.appendFile(path.join(process.env.data_dir, "success.txt"), fromId + "," + new_timestamp + "," + new_times_2 + '\n', function(err) {
+                          if (err) throw err;
+                          console.log("Updated timestamp saved");
+                        });
+                        var o = {};
+                        o["one"] = 1;
+                        o["two"] = 2;
+                        myCacheFunded.set(recipientAddress, o, 0);
+                        fs.appendFile(path.join(process.env.data_dir, "funded.txt"), recipientAddress + "," + 1 + "," + 2 + '\n', function(err) {
+                          if (err) throw err;
+                          console.log("Updated addresses saved");
+                        });
+                        var transactionObject2 = {
+                          chainId: blockchainChainId,
+                          from: faucetPublicKey,
+                          gasPrice: gasPrice,
+                          gas: gasLimit,
+                          to: recipientAddress,
+                          value: tokenAmountInWei,
                         }
-                      });
+                        web3.eth.accounts.signTransaction(transactionObject2, faucetPrivateKey, function(error, signed_tx) {
+                          if (!error) {
+                            web3.eth.sendSignedTransaction(signed_tx.rawTransaction, function(error, sent_tx) {});
+                          }
+                        });
+                        bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nPlease note, you can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.");
 
+
+
+                      } else {
+                        bot.sendMessage(chatId, "Sorry! Transaction failed, please try again soon!");
+                      }
                     });
-
-                  });
+                  } else {
+                    console.log(error);
+                  }
                 });
+                /*
+                                      } else {
+                                          bot.sendMessage(chatId, "Sorry! The address " + recipientAddress + " has already been funded. You have hit the rate limit.");
+                                      }
+
+                                      });
+
+                                    });
+
+                                  });
+                                });
+                */
               } else {
                 bot.sendMessage(chatId, "Address has already been funded!");
               }
