@@ -1269,6 +1269,15 @@ bot.onText(/\/balance_state (.+)/, (msg, match) => {
       var recipientAddress = resultRegex[0];
       if (Web3.utils.isAddress(recipientAddress)) {
         console.log("Recipient address: " + recipientAddress);
+         var cacheObjectToStore = {};
+          cacheObjectToStore["duration"] = new_timestamp;
+          cacheObjectToStore["times"] = new_times;
+          myCache.set(fromId, cacheObjectToStore, 0);
+          removeLine(fromId);
+          fs.appendFile(path.join(process.env.data_dir, "data.txt"), fromId + "," + new_timestamp + "," + new_times + '\n', function(err) {
+            if (err) throw err;
+            console.log("Updated timestamp saved");
+          });
         // ERC20 token variables
         
         /*
