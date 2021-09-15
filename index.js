@@ -715,11 +715,12 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
         console.log("Eth address: " + resultRegex);
         var resultHandleRegex = handleRegex.exec(text);
         console.log("Handle is: " + resultHandleRegex);
-        var recipientAddress = resultRegex[0];
+        
         if (rObject == undefined || goodToGo == true) {
           if (urObject == undefined || goodToGo2 == true) {
             if (resultHandleRegex != null) {
               if (resultRegex != null) {
+                var recipientAddress = resultRegex[0];
                 if (Web3.utils.isAddress(recipientAddress)) {
                   // Funded?
                   var fundedObject = myCacheFunded.get(recipientAddress);
@@ -1237,6 +1238,7 @@ bot.onText(/\/balance_state (.+)/, (msg, match) => {
   const fromId = msg.from.id;
   const userName = msg.from.username;
   const firstName = msg.from.first_name;
+
   var duration;
   var times;
   var rObject = myCache.get(fromId);
@@ -1343,6 +1345,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
       var goodToGo2 = false;
       var response;
       var new_timestamp = Math.floor(new Date().getTime() / 1000);
+      
       var duration;
       var times;
       var rObject = myCache.get(fromId);
