@@ -592,6 +592,20 @@ async function uRemoveLine(_handle) {
   console.log("Done: " + done);
 }
 
+// This is a new function which accesses the success2.txt file which stores shorter term drips of network tokens (i.e. daily dispense)
+async function uRemoveLine2(_handle) {
+  console.log("Removing line ...");
+  var data = await fs.readFileSync(path.join(process.env.data_dir, "success2.txt"), 'utf-8');
+  console.log("Data: " + data);
+  var reg = new RegExp('^' + _handle + '.*\n', 'gm');
+  console.log("Reg: " + reg);
+  //console.log(reg);
+  var newValue = data.replace(reg, '');
+  console.log("New value: " + newValue);
+  var done = await fs.writeFileSync(path.join(process.env.data_dir, "success2.txt"), newValue, 'utf-8');
+  console.log("Done: " + done);
+}
+
 
 
 app.post('/api/twitter/:tweet_id', function(req, res) {
@@ -1115,7 +1129,27 @@ user_readInterface.on('line', function(line) {
   a_user_myCache.set(split_data[0], cacheObject, 0);
 });
 
-// TEMP Funded Cache to fasttrack getlogs
+// SUCCESS2.TXT 
+const a_user_myCache2 = new NodeCache();
+
+// START Load data from data file
+const user_readInterface2 = readline.createInterface({
+  input: fs.createReadStream(path.join(process.env.data_dir, 'success2.txt')),
+  output: false,
+  console: false
+});
+
+console.log("Loading data into cache");
+user_readInterface2.on('line', function(line) {
+  var split_data = line.split(",");
+  console.log("Loading " + split_data[0] + "," + split_data[1] + "," + split_data[2]);
+  var cacheObject = {};
+  cacheObject["duration"] = split_data[1];
+  cacheObject["times"] = split_data[2];
+  a_user_myCache2.set(split_data[0], cacheObject, 0);
+});
+
+// Funded Cache to fasttrack getlogs
 const myCacheFunded = new NodeCache();
 
 const funded_readInterface = readline.createInterface({
@@ -1331,6 +1365,8 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
       var rate_limit_duration = process.env.rate_limit_duration;
       var aUsersAccountRateLimit = process.env.a_users_account_rate_limit;
       var aUsersAccountRateDuration = process.env.a_users_account_rate_duration;
+      var aUsersAccountRateLimit2 = process.env.a_users_account_rate_limit_2;
+      var aUsersAccountRateDuration2 = process.env.a_users_account_rate_duration_2;
       var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url;
       var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url;
       var faucetPublicKey = process.env.faucet_public_key;
@@ -1343,6 +1379,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
       var ethRegex = /0x[a-fA-F0-9]{40}/;
       var goodToGo = false;
       var goodToGo2 = false;
+      var goodToGo_nt = false;
       var response;
       var new_timestamp = Math.floor(new Date().getTime() / 1000);
       
@@ -1396,6 +1433,28 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
       if (new_times_2 <= parseInt(aUsersAccountRateLimit)) {
         goodToGo2 = true;
       }
+
+      // Rate limit network token per social media account
+      var duration_nt;
+      var times_nt;
+      var urObject_nt = a_user_myCache2.get(fromId);
+      if (urObject_nt == undefined) {
+        duration_nt = new_timestamp;
+        times_nt = 0;
+      } else {
+        duration_nt = parseInt(urObject_nt.duration);
+        times_nt = parseInt(urObject_nt.times);
+      }
+      if ((new_timestamp - duration_nt) > (parseInt(aUsersAccountRateDuration2) * 60)) {
+        times_nt = 0;
+      }
+      new_times_nt = times_nt + 1;
+      console.log("Checking new times: " + new_times_nt + " vs limit of " + aUsersAccountRateLimit2);
+      console.log("*** Good to go: " + goodToGo_nt);
+      if (new_times_nt <= parseInt(aUsersAccountRateLimit2)) {
+        goodToGo_nt = true;
+      }
+
       console.log("Text: " + text);
       var resultRegex = ethRegex.exec(text);
       console.log("Eth address: " + resultRegex);
@@ -1471,7 +1530,31 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
             bot.sendMessage(chatId, "Address is not valid!");
           }
         } else {
-          bot.sendMessage(chatId, "Sorry, rate limit, this user can only have " + aUsersAccountRateLimit + " token, every " + aUsersAccountRateDuration + " minute[s].");
+          if (urObject_nt == undefined || goodToGo_nt == true) {
+            if (resultRegex != null) {
+              var recipientAddress = resultRegex[0];
+              if (Web3.utils.isAddress(recipientAddress)) {
+                console.log("Recipient address: " + recipientAddress);
+                var cacheObjectToStore_nt = {};
+                cacheObjectToStore_nt["duration"] = new_timestamp;
+                cacheObjectToStore_nt["times"] = new_times_nt;
+                a_user_myCache2.set(fromId, cacheObjectToStore_nt, 0);
+                uRemoveLine2(fromId);
+                fs.appendFile(path.join(process.env.data_dir, "success2.txt"), fromId + "," + new_timestamp + "," + new_times_nt + '\n', function(err1) {
+                  if (err1) throw err1;
+                  console.log("Updated timestamp saved");
+                });
+                sendNetworkToken(recipientAddress);
+                bot.sendMessage(chatId, "This user already received ERC20. However, we still sent STATE network token, please use the /balance_state command to check your updated balance!");
+              } else {
+                bot.sendMessage(chatId, "Address is not valid!");
+              }
+            } else {
+              bot.sendMessage(chatId, "Address is not valid!");
+            }
+          } else {
+          bot.sendMessage(chatId, "Rate limit! This user has already received both ERC20 and network tokens");
+        }
         }
 
       } else {

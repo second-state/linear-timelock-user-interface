@@ -58,10 +58,14 @@ blockchain_chain_id=123
 user_rate_limit=5
 # The duration period in minutes i.e. 1440 is 24 hours
 rate_limit_duration=5
-# How many times a user's account i.e. Twitter or Telegram can use this server per duration period
+# How many times a user's account i.e. Twitter or Telegram can get ERC20 tokens (and one network token by default)
 a_users_account_rate_limit=1
-# The duration period in minutes i.e. 1440 is 24 hours
+# The duration period in minutes for ERC20 drip i.e. 1440 is 24 hours
 a_users_account_rate_duration=525600
+# How many times a user's account i.e. Twitter or Telegram can get a network token (because the prior config is for ERC20 tokens)
+a_users_account_rate_limit_2=1
+# The duration period in minutes for network token drip i.e. 1440 is 24 hours
+a_users_account_rate_duration_2=1440
 # The amount of wei to be sent per airdrop i.e. 1000000000000000000 (to send 1 ETH)
 token_amount_in_wei=1000000000000000000
 # ERC20 token amount - IMPORTANT, please check decimal places of deployed contract i.e. standard is 18 decimal places
@@ -117,8 +121,13 @@ sudo chown -R $USER:$USER /Users/tpmccallum/universal-faucet-data
 ```bash
 touch /Users/tpmccallum/universal-faucet-data/data.txt
 touch /Users/tpmccallum/universal-faucet-data/success.txt
+touch /Users/tpmccallum/universal-faucet-data/success2.txt
 touch /Users/tpmccallum/universal-faucet-data/funded.txt
 ```
+The `data.txt` file stores web usage (page loads/page refresh etc.) on a per social media account basis. Generally 5 requests per 5 minutes, then rate limit.
+The `success.txt` file stores successfuly ERC20 transfers on a per social media account basis. For ParaState this is one ERC20 token per social media account, then rate limit.
+The `success2.txt` file stores successfuly network token transfers on a per social media account basis. For ParaState this is one network token per social media account per day (1 network token every 24 hours), then rate limit. This allows users to come back and get network tokens each day.
+The `funded.txt` file stores successfuly ERC20 transfers on a blockchain account address basis. For ParaState this is one ERC20 token per external account address, then rate limit.
 
 ### Install node dependencies automatically
 
