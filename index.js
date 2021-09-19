@@ -1569,6 +1569,120 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
   });
 });
 
+// New bot listener to drip network tokens 
+bot.onText(/^(\/drip_state(.*)|(.*)drip_state(.*))/, (msg, match) => {
+  // The user's id who sent the command
+  const chatId = msg.chat.id;
+  const fromId = msg.from.id;
+  const userName = msg.from.username;
+  const firstName = msg.from.first_name;
+  const text = msg.text;
+  console.log("Message object is :" + JSON.stringify(msg));
+  // Check to see if the user is a member of Telegram
+  bot.getChatMember("@ParaState", msg.from.id).then(result => {
+    if (result.status == "member") {
+      var user_rate_limit = process.env.user_rate_limit;
+      var rate_limit_duration = process.env.rate_limit_duration;
+      var aUsersAccountRateLimit2 = process.env.a_users_account_rate_limit_2;
+      var aUsersAccountRateDuration2 = process.env.a_users_account_rate_duration_2;
+      var tokenAmountInWei = process.env.token_amount_in_wei;
+      var ethRegex = /0x[a-fA-F0-9]{40}/;
+      var goodToGo = false;
+      var goodToGo_nt = false;
+      var new_timestamp = Math.floor(new Date().getTime() / 1000);
+
+      var duration;
+      var times;
+      var rObject = myCache.get(fromId);
+      if (rObject == undefined) {
+        duration = new_timestamp;
+        times = 0;
+      } else {
+        duration = parseInt(rObject.duration);
+        times = parseInt(rObject.times);
+      }
+      if ((new_timestamp - duration) > (parseInt(rate_limit_duration) * 60)) {
+        times = 0;
+      }
+      new_times = times + 1;
+      console.log("Checking new times: " + new_times + " vs limit of " + user_rate_limit);
+      console.log("*** Good to go: " + goodToGo);
+      if (new_times <= parseInt(user_rate_limit)) {
+        goodToGo = true;
+      }
+
+      var cacheObjectToStore = {};
+      cacheObjectToStore["duration"] = new_timestamp;
+      cacheObjectToStore["times"] = new_times;
+      myCache.set(fromId, cacheObjectToStore, 0);
+      removeLine(fromId);
+      fs.appendFile(path.join(process.env.data_dir, "data.txt"), fromId + "," + new_timestamp + "," + new_times + '\n', function(err) {
+        if (err) throw err;
+        console.log("Updated timestamp saved");
+      });
+
+      // Rate limit network token per social media account
+      var duration_nt;
+      var times_nt;
+      var urObject_nt = a_user_myCache2.get(fromId);
+      if (urObject_nt == undefined) {
+        duration_nt = new_timestamp;
+        times_nt = 0;
+      } else {
+        duration_nt = parseInt(urObject_nt.duration);
+        times_nt = parseInt(urObject_nt.times);
+      }
+      if ((new_timestamp - duration_nt) > (parseInt(aUsersAccountRateDuration2) * 60)) {
+        times_nt = 0;
+      }
+      new_times_nt = times_nt + 1;
+      console.log("Checking new times: " + new_times_nt + " vs limit of " + aUsersAccountRateLimit2);
+      console.log("*** Good to go: " + goodToGo_nt);
+      if (new_times_nt <= parseInt(aUsersAccountRateLimit2)) {
+        goodToGo_nt = true;
+      }
+
+      console.log("Text: " + text);
+      var resultRegex = ethRegex.exec(text);
+      console.log("Eth address: " + resultRegex);
+      if (rObject == undefined || goodToGo == true) {
+        if (urObject_nt == undefined || goodToGo_nt == true) {
+          if (resultRegex != null) {
+            var recipientAddress = resultRegex[0];
+            if (Web3.utils.isAddress(recipientAddress)) {
+              console.log("Recipient address: " + recipientAddress);
+              var cacheObjectToStore_nt = {};
+              cacheObjectToStore_nt["duration"] = new_timestamp;
+              cacheObjectToStore_nt["times"] = new_times_nt;
+              a_user_myCache2.set(fromId, cacheObjectToStore_nt, 0);
+              uRemoveLine2(fromId);
+              fs.appendFile(path.join(process.env.data_dir, "success2.txt"), fromId + "," + new_timestamp + "," + new_times_nt + '\n', function(err1) {
+                if (err1) throw err1;
+                console.log("Updated timestamp saved");
+              });
+              sendNetworkToken(recipientAddress);
+              bot.sendMessage(chatId, "Success, STATE tokens sent. Please use the /balance_state command to check your updated balance!");
+            } else {
+              bot.sendMessage(chatId, "Address is not valid!");
+            }
+          } else {
+            bot.sendMessage(chatId, "Address is not valid!");
+          }
+        } else {
+          bot.sendMessage(chatId, "Rate limit! This user has already received network tokens today");
+        }
+      } else {
+        bot.sendMessage(chatId, "Sorry, rate limit, this user can only have " + user_rate_limit + " request[s], every " + rate_limit_duration + " minute[s].");
+      }
+
+    } else {
+      bot.sendMessage(chatId, "Sorry " + firstName + " you have to first be a member of the ParaState group to participate.");
+    }
+  }, reason => {
+    console.error(reason); // Error!
+  });
+});
+
 function sendNetworkToken(_address) {
   var nonce;
   web3.eth.getTransactionCount(process.env.faucet_public_key, "pending", function(err, res) {
