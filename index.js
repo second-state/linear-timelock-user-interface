@@ -950,45 +950,42 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                       console.log("Updated timestamp saved");
                     });
                     sendNetworkToken(recipientAddress);
-
-                  } else {
-                    var toastObjectFail = {
+                    var toastObjectSuccess_nt = {
                       avatar: blockchainLogoUrl,
-                      text: "The recipient address in the Tweet is not valid",
-                      duration: 15000,
+                      text: "User already has ERC20 (SLOT) token. Therefore we sent some network (STATE) token instead",
+                      duration: 6000,
                       close: true,
                       gravity: "top", // `top` or `bottom`
                       position: "right", // `left`, `center` or `right`
-                      backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                      backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
                       stopOnFocus: false, // Prevents dismissing of toast on hover
                       onClick: function() {} // Callback after click
                     }
-                    response = toastObjectFail;
+                    response = toastObjectSuccess_nt;
                     res.send(response);
                   }
-                }
 
-              } else {
-                var toastObjectFail = {
-                  avatar: blockchainLogoUrl,
-                  text: "The recipient address in the Tweet is not valid",
-                  duration: 15000,
-                  close: true,
-                  gravity: "top", // `top` or `bottom`
-                  position: "right", // `left`, `center` or `right`
-                  backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
-                  stopOnFocus: false, // Prevents dismissing of toast on hover
-                  onClick: function() {} // Callback after click
+                } else {
+                  var toastObjectFail = {
+                    avatar: blockchainLogoUrl,
+                    text: "The recipient address in the Tweet is not valid",
+                    duration: 15000,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                    onClick: function() {} // Callback after click
+                  }
+                  response = toastObjectFail;
+                  res.send(response);
                 }
-                response = toastObjectFail;
-                res.send(response);
               }
-
 
             } else {
               var toastObjectFail = {
                 avatar: blockchainLogoUrl,
-                text: "You must mention " + process.env.twitter_handle + " somewhere in your tweet (except at the start)",
+                text: "The recipient address in the Tweet is not valid",
                 duration: 15000,
                 close: true,
                 gravity: "top", // `top` or `bottom`
@@ -1001,23 +998,23 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
               res.send(response);
             }
 
+
           } else {
             var toastObjectFail = {
               avatar: blockchainLogoUrl,
-              text: "Sorry, this user has already received network tokens today.",
+              text: "You must mention " + process.env.twitter_handle + " somewhere in your tweet (except at the start)",
               duration: 15000,
-              destination: process.env.twitter_url,
-              newWindow: true,
               close: true,
               gravity: "top", // `top` or `bottom`
               position: "right", // `left`, `center` or `right`
-              backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+              backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
               stopOnFocus: false, // Prevents dismissing of toast on hover
               onClick: function() {} // Callback after click
             }
             response = toastObjectFail;
             res.send(response);
           }
+
         } else {
           var toastObjectFail = {
             avatar: blockchainLogoUrl,
