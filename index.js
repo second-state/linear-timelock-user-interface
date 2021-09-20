@@ -606,8 +606,6 @@ async function uRemoveLine2(_handle) {
   console.log("Done: " + done);
 }
 
-
-
 app.post('/api/twitter/:tweet_id', function(req, res) {
   var user_rate_limit = process.env.user_rate_limit;
   var rate_limit_duration = process.env.rate_limit_duration;
@@ -963,6 +961,20 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                     }
                     response = toastObjectSuccess_nt;
                     res.send(response);
+                  } else {
+                    var toastObjectFail = {
+                      avatar: blockchainLogoUrl,
+                      text: "The recipient address in the Tweet is not valid",
+                      duration: 15000,
+                      close: true,
+                      gravity: "top", // `top` or `bottom`
+                      position: "right", // `left`, `center` or `right`
+                      backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                      stopOnFocus: false, // Prevents dismissing of toast on hover
+                      onClick: function() {} // Callback after click
+                    }
+                    response = toastObjectFail;
+                    res.send(response);
                   }
 
                 } else {
@@ -980,12 +992,26 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                   response = toastObjectFail;
                   res.send(response);
                 }
-              }
 
+              } else {
+                var toastObjectFail = {
+                  avatar: blockchainLogoUrl,
+                  text: "You must mention " + process.env.twitter_handle + " somewhere in your tweet (except at the start)",
+                  duration: 15000,
+                  close: true,
+                  gravity: "top", // `top` or `bottom`
+                  position: "right", // `left`, `center` or `right`
+                  backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                  stopOnFocus: false, // Prevents dismissing of toast on hover
+                  onClick: function() {} // Callback after click
+                }
+                response = toastObjectFail;
+                res.send(response);
+              }
             } else {
               var toastObjectFail = {
                 avatar: blockchainLogoUrl,
-                text: "The recipient address in the Tweet is not valid",
+                text: "Rate limit: This user has already received network tokens today.",
                 duration: 15000,
                 close: true,
                 gravity: "top", // `top` or `bottom`
@@ -997,29 +1023,12 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
               response = toastObjectFail;
               res.send(response);
             }
-
-
-          } else {
-            var toastObjectFail = {
-              avatar: blockchainLogoUrl,
-              text: "You must mention " + process.env.twitter_handle + " somewhere in your tweet (except at the start)",
-              duration: 15000,
-              close: true,
-              gravity: "top", // `top` or `bottom`
-              position: "right", // `left`, `center` or `right`
-              backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
-              stopOnFocus: false, // Prevents dismissing of toast on hover
-              onClick: function() {} // Callback after click
-            }
-            response = toastObjectFail;
-            res.send(response);
           }
-
         } else {
           var toastObjectFail = {
             avatar: blockchainLogoUrl,
-            text: "Sorry, rate limit!",
-            duration: 6000,
+            text: "Rate limit!",
+            duration: 15000,
             close: true,
             gravity: "top", // `top` or `bottom`
             position: "right", // `left`, `center` or `right`
@@ -1030,7 +1039,6 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
           response = toastObjectFail;
           res.send(response);
         }
-
       }
     });
   }
