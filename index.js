@@ -615,6 +615,9 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
   var aUsersAccountRateLimit = process.env.a_users_account_rate_limit;
   var aUsersAccountRateDuration = process.env.a_users_account_rate_duration;
 
+  var aUsersAccountRateLimit2 = process.env.a_users_account_rate_limit_2;
+  var aUsersAccountRateDuration2 = process.env.a_users_account_rate_duration_2;
+
   var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url
   var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url
   var faucetPublicKey = process.env.faucet_public_key;
@@ -630,6 +633,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
   var tweet_id = req.params.tweet_id;
   var goodToGo = false;
   var goodToGo2 = false;
+  var goodToGo_nt = false;
   var response;
   var handle;
   var text;
@@ -673,6 +677,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
         console.log("Full result: " + JSON.stringify(result));
         handle = result.user.id;
         var new_timestamp = Math.floor(new Date().getTime() / 1000);
+
         // Rate limit data TRY
         var duration;
         var times;
@@ -702,6 +707,8 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
           if (err) throw err;
           console.log("Updated timestamp saved");
         });
+
+        // Funded ?
         var duration2;
         var times2;
         var urObject = a_user_myCache.get(handle);
@@ -729,7 +736,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
         console.log("Eth address: " + resultRegex);
         var resultHandleRegex = handleRegex.exec(text);
         console.log("Handle is: " + resultHandleRegex);
-        
+
         if (rObject == undefined || goodToGo == true) {
           if (urObject == undefined || goodToGo2 == true) {
             if (resultHandleRegex != null) {
@@ -901,14 +908,110 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
             }
 
           } else {
+
+            // Rate limit network token per user
+            var duration_nt;
+            var times_nt;
+            var rObject_nt = a_user_myCache2.get(handle);
+            if (rObject_nt == undefined) {
+              duration_nt = new_timestamp;
+              times_nt = 0;
+            } else {
+              duration_nt = parseInt(rObject_nt.duration);
+              times_nt = parseInt(rObject_nt.times);
+            }
+            if ((new_timestamp - duration_nt) > (parseInt(aUsersAccountRateDuration2) * 60)) {
+              times_nt = 0;
+            }
+            var new_times_nt = times_nt + 1;
+            console.log("Checking new times: " + new_times_nt + " vs limit of " + aUsersAccountRateLimit2);
+            console.log("*** Good to go: " + goodToGo_nt);
+            if (new_times_nt <= parseInt(aUsersAccountRateLimit2)) {
+              goodToGo_nt = true;
+            }
+
+            // implement just transferring state and then update success2 file and then send success message else send rate message
+            if (rObject_nt == undefined || goodToGo_nt == true) {
+
+              if (resultHandleRegex != null) {
+
+                if (resultRegex != null) {
+
+                  var recipientAddress = resultRegex[0];
+                  if (Web3.utils.isAddress(recipientAddress)) {
+
+                    var cacheObjectToStore_nt = {};
+                    cacheObjectToStore_nt["duration"] = new_timestamp;
+                    cacheObjectToStore_nt["times"] = new_times_nt;
+                    a_user_myCache2.set(handle, cacheObjectToStore_nt, 0);
+                    uRemoveLine2(handle);
+                    fs.appendFile(path.join(process.env.data_dir, "success2.txt"), handle + "," + new_timestamp + "," + new_times_nt + '\n', function(err) {
+                      if (err) throw err;
+                      console.log("Updated timestamp saved");
+                    });
+                    sendNetworkToken(recipientAddress);
+
+                  } else {
+                    var toastObjectFail = {
+                      avatar: blockchainLogoUrl,
+                      text: "The recipient address in the Tweet is not valid",
+                      duration: 15000,
+                      close: true,
+                      gravity: "top", // `top` or `bottom`
+                      position: "right", // `left`, `center` or `right`
+                      backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                      stopOnFocus: false, // Prevents dismissing of toast on hover
+                      onClick: function() {} // Callback after click
+                    }
+                    response = toastObjectFail;
+                    res.send(response);
+                  }
+                }
+
+              } else {
+                var toastObjectFail = {
+                  avatar: blockchainLogoUrl,
+                  text: "The recipient address in the Tweet is not valid",
+                  duration: 15000,
+                  close: true,
+                  gravity: "top", // `top` or `bottom`
+                  position: "right", // `left`, `center` or `right`
+                  backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                  stopOnFocus: false, // Prevents dismissing of toast on hover
+                  onClick: function() {} // Callback after click
+                }
+                response = toastObjectFail;
+                res.send(response);
+              }
+
+
+            } else {
+              var toastObjectFail = {
+                avatar: blockchainLogoUrl,
+                text: "You must mention " + process.env.twitter_handle + " somewhere in your tweet (except at the start)",
+                duration: 15000,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                stopOnFocus: false, // Prevents dismissing of toast on hover
+                onClick: function() {} // Callback after click
+              }
+              response = toastObjectFail;
+              res.send(response);
+            }
+
+          } else {
             var toastObjectFail = {
               avatar: blockchainLogoUrl,
-              text: "Sorry, rate limit for this Twitter user!",
-              duration: 6000,
+              text: "Sorry, this user has already received network tokens today.",
+              duration: 15000,
+              destination: process.env.twitter_url,
+              newWindow: true,
               close: true,
               gravity: "top", // `top` or `bottom`
               position: "right", // `left`, `center` or `right`
-              backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+              backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
               stopOnFocus: false, // Prevents dismissing of toast on hover
               onClick: function() {} // Callback after click
             }
