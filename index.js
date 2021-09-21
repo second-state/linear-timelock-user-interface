@@ -810,10 +810,8 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                             if (!error) {
                               var toastObjectSuccess = {
                                 avatar: blockchainLogoUrl,
-                                text: "Click to see Tx",
+                                text: "Success!",
                                 duration: 6000,
-                                destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-                                newWindow: true,
                                 close: true,
                                 gravity: "top", // `top` or `bottom`
                                 position: "right", // `left`, `center` or `right`
@@ -846,8 +844,6 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
                                 avatar: blockchainLogoUrl,
                                 text: "Transaction failed!",
                                 duration: 6000,
-                                destination: blockchainBlockExplorerTransactionUrl + signed_tx.transactionHash,
-                                newWindow: true,
                                 close: true,
                                 gravity: "top", // `top` or `bottom`
                                 position: "right", // `left`, `center` or `right`
