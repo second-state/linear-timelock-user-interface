@@ -1338,7 +1338,7 @@ console.log("Config set");
 */
 // A bot command that gives the balance of an external address
 
-bot.onText(/\/balance_slot (.+)/, (msg, match) => {
+bot.onText(/\/balance_test (.+)/, (msg, match) => {
   var new_timestamp = Math.floor(new Date().getTime() / 1000);
   var goodToGo = false;
   var user_rate_limit = process.env.user_rate_limit;
@@ -1498,7 +1498,7 @@ bot.onText(/\/balance_state (.+)/, (msg, match) => {
 
 // Respond to any message with drip_slot in the text
 
-bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
+bot.onText(/^(\/drip_test(.*)|(.*)drip_test(.*))/, (msg, match) => {
   // The user's id who sent the command
   const chatId = msg.chat.id;
   const fromId = msg.from.id;
@@ -1656,7 +1656,7 @@ bot.onText(/^(\/drip_slot(.*)|(.*)drip_slot(.*))/, (msg, match) => {
                           console.log("Updated addresses saved");
                         });
                         sendNetworkToken(recipientAddress);
-                        bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nYou can check your " + process.env.erc20_name + " balance by typing /balance_slot followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.\nYou can check your network token (STATE) balance by typing /balance_state followed by your address!\n");
+                        bot.sendMessage(chatId, firstName + " (" + userName + ")\n We have sent " + process.env.erc20_name + " to your address.\n " + recipientAddress + "\n\nYou can check your " + process.env.erc20_name + " balance by typing /balance_test followed by your address!\n\nAlso, you can add the " + process.env.erc20_name + " contract address ( " + contract_address + " ) to your wallet software.\nYou can check your network token (STATE) balance by typing /balance_state followed by your address!\n");
 
                       } else {
                         bot.sendMessage(chatId, "Sorry! Unable to send signed transaction!");
