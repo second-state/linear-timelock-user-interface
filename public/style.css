@@ -144,7 +144,7 @@ text-align: center;
 
 .Message {
   background: white;
-  padding: 30px;
+  padding: 20px;
   border-bottom: var(--ui-shadow-border);
   box-shadow: var(--ui-shadow);
   border-radius: 5px;
@@ -169,24 +169,25 @@ text-align: center;
 }
 
 .clearButton {
-  display: center;
+  display: flex;
   justify-content: center;
   align-items: center;
 
-  height: 20px;
+  height: 30px;
   width: 60%;
 
   background: #99d6ff;
 
-  border-radius: 15px;
-  border-width:  0px;
+  border-radius: 30px;
 
-  font-size: 12px;
+  font-size: 15px;
   font-weight: bold;
   color: white;
 
-  -webkit-filter: drop-shadow(5px 5px 5px #);
-  filter: drop-shadow(5px 5px 5px #5a5a5a);
+  text-transform: capitalize;
+
+  border-bottom: var(--ui-shadow-border);
+  box-shadow: var(--ui-shadow);
 }
 
 .NavButton {
@@ -220,12 +221,9 @@ text-align: center;
     font-size: 12px!important;
   }
   h1 {
-    font-size: 30px!important;
-  }
-  h2 {
     font-size: 20px!important;
   }
-  h1 {
+  h2 {
     font-size: 15px!important;
   }
   .small {
@@ -233,5 +231,83 @@ text-align: center;
 }
   .small_image {
     width: 80px!important;
+  }
+  .clearButton {
+      font-size: 10px;
+      border-radius: 15px;
+      font-weight: normal;
+      width: 75%;
+      height: 20px;
+  }
+  .NavButton {
+      font-size: 10px;
+      border-radius: 15px;
+      font-weight: normal;
+      width: 75%;
+      height: 20px;
+  }
+}
+
+@media (max-width: 320px) {
+  body {
+    font-size: 10px!important;
+  }
+  h1 {
+    font-size: 12px!important;
+  }
+  h2 {
+    font-size: 8px!important;
+  }
+  .small {
+  font-size: 6px!important;
+}
+  .small_image {
+    width: 80px!important;
+  }
+  .clearButton {
+      font-size: 10px;
+      border-radius: 15px;
+      font-weight: normal;
+      width: 75%;
+      height: 20px;
+  }
+  .NavButton {
+      font-size: 8px;
+      border-radius: 15px;
+      font-weight: normal;
+      width: 85%;
+      height: 30px;
+  }
+}
+
+@media (max-width: 280px) {
+  body {
+    font-size: 10px!important;
+  }
+  h1 {
+    font-size: 20px!important;
+  }
+  h2 {
+    font-size: 15px!important;
+  }
+  .small {
+  font-size: 6px!important;
+}
+  .small_image {
+    width: 80px!important;
+  }
+  .clearButton {
+      font-size: 10px;
+      border-radius: 15px;
+      font-weight: normal;
+      width: 75%;
+      height: 20px;
+  }
+  .NavButton {
+      font-size: 8px;
+      border-radius: 15px;
+      font-weight: normal;
+      width: 85%;
+      height: 30px;
   }
 }
