@@ -14,11 +14,9 @@ block layout-content
           value="https://twitter.com/testing_one_/status/1431755736707526660"
       )
       br
+      button.clearButton.center(onclick="clearTwitterInput()", id="clear_input") Clear
       br
-      button.clearButton(onclick="clearTwitterInput()", id="clear_input") Clear
-      br 
       button.NavButton.center(id="button_send_tokens", onclick="onButtonClickTwitter($('#tweet_url').val())") Get ERC20 & STATE
-      br
       button.NavButton.center(id="button_send_state", onclick="onButtonClickTwitterState($('#tweet_url').val())") Get STATE
       br 
       .progress
