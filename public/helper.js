@@ -47,6 +47,8 @@ function onButtonClickTwitter(_tweet_url) {
     console.log("Disabling button");
     document.getElementById("button_send_tokens").disabled = true;
     document.getElementById("button_send_tokens").style.background = '#808080';
+    document.getElementById("button_send_state").disabled = true;
+    document.getElementById("button_send_state").style.background = '#808080';
     document.getElementById("pb").style.transition = "all 30s linear 0s";
     document.getElementById("pb").style.width = '80%';
     console.log("Tweet URL: " + _tweet_url);
@@ -95,6 +97,8 @@ function onButtonClickTwitter(_tweet_url) {
             Toastify(toastObject).showToast();
             document.getElementById("button_send_tokens").disabled = false;
             document.getElementById("button_send_tokens").style.background = '#00ab66';
+            document.getElementById("button_send_state").disabled = false;
+            document.getElementById("button_send_state").style.background = '#00ab66';
             document.getElementById("pb").style.width = '0%';
             resolve();
         };
@@ -109,6 +113,8 @@ function onButtonClickTwitterState(_tweet_url) {
     console.log("Disabling button");
     document.getElementById("button_send_tokens").disabled = true;
     document.getElementById("button_send_tokens").style.background = '#808080';
+    document.getElementById("button_send_state").disabled = true;
+    document.getElementById("button_send_state").style.background = '#808080';
     document.getElementById("pb").style.transition = "all 30s linear 0s";
     document.getElementById("pb").style.width = '80%';
     console.log("Tweet URL: " + _tweet_url);
@@ -125,11 +131,11 @@ function onButtonClickTwitterState(_tweet_url) {
         console.log("rr" + resultRegex);
         console.log("rr2" + resultRegex_id);
         if (resultRegex != null && resultRegex_id != null) {
-            //fullUrl = "http://localhost:8001/api/twitter/" + tweetId;
-            fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter_state/" + tweetId;
+            //fullUrl = "http://localhost:8001/api/twitterstate/" + tweetId;
+            fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitterstate/" + tweetId;
         } else {
-            //fullUrl = "http://localhost:8001/api/twitter/" + "incorrect";
-            fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitter_state/" + "incorrect";
+            //fullUrl = "http://localhost:8001/api/twitterstate/" + "incorrect";
+            fullUrl = "https://testnet.faucet.parastate.io:8001/api/twitterstate/" + "incorrect";
         }
         console.log("Full URL: " + fullUrl);
         var xhr = new XMLHttpRequest();
@@ -157,6 +163,8 @@ function onButtonClickTwitterState(_tweet_url) {
             Toastify(toastObject).showToast();
             document.getElementById("button_send_tokens").disabled = false;
             document.getElementById("button_send_tokens").style.background = '#00ab66';
+            document.getElementById("button_send_state").disabled = false;
+            document.getElementById("button_send_state").style.background = '#00ab66';
             document.getElementById("pb").style.width = '0%';
             resolve();
         };
