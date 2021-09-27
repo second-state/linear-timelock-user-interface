@@ -647,7 +647,6 @@ async function uRemoveLine2(_handle) {
 }
 
 // STATE only start
-app.post('/api/twitter/:tweet_id', function(req, res) {
 app.post('/api/twitterstate/:tweet_id', function(req, res) {
   var user_rate_limit = process.env.user_rate_limit;
   var rate_limit_duration = process.env.rate_limit_duration;
