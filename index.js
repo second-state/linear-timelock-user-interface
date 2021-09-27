@@ -1117,31 +1117,35 @@ const getFollowers = async () => {
       "authorization": `Bearer ${twitter_token}`
     }
   }
-
-  let hasNextPage = true;
-  let nextToken = null;
-  console.log("Retrieving followers...");
-  while (hasNextPage) {
-    let resp = await getPage(params, options);
-    //console.log("*** Response body: " + JSON.stringify(resp));
-    if (resp.next_cursor > 0) {
-      for (var iter = 0; iter < resp.ids.length; iter++) {
-        var temp = new BigNumber(resp.ids[iter]);
-        users.push(temp.toString());
+  try {
+    let hasNextPage = true;
+    let nextToken = null;
+    console.log("Retrieving followers...");
+    while (hasNextPage) {
+      let resp = await getPage(params, options);
+      //console.log("*** Response body: " + JSON.stringify(resp));
+      if (resp.next_cursor > 0) {
+        for (var iter = 0; iter < resp.ids.length; iter++) {
+          var temp = new BigNumber(resp.ids[iter]);
+          users.push(temp.toString());
+        }
+        params.cursor = resp.next_cursor;
+      } else {
+        for (var iter = 0; iter < resp.ids.length; iter++) {
+          var temp = new BigNumber(resp.ids[iter]);
+          users.push(temp.toString());
+        }
+        hasNextPage = false;
       }
-      params.cursor = resp.next_cursor;
-    } else {
-      for (var iter = 0; iter < resp.ids.length; iter++) {
-        var temp = new BigNumber(resp.ids[iter]);
-        users.push(temp.toString());
-      }
-      hasNextPage = false;
     }
+    //console.log(users);
+    //console.log(`Got ${users.length} users.`);
+    console.log("Number of followers is: " + users.length);
+    return users;
+  } catch {
+    console.log("Unable to access Twitter API inside the getFollowers function of index.js");
+    return users;
   }
-  //console.log(users);
-  //console.log(`Got ${users.length} users.`);
-  console.log("Number of followers is: " + users.length);
-  return users;
 }
 
 const getPage = async (params, options) => {
