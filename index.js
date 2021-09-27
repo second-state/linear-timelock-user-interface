@@ -646,6 +646,233 @@ async function uRemoveLine2(_handle) {
   console.log("Done: " + done);
 }
 
+// STATE only start
+
+app.post('/api/twitter_state/:tweet_id', function(req, res) {
+  var user_rate_limit = process.env.user_rate_limit;
+  var rate_limit_duration = process.env.rate_limit_duration;
+
+  var aUsersAccountRateLimit = process.env.a_users_account_rate_limit;
+  var aUsersAccountRateDuration = process.env.a_users_account_rate_duration;
+
+  var aUsersAccountRateLimit2 = process.env.a_users_account_rate_limit_2;
+  var aUsersAccountRateDuration2 = process.env.a_users_account_rate_duration_2;
+
+  var blockchainBlockExplorerAddressUrl = process.env.blockchain_block_explorer_address_url
+  var blockchainBlockExplorerTransactionUrl = process.env.blockchain_block_explorer_transaction_url
+  var faucetPublicKey = process.env.faucet_public_key;
+  var faucetPrivateKey = process.env.faucet_private_key;
+  var blockchainChainId = process.env.blockchain_chain_id;
+  var gasPrice = process.env.gas_price;
+  var gasLimit = process.env.gas_limit;
+  var tokenAmountInWei = process.env.token_amount_in_wei;
+  var erc20TokenAmountInWei = process.env.erc20_token_amount_in_wei;
+  var blockchainLogoUrl = process.env.blockchain_logo_url;
+  var ethRegex = /0x[a-fA-F0-9]{40}/
+  var handleRegex = /(?<!^)@_parastate/
+  var tweet_id = req.params.tweet_id;
+  var goodToGo = false;
+  var goodToGo2 = false;
+  var goodToGo_nt = false;
+  var response;
+  var handle;
+  var text;
+  if (tweet_id.match(/incorrect/g)) {
+    console.log("tweet id is broken");
+    var toastObjectFail = {
+      avatar: blockchainLogoUrl,
+      text: "Invalid Tweet URL, click here for more information!",
+      duration: 15000,
+      destination: "https://help.twitter.com/en/using-twitter/tweet-and-moment-url",
+      newWindow: true,
+      close: true,
+      gravity: "top", // `top` or `bottom`
+      position: "right", // `left`, `center` or `right`
+      backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+      stopOnFocus: false, // Prevents dismissing of toast on hover
+      onClick: function() {} // Callback after click
+    }
+    response = toastObjectFail;
+    res.send(response);
+  } else {
+    getRequest(tweet_id).then(result => {
+      if (JSON.stringify(result).toLowerCase().includes("error")) {
+        console.log("tweet id is broken");
+        var toastObjectFail = {
+          avatar: blockchainLogoUrl,
+          text: "Invalid Tweet URL, click here for more information!",
+          duration: 15000,
+          destination: "https://help.twitter.com/en/using-twitter/tweet-and-moment-url",
+          newWindow: true,
+          close: true,
+          gravity: "top", // `top` or `bottom`
+          position: "right", // `left`, `center` or `right`
+          backgroundColor: "linear-gradient(to right, #330066, #9900CC)",
+          stopOnFocus: false, // Prevents dismissing of toast on hover
+          onClick: function() {} // Callback after click
+        }
+        response = toastObjectFail;
+        res.send(response);
+      } else {
+        console.log("Full result: " + JSON.stringify(result));
+        handle = result.user.id;
+        var new_timestamp = Math.floor(new Date().getTime() / 1000);
+
+        // Rate limit data TRY
+        var duration;
+        var times;
+        var rObject = myCache.get(handle);
+        if (rObject == undefined) {
+          duration = new_timestamp;
+          times = 0;
+        } else {
+          duration = parseInt(rObject.duration);
+          times = parseInt(rObject.times);
+        }
+        if ((new_timestamp - duration) > (parseInt(rate_limit_duration) * 60)) {
+          times = 0;
+        }
+        var new_times = times + 1;
+        console.log("Checking new times: " + new_times + " vs limit of " + user_rate_limit);
+        console.log("*** Good to go: " + goodToGo);
+        if (new_times <= parseInt(user_rate_limit)) {
+          goodToGo = true;
+        }
+        var cacheObjectToStore = {};
+        cacheObjectToStore["duration"] = new_timestamp;
+        cacheObjectToStore["times"] = new_times;
+        myCache.set(handle, cacheObjectToStore, 0);
+        removeLine(handle);
+        fs.appendFile(path.join(process.env.data_dir, "data.txt"), handle + "," + new_timestamp + "," + new_times + '\n', function(err) {
+          if (err) throw err;
+          console.log("Updated timestamp saved");
+        });
+
+        // Rate limit network token per user
+        var duration_nt;
+        var times_nt;
+        var rObject_nt = a_user_myCache2.get(handle);
+        if (rObject_nt == undefined) {
+          duration_nt = new_timestamp;
+          times_nt = 0;
+        } else {
+          duration_nt = parseInt(rObject_nt.duration);
+          times_nt = parseInt(rObject_nt.times);
+        }
+        if ((new_timestamp - duration_nt) > (parseInt(aUsersAccountRateDuration2) * 60)) {
+          times_nt = 0;
+        }
+        var new_times_nt = times_nt + 1;
+        console.log("Checking new times: " + new_times_nt + " vs limit of " + aUsersAccountRateLimit2);
+        console.log("*** Good to go: " + goodToGo_nt);
+        if (new_times_nt <= parseInt(aUsersAccountRateLimit2)) {
+          goodToGo_nt = true;
+        }
+
+        // implement just transferring state and then update success2 file and then send success message else send rate message
+        if (rObject_nt == undefined || goodToGo_nt == true) {
+
+          if (resultHandleRegex != null) {
+
+            if (resultRegex != null) {
+
+              var recipientAddress = resultRegex[0];
+              if (Web3.utils.isAddress(recipientAddress)) {
+
+                var cacheObjectToStore_nt = {};
+                cacheObjectToStore_nt["duration"] = new_timestamp;
+                cacheObjectToStore_nt["times"] = new_times_nt;
+                a_user_myCache2.set(handle, cacheObjectToStore_nt, 0);
+                uRemoveLine2(handle);
+                fs.appendFile(path.join(process.env.data_dir, "success2.txt"), handle + "," + new_timestamp + "," + new_times_nt + '\n', function(err) {
+                  if (err) throw err;
+                  console.log("Updated timestamp saved");
+                });
+                sendNetworkToken(recipientAddress);
+                var toastObjectSuccess_nt = {
+                  avatar: blockchainLogoUrl,
+                  text: "Network token sent, please check your account!",
+                  duration: 6000,
+                  close: true,
+                  gravity: "top", // `top` or `bottom`
+                  position: "right", // `left`, `center` or `right`
+                  backgroundColor: "linear-gradient(to right, #008000, #3CBC3C)",
+                  stopOnFocus: false, // Prevents dismissing of toast on hover
+                  onClick: function() {} // Callback after click
+                }
+                response = toastObjectSuccess_nt;
+                res.send(response);
+              } else {
+                var toastObjectFail = {
+                  avatar: blockchainLogoUrl,
+                  text: "The recipient address in the Tweet is not valid",
+                  duration: 15000,
+                  close: true,
+                  gravity: "top", // `top` or `bottom`
+                  position: "right", // `left`, `center` or `right`
+                  backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                  stopOnFocus: false, // Prevents dismissing of toast on hover
+                  onClick: function() {} // Callback after click
+                }
+                response = toastObjectFail;
+                res.send(response);
+              }
+
+            } else {
+              var toastObjectFail = {
+                avatar: blockchainLogoUrl,
+                text: "The recipient address in the Tweet is not valid",
+                duration: 15000,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+                stopOnFocus: false, // Prevents dismissing of toast on hover
+                onClick: function() {} // Callback after click
+              }
+              response = toastObjectFail;
+              res.send(response);
+            }
+
+          } else {
+            var toastObjectFail = {
+              avatar: blockchainLogoUrl,
+              text: "You must mention " + process.env.twitter_handle + " somewhere in your tweet (except at the start)",
+              duration: 15000,
+              close: true,
+              gravity: "top", // `top` or `bottom`
+              position: "right", // `left`, `center` or `right`
+              backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+              stopOnFocus: false, // Prevents dismissing of toast on hover
+              onClick: function() {} // Callback after click
+            }
+            response = toastObjectFail;
+            res.send(response);
+          }
+        } else {
+          var toastObjectFail = {
+            avatar: blockchainLogoUrl,
+            text: "Rate limit: This user has already received network tokens today.",
+            duration: 15000,
+            close: true,
+            gravity: "top", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            backgroundColor: "linear-gradient(to right, #FF0000, #800000)",
+            stopOnFocus: false, // Prevents dismissing of toast on hover
+            onClick: function() {} // Callback after click
+          }
+          response = toastObjectFail;
+          res.send(response);
+        }
+      }
+    });
+  }
+});
+
+// STATE only end
+
+// ERC20 and STATE start
+
 app.post('/api/twitter/:tweet_id', function(req, res) {
   var user_rate_limit = process.env.user_rate_limit;
   var rate_limit_duration = process.env.rate_limit_duration;
@@ -1080,7 +1307,7 @@ app.post('/api/twitter/:tweet_id', function(req, res) {
   }
 });
 
-// ******** TWITTER START ********
+// ERC20 and STATE end
 
 async function getRequest(_id) {
   const params = {

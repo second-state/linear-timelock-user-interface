@@ -17,8 +17,9 @@ block layout-content
       br
       button.clearButton(onclick="clearTwitterInput()", id="clear_input") Clear
       br 
-      div.NavButtons
-      button.NavButton.center(id="button_send_tokens", onclick="onButtonClickTwitter($('#tweet_url').val())") Submit
+      button.NavButton.center(id="button_send_tokens", onclick="onButtonClickTwitter($('#tweet_url').val())") Get ERC20 & STATE
+      br
+      button.NavButton.center(id="button_send_state", onclick="onButtonClickTwitterState($('#tweet_url').val())") Get STATE
       br 
       .progress
         #pb.progress-bar.progress-bar-striped.progress-bar-animated(role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 0%')
