@@ -767,6 +767,14 @@ app.post('/api/twitterstate/:tweet_id', function(req, res) {
         if (new_times_nt <= parseInt(aUsersAccountRateLimit2)) {
           goodToGo_nt = true;
         }
+        console.log("ID of handle: " + handle);
+        console.log("ID STRING of handle: " + handle.toString());
+        text = result.full_text;
+        console.log("Text: " + text);
+        var resultRegex = ethRegex.exec(text);
+        console.log("Eth address: " + resultRegex);
+        var resultHandleRegex = handleRegex.exec(text);
+        console.log("Handle is: " + resultHandleRegex);
 
         // implement just transferring state and then update success2 file and then send success message else send rate message
         if (rObject_nt == undefined || goodToGo_nt == true) {
