@@ -199,36 +199,80 @@ Once you have two sessions open, run the following command to create and verify 
 sudo certbot certonly --manual
 ```
 
-Example of apache2 work required whilst the above `certbot` command is running include ...
+Certbot will provide you with some text data and a URL, you must follow the prompts as roughly outlined below.
 
-```
-Create a file containing just this data:
+Create a file containing just the data provided to you (let's pretend the data was `asdfasdf`):
 
-asdfasdf
-
-And make it available on your web server at this URL:
+Then make that data available on your web server at the URL provided to you, let just pretend that this is the URL provided i.e. ending in `asdf`.
 
 http://testnet.faucet.parastate.io/.well-known/acme-challenge/asdf
 
 ```
-
-You then write the data provided by the `certbot` command to the file path provided by the `certbot` command.
+By now you have essentially written the data provided by the `certbot` command to the file path provided by the `certbot` command.
 
 ```bash
 sudo mkdir -p .well-known/acme-challenge
 vi asdf
 ```
 
-For example, enter the text `asdfasdf` and save `asdf` file and press enter to continue in the `certbot` terminal.
-
+For example, enter the text `asdfasdf` and save `asdf` file.
 
 You will also need to open port 80 so that `certbot` can see the data in that file.
+
+Then press enter to continue in the `certbot` terminal so that certbot can go ahead and get that acme-challenge (verification) finished.
 
 When the verification is finished you will need to update the ownership of the new certificates in the letsencrypt location (because they were written by root not your user). Simply do the following (to prevent an error like this `Error: EACCES: permission denied, open '/etc/letsencrypt` when starting the faucet)
 
 ```bash
 sudo chown $USER:$USER -R /etc/letsencrypt
 ```
+## Ensuring uptime
+
+Go ahead and create a file called `start_faucet.sh` in a specific location i.e. `/a_path_to/start_faucet.sh`. 
+
+Paste in the following script but ensure that your `universal-blockchain-faucet` path is correct and also that your `/home/tpmccallum/.npm-global/bin/forever` path is correct. Hint type `which forever` to see where it is installed on your machine.
+
+```bash
+#!/bin/bash
+cd /media/nvme/universal-blockchain-faucet
+/home/tpmccallum/.npm-global/bin/forever start index.js
+```
+
+You can then go ahead and create a file called `check_faucet.sh` and fill it with the following. Again, please check your paths because they will be different to these.
+
+```bash
+#!/bin/bash
+SS_FAUCET=$(ps -ax | grep -c "/media/nvme/universal-blockchain-faucet/index.js")
+if [ $SS_FAUCET -gt 1 ] 
+then
+    echo $(date)
+else
+    echo "Starting, please wait ..."
+    ( exec "/a_path_to/start_faucet.sh" )
+    echo "Success!"  
+fi
+```
+
+Now make both of these files executable.
+
+```bash
+sudo chmod a+x start_faucet.sh
+sudo chmod a+x check_faucet.sh
+```
+
+The last step is to add the automatic execution of these scripts to cron
+
+```bash
+crontab -e
+```
+
+Then insert the following lines (making sure that your paths are correct, because the following example is probably not correct for your system)
+
+```bash
+* * * * * /a_path_to/check_faucet.sh  > /a_path_to/faucet_log.txt 2>&1
+```
+
+If the faucet is not running it will start it. If the faucet is running it will just record the date to the file. It does not append; it overwrites. Essentially the `/a_path_to/faucet_log.txt` will have a single line in it at all times (showing the date of the last uptime).
 
 ## Offering redirects
 
