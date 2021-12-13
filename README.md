@@ -16,6 +16,7 @@ sudo apt install nodejs npm
 ### Fetch the code
 
 ```bash
+cd /media/nvme/
 git clone https://github.com/ParaState/timelock-token-user-interface.git
 ```
 
@@ -33,20 +34,19 @@ Create a new file called `.env` and add the following text (fill out your specif
 # A throw away practice key (never store large amounts in this address for obvious reasons)
 contract_private_key=
 contract_public_key=
-blockchain_rpc=https://rpc.parastate.io:8545
-blockchain_chain_id=123
+blockchain_rpc= "Enter Ethereum RPC endpoint here"
+blockchain_chain_id=1
 # How many times a user can use this server per duration period
 user_rate_limit=5
 # The duration period in minutes i.e. 1440 is 24 hours
 rate_limit_duration=5
 blockchain_logo_url=https://pbs.twimg.com/profile_images/1357246244540751873/zhVBBG5-_400x400.jpg
-blockchain_name=ParaState Testnet
-blockchain_description=ParaState Testnet
-blockchain_block_explorer_url=http://scan.parastate.io/
+
+blockchain_block_explorer_url=https://etherscan.io/
 # URL and path to address/account, include trailing slash i.e. https://explore.io/address/
-blockchain_block_explorer_address_url=http://scan.parastate.io/account/
+blockchain_block_explorer_address_url=https://etherscan.io/address/
 # URL and path to transaction/tx etc, including trailing slash i.e. https://explore.io/tx/
-blockchain_block_explorer_transaction_url=http://scan.parastate.io/tx/
+blockchain_block_explorer_transaction_url=https://etherscan.io/tx/
 # Override gas price
 gas_price=5000000000
 # Override gas limit
@@ -54,16 +54,15 @@ gas_limit=8000000
 # Flavour of client's web3 i.e. oeth (Oasis Ethereum), cmt (CyberMiles), eth (Ethereum), state (ParaState), dot (Polkadot)
 web3_flavour=eth
 server_name=localhost
-server_port=8001
+server_port=8002
 # Are you using HTTPS (letsencrypt)? yes/no
 https=yes
 host=0.0.0.0
 # data_dir=/home/azureuser/timelock-data
-data_dir=/Users/tpmccallum/timelock-data
-erc20_name=
-erc20_symbol=
-erc20_address=
-erc20_tx=
+data_dir=/media/nvme/timelock-data
+timelock_name=
+timelock_address=
+timelock_tx=
 ```
 
 ### Data directory
@@ -71,14 +70,14 @@ erc20_tx=
 Create a data directory which is the same as what you just set in the `.env` file
 
 ```bash
-sudo mkdir -p /Users/tpmccallum/timelock-data
-sudo chown -R $USER:$USER /Users/tpmccallum/timelock-data
+sudo mkdir -p /media/nvme/timelock-data
+sudo chown -R $USER:$USER /media/nvme/timelock-data
 ```
 
 ### Create the data files
 
 ```bash
-touch /Users/tpmccallum/timelock-data/data.txt
+touch /media/nvme/timelock-data/data.txt
 ```
 
 ### Install node dependencies automatically

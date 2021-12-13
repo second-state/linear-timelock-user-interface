@@ -3,23 +3,21 @@ block layout-content
   script(src = "jquery.min.js")
   script(src = "helper.js")
   .container.View.WelcomeView
-    h1.Banner #{blockchain_name} Faucet
+    h1.Banner ParaState Timelock
     div.Message.center
       div.Title
-      p Enter Tweet URL
+      p Enter Ethereum Address
       input(
-          id="tweet_url"
+          id="eth_address"
           type="text"
           class="full_width"
-          value="https://twitter.com/testing_one_/status/1431755736707526660"
+          value="0x..."
       )
       br
       br
-      button.clearButton.center(onclick="clearTwitterInput()", id="clear_input") Clear
+      button.clearButton.center(onclick="clearInput()", id="clear_input") Clear
       br
-      button.NavButton.center(id="button_send_tokens", onclick="onButtonClickTwitter($('#tweet_url').val())") Get ERC20 & STATE
-      br
-      button.NavButton.center(id="button_send_state", onclick="onButtonClickTwitterState($('#tweet_url').val())") Get STATE
+      button.NavButton.center(id="button_transfer_tokens", onclick="onButtonClickTransfer($('#eth_address').val())") Transfer Tokens
       br 
       .progress
         #pb.progress-bar.progress-bar-striped.progress-bar-animated(role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 0%')
