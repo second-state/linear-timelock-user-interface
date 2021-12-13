@@ -1,4 +1,4 @@
-# Timelock token User Interface (UI)
+# PRIVATE - Timelock token User Interface (UI)
 
 # What does it do?
 
