@@ -10,7 +10,11 @@ Users simply enter their Ethereum mainnet address and click the transfer button.
 
 ![Screen Shot 2021-12-14 at 9 28 02 am](https://user-images.githubusercontent.com/9831342/145905502-c8a33759-b73e-4b82-aab4-b28524883e11.png)
 
-# How to deploy
+# Where is the timelock smart contract
+
+The [timelock smart contract](https://github.com/ParaState/timelock-token-deployment/blob/main/Timelock.sol) is deployed on the Ethereum mainnet and then this UI source code us updated with the timelocks ABI, bytecode, contract address and deployment transaction hash. This timelock UI instantiates the timelock contract in order to interact and transfer tokens to end users and so forth.
+
+# How to deploy the UI
 
 **Ubuntu example**
 
@@ -34,10 +38,10 @@ cd timelock-token-user-interface
 
 ### Configure 
 
-Create a new file called `.env` and add the following text (fill out your specific config options)
+Create a new file called `.env` and add the following text (fill out your specific config options). Notice the requirements to enter details about where the [timelock smart contract](https://github.com/ParaState/timelock-token-deployment/blob/main/Timelock.sol) was deployed i.e. contract address and so forth.
 
 ```python
-# A throw away practice key (never store large amounts in this address for obvious reasons)
+# This private key is highly sensitive because it controls all functions that are onlyOwner i.e. can transfer all funds
 contract_private_key=
 contract_public_key=
 blockchain_rpc= "Enter Ethereum RPC endpoint here"
