@@ -4,6 +4,12 @@
 
 Interacts with the timelock token which allows users to transfer tokens after a certain timespan has elapsed.
 
+# How do end users interact with the timelock UI
+
+Users simply enter their Ethereum mainnet address and click the transfer button. If tokens have cleared the vesting period then tokens will be transferred. If tokens are still locked, the user will get a Toastify message explaining the timelock.
+
+![Screen Shot 2021-12-14 at 9 28 02 am](https://user-images.githubusercontent.com/9831342/145905502-c8a33759-b73e-4b82-aab4-b28524883e11.png)
+
 # How to deploy
 
 **Ubuntu example**
