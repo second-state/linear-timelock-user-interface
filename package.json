@@ -27,6 +27,7 @@
     "nodemon": "^2.0.9"
   },
   "dependencies": {
+    "@metamask/onboarding": "^1.0.1",
     "bignumber.js": "^9.0.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",

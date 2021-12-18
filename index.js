@@ -14,6 +14,7 @@ const readline = require('readline');
 const BigNumber = require('bignumber.js')
 const rateLimit = require("express-rate-limit");
 
+
 // A class that manages external account details (so that async web3 calls can temporarily store info)
 class AccountState {
   constructor() {
