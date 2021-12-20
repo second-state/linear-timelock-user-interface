@@ -22,8 +22,12 @@ block layout-content
       br
       button.clearButton.center(onclick="clearInput()", id="clear_input") Clear input
       br
+      button.NavButton.center(id="button_calculate_balances", onclick="calculateBalances()") Calculate Balances
+      br
       button.NavButton.center(id="button_transfer_tokens", onclick="onButtonClickTransfer($('#eth_address').val())") Unlock Tokens
-      br 
+      br
+      div.Details(id="locked_balance") Locked balance:
+      br
       .progress
         #pb.progress-bar.progress-bar-striped.progress-bar-animated(role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 0%')
       hr
