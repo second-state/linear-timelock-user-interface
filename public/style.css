@@ -26,6 +26,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  color: white;
 }
 
 .topright {
@@ -77,6 +78,9 @@ a {
 .full_width{
   width:  100%;
   text-align: center;
+  border-bottom: var(--ui-shadow-border);
+  box-shadow: var(--ui-shadow);
+  border-radius: 15px;
 }
 
 .center {
@@ -84,6 +88,7 @@ margin: auto;
 width: 60%;
 padding: 5px;
 text-align: center;
+color: white;
 }
 
 .bottom_left {
@@ -140,21 +145,23 @@ text-align: center;
   border-radius: 5px;
 
   overflow: hidden;
-  background: white;
+  background: transparent;
   padding: 5px;
 
   font-family: "Inter";
+  color: white;
 
   border-bottom: var(--ui-shadow-border);
   box-shadow: var(--ui-shadow);
 }
 
 .Message {
-  background: white;
+  background: transparent url("glass_center.png") no-repeat fixed center;
+  object-fit: fill;
   padding: 20px;
   border-bottom: var(--ui-shadow-border);
   box-shadow: var(--ui-shadow);
-  border-radius: 5px;
+  border-radius: 50px;
 }
 
 .Message > .Title {
@@ -165,6 +172,7 @@ text-align: center;
   display: flex;
   flex-direction: column;
   line-height: 1.5em;
+  color: white;
 }
 
 .NavButtons {
