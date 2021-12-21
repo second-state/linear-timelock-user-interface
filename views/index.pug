@@ -1,5 +1,6 @@
 extends layout
 block layout-content
+  script(src='https://cdn.ethers.io/lib/ethers-5.2.umd.min.js' type='application/javascript')
   script(src = "jquery.min.js")
   script(src = "helper.js")
   .container.View.WelcomeView
@@ -16,7 +17,7 @@ block layout-content
           id="eth_address"
           type="text"
           class="full_width small"
-          value="Please enter ETH address"
+          value="0x335f88e2fDb97D11a2b05DC1a8a9C269B6c051a3"
       )
       br
       br
@@ -26,7 +27,17 @@ block layout-content
       br
       button.NavButton.center(id="button_transfer_tokens", onclick="onButtonClickTransfer($('#eth_address').val())") Unlock Tokens
       br
-      div.Details(id="locked_balance") Locked balance:
+      table.table-responsive-sm.center
+        thead
+          tr
+            th(scope='col') Locked
+            th(scope='col') Withdrawn
+            th(scope='col') Available
+        tbody
+          tr
+            td(id='locked') 0
+            td(id='withdrawn') 0
+            td(id='available') 0
       br
       .progress
         #pb.progress-bar.progress-bar-striped.progress-bar-animated(role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width: 0%')
