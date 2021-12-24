@@ -184,6 +184,7 @@ color: white;
 }
 
 .clearButton {
+  background: rgba(43, 103, 241, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -191,9 +192,9 @@ color: white;
   height: 30px;
   width: 60%;
 
-  background: #99d6ff;
+  /*background: #00ab66;*/
 
-  border-radius: 30px;
+  border-radius: 20px;
 
   font-size: 15px;
   font-weight: bold;
@@ -206,6 +207,7 @@ color: white;
 }
 
 .NavButton {
+  background: rgba(43, 103, 241, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -213,9 +215,32 @@ color: white;
   height: 30px;
   width: 60%;
 
-  background: #00ab66;
+  /*background: #00ab66;*/
 
-  border-radius: 30px;
+  border-radius: 20px;
+
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+
+  text-transform: capitalize;
+
+  border-bottom: var(--ui-shadow-border);
+  box-shadow: var(--ui-shadow);
+}
+
+.BalanceButton {
+  background: rgba(43, 103, 241, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 30px;
+  width: 60%;
+
+  /*background: #00ab66;*/
+
+  border-radius: 20px;
 
   font-size: 15px;
   font-weight: bold;
@@ -259,6 +284,14 @@ color: white;
       width: 75%;
       height: 30px;
   }
+  .BalanceButton {
+      font-size: 16px;
+      border-radius: 15px;
+      font-weight: normal;
+      width: 75%;
+      height: 30px;
+  }
+
   .small_fox {
     width: 80px!important;
   }
@@ -286,6 +319,13 @@ color: white;
       height: 30px;
   }
   .NavButton {
+      font-size: 14px;
+      border-radius: 15px;
+      font-weight: normal;
+      width: 75%;
+      height: 30px;
+  }
+  .BalanceButton {
       font-size: 14px;
       border-radius: 15px;
       font-weight: normal;
@@ -325,6 +365,13 @@ color: white;
       width: 75%;
       height: 30px;
   }
+  .BalanceButton {
+      font-size: 14px;
+      border-radius: 15px;
+      font-weight: normal;
+      width: 75%;
+      height: 30px;
+  }
   .small_fox {
     width: 80px!important;
   }
@@ -352,6 +399,13 @@ color: white;
       height: 20px;
   }
   .NavButton {
+      font-size: 12px;
+      border-radius: 15px;
+      font-weight: normal;
+      width: 75%;
+      height: 20px;
+  }
+  .BalanceButton {
       font-size: 12px;
       border-radius: 15px;
       font-weight: normal;
@@ -394,6 +448,13 @@ color: white;
       width: 85%;
       height: 20px;
   }
+  .BalanceButton {
+      font-size: 10px;
+      border-radius: 10px;
+      font-weight: normal;
+      width: 85%;
+      height: 20px;
+  }
 }
 
 @media (max-width: 280px) {
@@ -421,6 +482,13 @@ color: white;
       height: 20px;
   }
   .NavButton {
+      font-size: 10px;
+      border-radius: 10px;
+      font-weight: normal;
+      width: 85%;
+      height: 20px;
+  }
+  .BalanceButton {
       font-size: 10px;
       border-radius: 10px;
       font-weight: normal;
