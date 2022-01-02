@@ -157,7 +157,7 @@ app.set("view engine", "pug");
 app.use(express.static(path.join(__dirname, "/public/")));
 app.use(cors());
 // Rate limiting for simple spamming of page reloads
-app.use("/transfer/", web_page_limiter);
+app.use("/", web_page_limiter);
 // Rate limiting for repeated API calls
 app.use("/api/", api_limiter);
 
@@ -174,11 +174,11 @@ app.use(
  */
 
 app.get('/', (req, res) => {
-  var direct = "Click to visit <a href=\"https://" + process.env.server_name + ":" + process.env.server_port + "/transfer\" target=\"_blank\"> :8002/transfer </a>";
+  var direct = "Click to visit <a href=\"https://" + process.env.server_name + "target=\"_blank\"> </a>";
   res.send(direct);
 });
 
-app.get("/transfer", (req, res) => {
+app.get("/", (req, res) => {
   res.render("index", {
     title: "Home",
     timelock_address: process.env.timelock_address,
