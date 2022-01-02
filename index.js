@@ -104,7 +104,7 @@ var listOfFollowers = [];
 
 const app = express();
 const server_name = process.env.server_name;
-const server_port = process.env.server_port || "8001";
+const server_port = process.env.server_port || "80";
 var user_rate_limit = process.env.user_rate_limit;
 var rate_limit_duration = process.env.rate_limit_duration;
 
