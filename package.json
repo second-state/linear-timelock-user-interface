@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/second-state/timelock-token-user-interface/issues"
   },
-  "homepage": "https://timelock.parastate.io/timelock-token-user-interface",
+  "homepage": "https://second-state.github.io/timelock-token-user-interface",
   "devDependencies": {
     "nodemon": "^2.0.9"
   },
