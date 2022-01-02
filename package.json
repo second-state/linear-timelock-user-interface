@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./index.js",
     "prod": "forever ./index.js",
-    "deploy": "npm install --global gh-pages --save-dev"
+    "build": "npm install --global gh-pages --save-dev"
   },
   "repository": {
     "type": "git",
