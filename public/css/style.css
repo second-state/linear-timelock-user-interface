@@ -89,6 +89,7 @@ width: 60%;
 padding: 5px;
 text-align: center;
 color: white;
+
 }
 
 .bottom_left {
@@ -145,23 +146,25 @@ color: white;
   border-radius: 5px;
 
   overflow: hidden;
-  background: transparent;
+  background: linear-gradient(rgba(43, 103, 241, 0.3), rgba(255, 255, 255, .15));
+  backdrop-filter: blur(25px);
   padding: 5px;
 
   font-family: "Inter";
   color: white;
 
-  border-bottom: var(--ui-shadow-border);
-  box-shadow: var(--ui-shadow);
+  border: 0.25px solid rgba(255, 255, 255, 0.33);
+  box-shadow: 2px 3px 1px 1px rgba(0, 0, 100, .5);
 }
 
 .Message {
-  background: transparent url("../images/glass_center.png") no-repeat fixed center;
+  background: linear-gradient(rgba(145, 205, 255, 0.1), rgba(43, 103, 241, .05));
+  backdrop-filter: blur(69px);
   object-fit: fill;
   padding: 20px;
-  border-bottom: var(--ui-shadow-border);
-  box-shadow: var(--ui-shadow);
-  border-radius: 50px;
+  border: 0.5px solid rgba(255, 255, 255, 0.33);
+  box-shadow: 2px 3px 1px 1px rgba(0, 0, 100, .5);
+  border-radius: 25px;
 }
 
 .Message > .Title {
@@ -184,7 +187,8 @@ color: white;
 }
 
 .clearButton {
-  background: rgba(43, 103, 241, 0.3);
+  background: linear-gradient(rgba(43, 103, 241, 0.3), rgba(255, 255, 255, .15));
+  backdrop-filter: blur(25px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -194,7 +198,7 @@ color: white;
 
   /*background: #00ab66;*/
 
-  border-radius: 20px;
+  border-radius: 5px;
 
   font-size: 15px;
   font-weight: bold;
@@ -202,12 +206,13 @@ color: white;
 
   text-transform: capitalize;
 
-  border-bottom: var(--ui-shadow-border);
-  box-shadow: var(--ui-shadow);
+  border: 0.25px solid rgba(255, 255, 255, 0.33);
+  box-shadow: 2px 3px 1px 1px rgba(0, 0, 100, .5);
 }
 
 .NavButton {
-  background: rgba(43, 103, 241, 0.3);
+  background: linear-gradient(rgba(43, 103, 241, 0.3), rgba(255, 255, 255, .15));
+  backdrop-filter: blur(25px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -217,7 +222,7 @@ color: white;
 
   /*background: #00ab66;*/
 
-  border-radius: 20px;
+  border-radius: 5px;
 
   font-size: 15px;
   font-weight: bold;
@@ -225,12 +230,13 @@ color: white;
 
   text-transform: capitalize;
 
-  border-bottom: var(--ui-shadow-border);
-  box-shadow: var(--ui-shadow);
+  border: 0.25px solid rgba(255, 255, 255, 0.33);
+  box-shadow: 2px 3px 1px 1px rgba(0, 0, 100, .5);
 }
 
 .BalanceButton {
-  background: rgba(43, 103, 241, 0.3);
+  background: linear-gradient(rgba(43, 103, 241, 0.3), rgba(255, 255, 255, .15));
+  backdrop-filter: blur(25px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -240,7 +246,7 @@ color: white;
 
   /*background: #00ab66;*/
 
-  border-radius: 20px;
+  border-radius: 5px;
 
   font-size: 15px;
   font-weight: bold;
@@ -248,8 +254,8 @@ color: white;
 
   text-transform: capitalize;
 
-  border-bottom: var(--ui-shadow-border);
-  box-shadow: var(--ui-shadow);
+  border: 0.25px solid rgba(255, 255, 255, 0.33);
+  box-shadow: 2px 3px 1px 1px rgba(0, 0, 100, .5);
 }
 
   .small_image {
@@ -272,21 +278,21 @@ color: white;
   }
   .clearButton {
       font-size: 16px;
-      border-radius: 15px;
+ 
       font-weight: normal;
       width: 75%;
       height: 30px;
   }
   .NavButton {
       font-size: 16px;
-      border-radius: 15px;
+
       font-weight: normal;
       width: 75%;
       height: 30px;
   }
   .BalanceButton {
       font-size: 16px;
-      border-radius: 15px;
+
       font-weight: normal;
       width: 75%;
       height: 30px;
@@ -313,21 +319,21 @@ color: white;
   }
   .clearButton {
       font-size: 14px;
-      border-radius: 15px;
+
       font-weight: normal;
       width: 75%;
       height: 30px;
   }
   .NavButton {
       font-size: 14px;
-      border-radius: 15px;
+
       font-weight: normal;
       width: 75%;
       height: 30px;
   }
   .BalanceButton {
       font-size: 14px;
-      border-radius: 15px;
+
       font-weight: normal;
       width: 75%;
       height: 30px;
@@ -353,21 +359,21 @@ color: white;
   }
   .clearButton {
       font-size: 14px;
-      border-radius: 15px;
+
       font-weight: normal;
       width: 75%;
       height: 30px;
   }
   .NavButton {
       font-size: 14px;
-      border-radius: 15px;
+ 
       font-weight: normal;
       width: 75%;
       height: 30px;
   }
   .BalanceButton {
       font-size: 14px;
-      border-radius: 15px;
+
       font-weight: normal;
       width: 75%;
       height: 30px;
@@ -393,21 +399,21 @@ color: white;
   }
   .clearButton {
       font-size: 12px;
-      border-radius: 15px;
+
       font-weight: normal;
       width: 75%;
       height: 20px;
   }
   .NavButton {
       font-size: 12px;
-      border-radius: 15px;
+
       font-weight: normal;
       width: 75%;
       height: 20px;
   }
   .BalanceButton {
       font-size: 12px;
-      border-radius: 15px;
+
       font-weight: normal;
       width: 75%;
       height: 20px;
@@ -436,21 +442,21 @@ color: white;
   }
   .clearButton {
       font-size: 10px;
-      border-radius: 10px;
+
       font-weight: normal;
       width: 85%;
       height: 20px;
   }
   .NavButton {
       font-size: 10px;
-      border-radius: 10px;
+
       font-weight: normal;
       width: 85%;
       height: 20px;
   }
   .BalanceButton {
       font-size: 10px;
-      border-radius: 10px;
+
       font-weight: normal;
       width: 85%;
       height: 20px;
@@ -476,21 +482,21 @@ color: white;
   }
   .clearButton {
       font-size: 10px;
-      border-radius: 10px;
+
       font-weight: normal;
       width: 85%;
       height: 20px;
   }
   .NavButton {
       font-size: 10px;
-      border-radius: 10px;
+
       font-weight: normal;
       width: 85%;
       height: 20px;
   }
   .BalanceButton {
       font-size: 10px;
-      border-radius: 10px;
+
       font-weight: normal;
       width: 85%;
       height: 20px;
