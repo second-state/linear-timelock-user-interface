@@ -25,6 +25,7 @@ git clone git@github.com:second-state/timelock-token-user-interface.git
 Then simply type
 
 ```
+npm install
 npm run deploy
 ```
 
