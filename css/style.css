@@ -63,7 +63,7 @@ a {
 #root {
   display: flex;
   flex-direction: column;
-  background: url("background_wide.jpg") no-repeat;
+  background: url("../images/background_wide.jpg") no-repeat;
   background-size: cover;
 }
 
@@ -156,7 +156,7 @@ color: white;
 }
 
 .Message {
-  background: transparent url("glass_center.png") no-repeat fixed center;
+  background: transparent url("../images/glass_center.png") no-repeat fixed center;
   object-fit: fill;
   padding: 20px;
   border-bottom: var(--ui-shadow-border);
