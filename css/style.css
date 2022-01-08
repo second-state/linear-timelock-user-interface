@@ -158,12 +158,12 @@ color: white;
 }
 
 .Message {
-  background: linear-gradient(rgba(43, 103, 241, 0.3), rgba(255, 255, 255, .15));
-  backdrop-filter: blur(2px);
+  background: linear-gradient(rgba(145, 205, 255, 0.1), rgba(43, 103, 241, .05));
+  backdrop-filter: blur(69px);
   object-fit: fill;
   padding: 20px;
-  border: 0.25px solid rgba(255, 255, 255, 0.33);
-  box-shadow: 3px 5px 1px 1px rgba(0, 0, 100, .2);  
+  border: 0.5px solid rgba(255, 255, 255, 0.33);
+  box-shadow: 2px 3px 1px 1px rgba(0, 0, 100, .5);
   border-radius: 25px;
 }
 
