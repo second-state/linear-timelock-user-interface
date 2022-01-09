@@ -22,13 +22,13 @@ Clone this repository
 git clone git@github.com:second-state/timelock-token-user-interface.git
 ```
 
-## ABI of Timelock
+## ABI and address of Timelock
 
-Paste the ABI of the timelock into the helper.js file
+Paste the ABI and the address of the timelock into the helper.js file
 
 ## Contract address of ERC20 (NOT timelock)
 
-Paste the contract address of the ERC20 contract into the helper.js file
+In addition to that, also paste the contract address of the **ERC20 contract** into the helper.js file. You will see the two addresses are clearly marked.
 
 ## Installing
 
