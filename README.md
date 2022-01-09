@@ -39,6 +39,10 @@ npm install
 ```
 
 ## Running
+
+To publish/deploy simply type
+
+```
 npm run deploy
 ```
 
