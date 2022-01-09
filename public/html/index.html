@@ -27,17 +27,19 @@
           </a>
           <br>
           <hr>
+          <input class="full_width small" id="eth_address" type="text" value="Ethereum address">
           <br>
-          <input class="full_width small" id="eth_address" type="text" value="0x335f88e2fDb97D11a2b05DC1a8a9C269B6c051a3">
+          <br>
+          <input class="full_width small" id="state_amount" type="text" value="ERC20 amount in wei">
           <br>
           <br>
           <button class="clearButton center" onclick="clearInput()" id="clear_input">Clear input</button>
           <br>
-          <button class="BalanceButton center" id="button_calculate_balances" onclick="calculateBalances()">Calculate Balances</button>
+          <button class="BalanceButton center" id="button_calculate_balances" onclick="calculateBalances()">Calculate Max</button>
           <br>
           <button class="NavButton center" id="button_transfer_tokens" onclick="onButtonClickTransfer($('#eth_address').val())">Unlock Tokens</button>
           <br>
-          <table class="table-responsive-sm center">
+          <table id="example" class="table-responsive-sm center tableText">
             <thead>
               <tr>
                 <th scope="col">Locked</th>

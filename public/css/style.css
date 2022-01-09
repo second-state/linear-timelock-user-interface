@@ -83,6 +83,10 @@ a {
   border-radius: 15px;
 }
 
+.tableText {
+  font-size: 12px;
+}
+
 .center {
 margin: auto;
 width: 60%;
@@ -155,6 +159,10 @@ color: white;
 
   border: 0.25px solid rgba(255, 255, 255, 0.33);
   box-shadow: 2px 3px 1px 1px rgba(0, 0, 100, .5);
+}
+
+.progress {
+  height: 0.25rem!important;
 }
 
 .Message {
