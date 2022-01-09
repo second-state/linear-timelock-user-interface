@@ -8,7 +8,7 @@ Interacts with the timelock token which allows users to transfer tokens after a 
 
 Users simply enter their Ethereum mainnet address and click the transfer button. If tokens have cleared the vesting period then tokens will be transferred. If tokens are still locked, the user will get a Toastify message explaining the timelock.
 
-![Screen Shot 2022-01-08 at 9 13 07 pm](https://user-images.githubusercontent.com/9831342/148641968-32f4639a-f646-419c-af5f-9388455002d7.png)
+![Screen Shot 2022-01-10 at 7 20 09 am](https://user-images.githubusercontent.com/9831342/148701427-3217e79a-3e02-4b71-b4b1-20d93729ac94.png)
 
 # Where is the timelock smart contract
 
