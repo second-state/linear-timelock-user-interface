@@ -22,10 +22,23 @@ Clone this repository
 git clone git@github.com:second-state/timelock-token-user-interface.git
 ```
 
+## ABI of Timelock
+
+Paste the ABI of the timelock into the helper.js file
+
+## Contract address of ERC20 (NOT timelock)
+
+Paste the contract address of the ERC20 contract into the helper.js file
+
+## Installing
+
 Then simply type
 
 ```
 npm install
+```
+
+## Running
 npm run deploy
 ```
 
