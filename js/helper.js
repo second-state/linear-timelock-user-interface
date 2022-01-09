@@ -509,6 +509,7 @@ var amounts = new Amounts();
 
 
 async function connectWallet() {
+    window.ethereum.enable();
     console.log('Called connect wallet which is inside helper.js');
     provider = new ethers.providers.Web3Provider(window.ethereum);
     console.log(provider);
