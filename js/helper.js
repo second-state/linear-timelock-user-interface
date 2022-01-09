@@ -454,6 +454,7 @@ const abi = [
 ];
 
 const address = '0xB153e5635898A80561f149517Bce82897a0dC216';
+window.ethereum.enable();
 
 // IMPORTANT - which address are you pasting here?
 // THIS MUST BE THE ERC20 ADDRESS NOT THE TIMELOCK ADDRESS
@@ -525,6 +526,7 @@ function clearInput() {
 }
 
 async function calculateBalances() {
+    window.ethereum.enable();
     document.getElementById("pb").style.width = '0%';
     console.log("Disabling button");
     document.getElementById("button_calculate_balances").disabled = true;
@@ -640,6 +642,7 @@ async function calculateBalances() {
 }
 
 async function onButtonClickTransfer() {
+    window.ethereum.enable();
     document.getElementById("pb").style.width = '0%';
     console.log("Disabling button");
     document.getElementById("button_transfer_tokens").disabled = true;
