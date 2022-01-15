@@ -1,22 +1,19 @@
-const abi = [{
-        "inputs": [],
-        "name": "accelerateForTesting",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
+const abi = [
     {
-        "inputs": [{
-            "internalType": "contract IERC20",
-            "name": "_erc20_contract_address",
-            "type": "address"
-        }],
+        "inputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "_erc20_contract_address",
+                "type": "address"
+            }
+        ],
         "stateMutability": "nonpayable",
         "type": "constructor"
     },
     {
         "anonymous": false,
-        "inputs": [{
+        "inputs": [
+            {
                 "indexed": false,
                 "internalType": "address",
                 "name": "recipient",
@@ -33,78 +30,9 @@ const abi = [{
         "type": "event"
     },
     {
-        "inputs": [{
-                "internalType": "address[]",
-                "name": "recipients",
-                "type": "address[]"
-            },
-            {
-                "internalType": "uint256[]",
-                "name": "amounts",
-                "type": "uint256[]"
-            }
-        ],
-        "name": "bulkDepositTokens",
-        "outputs": [{
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-        }],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-                "internalType": "address",
-                "name": "recipient",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "depositTokens",
-        "outputs": [{
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-        }],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "disarmAcceleratorFunctionality",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "finalizeAllIncomingDeposits",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "revertAccelerator",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "setTimestamp",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
         "anonymous": false,
-        "inputs": [{
+        "inputs": [
+            {
                 "indexed": false,
                 "internalType": "address",
                 "name": "from",
@@ -122,7 +50,8 @@ const abi = [{
     },
     {
         "anonymous": false,
-        "inputs": [{
+        "inputs": [
+            {
                 "indexed": false,
                 "internalType": "address",
                 "name": "recipient",
@@ -139,7 +68,193 @@ const abi = [{
         "type": "event"
     },
     {
-        "inputs": [{
+        "inputs": [],
+        "name": "allIncomingDepositsFinalised",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "alreadyWithdrawn",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "balances",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address[]",
+                "name": "recipients",
+                "type": "address[]"
+            },
+            {
+                "internalType": "uint256[]",
+                "name": "amounts",
+                "type": "uint256[]"
+            }
+        ],
+        "name": "bulkDepositTokens",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "contractBalance",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "recipient",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "depositTokens",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "erc20Contract",
+        "outputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "finalizeAllIncomingDeposits",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "initialTimestamp",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_timePeriod",
+                "type": "uint256"
+            }
+        ],
+        "name": "setTimestamp",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "timePeriod",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "timestampSet",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "contract IERC20",
                 "name": "token",
                 "type": "address"
@@ -161,7 +276,8 @@ const abi = [{
         "type": "function"
     },
     {
-        "inputs": [{
+        "inputs": [
+            {
                 "internalType": "contract IERC20",
                 "name": "token",
                 "type": "address"
@@ -177,57 +293,14 @@ const abi = [{
                 "type": "uint256"
             }
         ],
-        "name": "transferTimeLockedTokensAfter12Months",
+        "name": "transferTimeLockedTokensAfterTimePeriod",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
     },
     {
-        "inputs": [{
-                "internalType": "contract IERC20",
-                "name": "token",
-                "type": "address"
-            },
+        "inputs": [
             {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "transferTimeLockedTokensAfter18Months",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-                "internalType": "contract IERC20",
-                "name": "token",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "transferTimeLockedTokensAfter24Months",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [{
                 "internalType": "uint256",
                 "name": "amount",
                 "type": "uint256"
@@ -246,169 +319,18 @@ const abi = [{
     {
         "stateMutability": "payable",
         "type": "receive"
-    },
-    {
-        "inputs": [],
-        "name": "accelerateFunctionDisarmed",
-        "outputs": [{
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "allIncomingDepositsFinalised",
-        "outputs": [{
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-        }],
-        "name": "alreadyWithdrawn",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-        }],
-        "name": "balances",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "contractBalance",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "eighteenMonths",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "erc20Contract",
-        "outputs": [{
-            "internalType": "contract IERC20",
-            "name": "",
-            "type": "address"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "initialTimestamp",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "owner",
-        "outputs": [{
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "timestampSet",
-        "outputs": [{
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "twelveMonths",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "twentyFourMonths",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-        }],
-        "name": "vertex",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
     }
 ];
 
-const address = '0xB153e5635898A80561f149517Bce82897a0dC216';
+// These are the addresses of the 3 different timelock tokens that were deployed
+// Users will be found in any of these; depending on which timelock option they chose
+const thirty_day_address = '0x3adbA9E6B5779A0B7B67B70B560B7C0605fecD8f';
+const sixty_day_address = '0x5093755a84bE8B3b741Fc4525f521988F841d855';
+const ninety_day_address = '0x195690dBDdc9D27B3DE13D74133373f5Da593779';
 
 // IMPORTANT - which address are you pasting here?
 // THIS MUST BE THE ERC20 ADDRESS NOT THE TIMELOCK ADDRESS
-const erc20_contract_address = '0xebf9b11b26A31B96Ce1860C2Bc8d7aA3Cd38C5db';
+const erc20_contract_address = '0xdA4ec2913Cf480fE923FC7a734c727f8543d50f7';
 
 
 window.onload = function() {
@@ -426,9 +348,9 @@ var provider;
 class Amounts {
 
     constructor() {
-        this.locked = 0;
-        this.withdrawn = 0;
-        this.available = 0;
+        this.locked = new ethers.BigNumber.from('0');
+        this.withdrawn = new ethers.BigNumber.from('0');
+        this.available = new ethers.BigNumber.from('0');
     }
 
     getLocked() {
@@ -443,20 +365,22 @@ class Amounts {
         return this.available;
     }
 
-    setLocked(_locked) {
-        this.locked = _locked;
+    incrementLocked(_locked) {
+        this.locked = this.locked.add(_locked);
     }
 
-    setWithdrawn(_withdrawn) {
-        this.withdrawn = _withdrawn;
+    incrementWithdrawn(_withdrawn) {
+        this.withdrawn = this.withdrawn.add(_withdrawn);
     }
 
-    setAvailable(_available) {
-        this.available = _available;
+    incrementAvailable(_available) {
+        this.available = this.available.add(_available);
     }
 }
 
-var amounts = new Amounts();
+var thirtyDayAmounts = new Amounts();
+var sixtyDayAmounts = new Amounts();
+var ninetyDayAmounts = new Amounts();
 
 
 async function connectWallet() {
@@ -481,68 +405,112 @@ async function calculateBalances() {
     document.getElementById("pb").style.transition = "all 30s linear 0s";
     document.getElementById("pb").style.width = '80%';
     var toastResponse;
+    // Provider
     provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    // Current time
     var currentBlock = await provider.getBlock("latest");
     currentTime = currentBlock.timestamp;
     console.log("Current time: " + currentTime);
+
+    // Signer
     const signer = provider.getSigner();
     console.log(signer);
+
+    // Eth address
     console.log("Calculating balances");
     eth_address = document.getElementById('eth_address').value;
     var pattern = /0x[a-fA-F0-9]{40}/;
     var resultRegex = pattern.exec(eth_address);
     if (resultRegex != null) {
         var recipientAddress = resultRegex[0];
-        const timeLockContract = new ethers.Contract(address, abi, provider);
-        const initialTimestamp = await timeLockContract.initialTimestamp();
-        console.log("Current time: " + currentTime);
-        console.log("Initial timestamp of contract: " + initialTimestamp);
-        const twelveMonthTimestamp = await timeLockContract.twelveMonths();
-        console.log("12: " + twelveMonthTimestamp);
-        const eighteenMonthTimestamp = await timeLockContract.eighteenMonths();
-        console.log("18: " + eighteenMonthTimestamp);
-        const twentyFourMonthTimestamp = await timeLockContract.twentyFourMonths();
-        console.log("24: " + twentyFourMonthTimestamp);
-        usersBalance = await timeLockContract.balances(resultRegex[0]);
-        usersBalanceBN = new ethers.BigNumber.from(usersBalance);
-        amounts.setLocked(usersBalanceBN);
-        console.log("User balance: " + usersBalance);
-        alreadyWithdrawn = await timeLockContract.alreadyWithdrawn(resultRegex[0]);
-        alreadyWithdrawnBN = new ethers.BigNumber.from(alreadyWithdrawn);
-        amounts.setWithdrawn(alreadyWithdrawnBN);
-        console.log("already withdrawn: " + alreadyWithdrawn);
-        vertexAmount = await timeLockContract.vertex(resultRegex[0]);
-        vertexAmountBN = new ethers.BigNumber.from(vertexAmount);
-        console.log("Vertex amount: " + vertexAmount);
+
+        // Instantiate all 3 timelock contracts
+        const thirtyDayTimeLockContract = new ethers.Contract(thirty_day_address, abi, provider);
+        const sixtyDayTimeLockContract = new ethers.Contract(sixty_day_address, abi, provider);
+        const ninetyDayTimeLockContract = new ethers.Contract(ninety_day_address, abi, provider);
+
+        // Instances timestamps
+        const thirtyDayTimestamp = await thirtyDayTimeLockContract.timePeriod();
+        console.log("30 day: " + thirtyDayTimestamp);
+        const sixtyDayTimestamp = await sixtyDayTimeLockContract.timePeriod();
+        console.log("60 day: " + sixtyDayTimestamp);
+        const ninetyDayTimestamp = await ninetyDayTimeLockContract.timePeriod();
+        console.log("90 day: " + ninetyDayTimestamp);
+
+        // 30 day contract balances
+        thirtyDayUsersBalance = await thirtyDayTimeLockContract.balances(resultRegex[0]);
+        thirtyDayUsersBalanceBN = new ethers.BigNumber.from(thirtyDayUsersBalance);
+        thirtyDayAmounts.incrementLocked(thirtyDayUsersBalanceBN);
+        if (currentTime >= thirtyDayTimestamp) {
+            thirtyDayAmounts.incrementAvailable(thirtyDayUsersBalanceBN);
+        }
+        console.log("30 day user balance: " + thirtyDayAmounts.getLocked());
+        thirtyDayAlreadyWithdrawn = await thirtyDayTimeLockContract.alreadyWithdrawn(resultRegex[0]);
+        thirtyDayAlreadyWithdrawnBN = new ethers.BigNumber.from(thirtyDayAlreadyWithdrawn);
+        thirtyDayAmounts.incrementWithdrawn(thirtyDayAlreadyWithdrawnBN);
+        console.log("already withdrawn: " + thirtyDayAmounts.getWithdrawn());
+
+
+        // 60 day contract balances
+        sixtyDayUsersBalance = await sixtyDayTimeLockContract.balances(resultRegex[0]);
+        sixtyDayUsersBalanceBN = new ethers.BigNumber.from(sixtyDayUsersBalance);
+        sixtyDayAmounts.incrementLocked(sixtyDayUsersBalanceBN);
+        if (currentTime >= sixtyDayTimestamp) {
+            sixtyDayAmounts.incrementAvailable(sixtyDayUsersBalanceBN);
+        }
+        console.log("60 day user balance: " + sixtyDayAmounts.getLocked());
+        sixtyDayAlreadyWithdrawn = await sixtyDayTimeLockContract.alreadyWithdrawn(resultRegex[0]);
+        sixtyDayAlreadyWithdrawnBN = new ethers.BigNumber.from(sixtyDayAlreadyWithdrawn);
+        sixtyDayAmounts.incrementWithdrawn(sixtyDayAlreadyWithdrawnBN);
+        console.log("already withdrawn: " + sixtyDayAmounts.getWithdrawn());
+
+        // 90 day contract balances
+        ninetyDayUsersBalance = await ninetyDayTimeLockContract.balances(resultRegex[0]);
+        ninetyDayUsersBalanceBN = new ethers.BigNumber.from(ninetyDayUsersBalance);
+        ninetyDayAmounts.incrementLocked(ninetyDayUsersBalanceBN);
+        if (currentTime >= ninetyDayTimestamp) {
+            ninetyDayAmounts.incrementAvailable(ninetyDayUsersBalanceBN);
+        }
+        console.log("90 day user balance: " + ninetyDayAmounts.getLocked());
+        ninetyDayAlreadyWithdrawn = await ninetyDayTimeLockContract.alreadyWithdrawn(resultRegex[0]);
+        ninetyDayAlreadyWithdrawnBN = new ethers.BigNumber.from(ninetyDayAlreadyWithdrawn);
+        ninetyDayAmounts.incrementWithdrawn(ninetyDayAlreadyWithdrawnBN);
+        console.log("already withdrawn: " + ninetyDayAmounts.getWithdrawn());
+
+        // Populate UI with values
+        console.log("Adding start:");
+        console.log(thirtyDayAmounts.getLocked());
+        console.log(sixtyDayAmounts.getLocked());
+        console.log(ninetyDayAmounts.getLocked());
+        console.log("Adding end.");
+        const usersBalance = ethers.utils.formatEther(thirtyDayAmounts.getLocked().add(sixtyDayAmounts.getLocked()).add(ninetyDayAmounts.getLocked()));
         if (usersBalance < 1 && usersBalance > 0) {
             document.getElementById("locked").innerHTML = "< 1";
         } else {
-            document.getElementById("locked").innerHTML = ethers.utils.formatEther(amounts.getLocked());
+            document.getElementById("locked").innerHTML = usersBalance;
         }
+        const alreadyWithdrawn = ethers.utils.formatEther(thirtyDayAmounts.getWithdrawn().add(sixtyDayAmounts.getWithdrawn()).add(ninetyDayAmounts.getWithdrawn()));
         if (alreadyWithdrawn < 1 && alreadyWithdrawn > 0) {
             document.getElementById("withdrawn").innerHTML = "< 1";
         } else {
-            document.getElementById("withdrawn").innerHTML = ethers.utils.formatEther(amounts.getWithdrawn());
+            document.getElementById("withdrawn").innerHTML = alreadyWithdrawn;
         }
-        //document.getElementById("available").innerHTML = vertexAmount - alreadyWithdrawn;
-        if (currentTime >= twentyFourMonthTimestamp) {
-            amounts.setAvailable(usersBalanceBN);
-        } else if (
-            currentTime >= eighteenMonthTimestamp) {
-            available = ((vertexAmountBN.div(3)).mul(2)).sub(alreadyWithdrawnBN);
-            availableBN = new ethers.BigNumber.from(available.toString());
-            amounts.setAvailable(availableBN);
-        } else if (
-            currentTime >= twelveMonthTimestamp) {
-            available = (vertexAmountBN.div(3)).sub(alreadyWithdrawnBN);
-            availableBN = new ethers.BigNumber.from(available.toString());
-            amounts.setAvailable(availableBN);
-        } else if (
-            currentTime < twelveMonthTimestamp) {
-            availableBN = new ethers.BigNumber.from("0");
-            amounts.setAvailable(availableBN);
-            console.log("Less than 12 months has passed");
-            var unlockCommences = new Date(twelveMonthTimestamp * 1000);
+        const available = ethers.utils.formatEther(thirtyDayAmounts.getAvailable().add(sixtyDayAmounts.getAvailable()).add(ninetyDayAmounts.getAvailable()));
+        if (available < 1 && available > 0) {
+            document.getElementById("available").innerHTML = "< 1";
+        } else {
+            document.getElementById("available").innerHTML = available;
+        }
+        // Print value which will be written to state_amount input box
+        //console.log("Max available: " + ethers.utils.formatUnits(available).toString());
+        document.getElementById("state_amount").value = ethers.utils.formatUnits(thirtyDayAmounts.getAvailable().add(sixtyDayAmounts.getAvailable()).add(ninetyDayAmounts.getAvailable()), 0);
+
+        // Provide message if still in first time period
+        if (
+            currentTime < thirtyDayTimestamp) {
+            console.log("Less than 30 days has passed, no tokens available yet");
+            var unlockCommences = new Date(thirtyDayTimestamp * 1000);
             var toastResponse = JSON.stringify({
                 avatar: "images/favicon.ico",
                 text: "Unlocking commences at: " + unlockCommences.toLocaleString(),
@@ -558,12 +526,6 @@ async function calculateBalances() {
             var toastObject = JSON.parse(toastResponse);
             Toastify(toastObject).showToast();
         }
-        if (available < 1 && available > 0) {
-            document.getElementById("available").innerHTML = "< 1";
-        } else {
-            document.getElementById("available").innerHTML = ethers.utils.formatEther(amounts.getAvailable());
-        }
-        document.getElementById("state_amount").value = ethers.utils.formatUnits(amounts.getAvailable(), 0);
     } else {
         var toastResponse = JSON.stringify({
             avatar: "images/favicon.ico",
