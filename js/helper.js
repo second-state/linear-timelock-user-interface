@@ -520,15 +520,37 @@ async function calculateBalances() {
 }
 
 async function onButtonClickTransfer() {
+    // Provider
     window.ethereum.enable()
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    // Signer
+    signer = provider.getSigner();
+    console.log(signer);
+
+    // Instantiate all 3 timelock contracts
+    thirtyDayTimeLockContract = new ethers.Contract(thirty_day_address, abi, signer);
+    sixtyDayTimeLockContract = new ethers.Contract(sixty_day_address, abi, signer);
+    ninetyDayTimeLockContract = new ethers.Contract(ninety_day_address, abi, signer);
+
+    // Current time
+    var currentBlock = await provider.getBlock("latest");
+    currentTime = currentBlock.timestamp;
+    console.log("Current time: " + currentTime);
+
+    // UI mods
     document.getElementById("pb").style.width = '0%';
     console.log("Disabling button");
     document.getElementById("button_transfer_tokens").disabled = true;
     document.getElementById("pb").style.transition = "all 30s linear 0s";
     document.getElementById("pb").style.width = '80%';
 
+    // Init toast response
     var toastResponse;
+
+    // Amount to unlock
     state_amount = document.getElementById('state_amount').value;
+    
     // Ensure that state amount is a real number, if not then we skip everything and send a toast message 
     try {
         stateAmountInWei = new ethers.BigNumber.from(state_amount);
@@ -566,23 +588,12 @@ async function onButtonClickTransfer() {
         throw "exit";
     }
     if (stateAmountInWei > 0) {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        var currentBlock = await provider.getBlock("latest");
-        currentTime = currentBlock.timestamp;
-        console.log("Current time: " + currentTime);
-        signer = provider.getSigner();
-        console.log(signer);
         console.log("Calculating balances");
         eth_address = document.getElementById('eth_address').value;
         var pattern = /0x[a-fA-F0-9]{40}/;
         var resultRegex = pattern.exec(eth_address);
         if (resultRegex != null) {
             var recipientAddress = resultRegex[0];
-
-            // Instantiate all 3 timelock contracts
-            thirtyDayTimeLockContract = new ethers.Contract(thirty_day_address, abi, provider);
-            sixtyDayTimeLockContract = new ethers.Contract(sixty_day_address, abi, provider);
-            ninetyDayTimeLockContract = new ethers.Contract(ninety_day_address, abi, provider);
 
             // Instances timestamps
             thirtyDayTimestamp = await thirtyDayTimeLockContract.timePeriod();
