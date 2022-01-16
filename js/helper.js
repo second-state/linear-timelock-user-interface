@@ -492,7 +492,7 @@ async function calculateBalances() {
             console.log("Less than 30 days has passed, no tokens available yet");
             var unlockCommences = new Date(thirtyDayTimestamp * 1000);
             var toastResponse = JSON.stringify({
-                avatar: "images/favicon.ico",
+                avatar: "../images/favicon.ico",
                 text: "Unlocking commences at: " + unlockCommences.toLocaleString(),
                 duration: 10000,
                 newWindow: true,
@@ -508,7 +508,7 @@ async function calculateBalances() {
         }
     } else {
         var toastResponse = JSON.stringify({
-            avatar: "images/favicon.ico",
+            avatar: "../images/favicon.ico",
             text: "Not a valid Ethereum address!",
             duration: 10000,
             newWindow: true,
@@ -579,7 +579,7 @@ async function onButtonClickTransfer() {
             document.getElementById("pb").style.width = '0%';
         });
         var toastResponse = JSON.stringify({
-            avatar: "images/favicon.ico",
+            avatar: "../images/favicon.ico",
             text: "Token amount is not a valid number!",
             duration: 10000,
             newWindow: true,
@@ -662,7 +662,7 @@ async function onButtonClickTransfer() {
                 valid = true;
                 response = await thirtyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, stateAmountInWei);
                 var toastResponse = JSON.stringify({
-                    avatar: "images/favicon.ico",
+                    avatar: "../images/favicon.ico",
                     text: "Congratulations, tokens unlocked!",
                     duration: 10000,
                     newWindow: true,
@@ -679,7 +679,7 @@ async function onButtonClickTransfer() {
                 valid = true;
                 response = await thirtyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, thirtyDayAmounts.getAvailable());
                 var toastResponse = JSON.stringify({
-                    avatar: "images/favicon.ico",
+                    avatar: "../images/favicon.ico",
                     text: "Congratulations, tokens unlocked!",
                     duration: 10000,
                     newWindow: true,
@@ -698,7 +698,7 @@ async function onButtonClickTransfer() {
                 valid = true;
                 response = await sixtyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, stateAmountInWei);
                 var toastResponse = JSON.stringify({
-                    avatar: "images/favicon.ico",
+                    avatar: "../images/favicon.ico",
                     text: "Congratulations, tokens unlocked!",
                     duration: 10000,
                     newWindow: true,
@@ -715,7 +715,7 @@ async function onButtonClickTransfer() {
                 valid = true;
                 response = await sixtyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, sixtyDayAmounts.getAvailable());
                 var toastResponse = JSON.stringify({
-                    avatar: "images/favicon.ico",
+                    avatar: "../images/favicon.ico",
                     text: "Congratulations, tokens unlocked!",
                     duration: 10000,
                     newWindow: true,
@@ -734,7 +734,7 @@ async function onButtonClickTransfer() {
                 valid = true;
                 response = await ninetyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, stateAmountInWei);
                 var toastResponse = JSON.stringify({
-                    avatar: "images/favicon.ico",
+                    avatar: "../images/favicon.ico",
                     text: "Congratulations, tokens unlocked!",
                     duration: 10000,
                     newWindow: true,
@@ -751,7 +751,7 @@ async function onButtonClickTransfer() {
                 valid = true;
                 response = await ninetyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, ninetyDayAmounts.getAvailable());
                 var toastResponse = JSON.stringify({
-                    avatar: "images/favicon.ico",
+                    avatar: "../images/favicon.ico",
                     text: "Congratulations, tokens unlocked!",
                     duration: 10000,
                     newWindow: true,
@@ -767,7 +767,7 @@ async function onButtonClickTransfer() {
             }
             if (valid == false){
                 var toastResponse = JSON.stringify({
-                    avatar: "images/sorry.png",
+                    avatar: "../images/sorry.png",
                     text: "Sorry, invalid request, please check input!",
                     duration: 10000,
                     newWindow: true,
@@ -783,7 +783,7 @@ async function onButtonClickTransfer() {
             }
         } else {
             var toastResponse = JSON.stringify({
-                avatar: "images/favicon.ico",
+                avatar: "../images/favicon.ico",
                 text: "Not a valid Ethereum address!",
                 duration: 10000,
                 newWindow: true,
@@ -799,7 +799,7 @@ async function onButtonClickTransfer() {
         }
     } else {
         var toastResponse = JSON.stringify({
-            avatar: "images/favicon.ico",
+            avatar: "../images/favicon.ico",
             text: "Token amount must be greater than zero!",
             duration: 10000,
             newWindow: true,
