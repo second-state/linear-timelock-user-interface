@@ -21,10 +21,10 @@
         <h1 class="Banner">ParaState Timelock</h1>
         <div class="Message center">
           <div class="Title"></div>
-          <div class="Details" id="connect_wallet_text">Connect Wallet</div>
           <a onclick="connectWallet()" id="connect" title="MetaMask via Wikimedia Commons- https://commons.wikimedia.org/wiki/File:MetaMask_Fox.svg">
             <img class="small_fox" width="80px" alt="MetaMask Fox" src="../images/metamask-fox.svg">
           </a>
+          <div class="Details" id="connect_wallet_text">Click ☝️ to connect wallet. </div>
           <br>
           <hr>
           <input class="full_width small" id="eth_address" type="text" value="Ethereum address">
@@ -35,9 +35,9 @@
           <br>
           <button class="clearButton center" onclick="clearInput()" id="clear_input">Clear input</button>
           <br>
-          <button class="BalanceButton center" id="button_calculate_balances" onclick="calculateBalances()">Calculate Max</button>
+          <button class="BalanceButton center" id="button_calculate_balances" onclick="calculateBalances()">Refresh/Calculate Balances</button>
           <br>
-          <button class="NavButton center" id="button_transfer_tokens" onclick="onButtonClickTransfer($('#eth_address').val())">Unlock Tokens</button>
+          <button class="NavButton center" id="button_transfer_tokens" onclick="onButtonClickTransfer($('#eth_address').val())">Unlock Your Tokens</button>
           <br>
           <table id="example" class="table-responsive-sm center tableText">
             <thead>
