@@ -364,6 +364,9 @@ async function connectWallet() {
     console.log(signer);
     var addressOfSigner = await signer.getAddress();
     document.getElementById("eth_address").value = addressOfSigner;
+    document.getElementById("connect_wallet_text").style.color = "#00FF7F";
+    document.getElementById("connect_wallet_text").innerHTML = "Wallet connected ✔";
+
 }
 
 function clearInput() {
