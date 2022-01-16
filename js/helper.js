@@ -332,6 +332,12 @@ class Amounts {
     incrementAvailable(_available) {
         this.available = this.available.add(_available);
     }
+
+    reset() {
+        this.locked = new ethers.BigNumber.from('0');
+        this.withdrawn = new ethers.BigNumber.from('0');
+        this.available = new ethers.BigNumber.from('0');
+    }
 }
 
 var thirtyDayAmounts = new Amounts();
@@ -366,6 +372,9 @@ function clearInput() {
 }
 
 async function calculateBalances() {
+    thirtyDayAmounts.reset();
+    sixtyDayAmounts.reset();
+    ninetyDayAmounts.reset();
     window.ethereum.enable();
     document.getElementById("pb").style.width = '0%';
     console.log("Disabling button");
@@ -520,6 +529,9 @@ async function calculateBalances() {
 }
 
 async function onButtonClickTransfer() {
+    thirtyDayAmounts.reset();
+    sixtyDayAmounts.reset();
+    ninetyDayAmounts.reset();
     // Provider
     window.ethereum.enable()
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -550,7 +562,7 @@ async function onButtonClickTransfer() {
 
     // Amount to unlock
     state_amount = document.getElementById('state_amount').value;
-    
+
     // Ensure that state amount is a real number, if not then we skip everything and send a toast message 
     try {
         stateAmountInWei = new ethers.BigNumber.from(state_amount);
@@ -642,23 +654,129 @@ async function onButtonClickTransfer() {
             ninetyDayAlreadyWithdrawnBN = new ethers.BigNumber.from(ninetyDayAlreadyWithdrawn);
             ninetyDayAmounts.incrementWithdrawn(ninetyDayAlreadyWithdrawnBN);
             console.log("already withdrawn: " + ninetyDayAmounts.getWithdrawn());
-
+            var valid = false;
             if (currentTime >= thirtyDayTimestamp && thirtyDayAmounts.getAvailable() > 0 && stateAmountInWei <= thirtyDayAmounts.getAvailable()) {
+                valid = true;
                 response = await thirtyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, stateAmountInWei);
+                var toastResponse = JSON.stringify({
+                    avatar: "images/favicon.ico",
+                    text: "Congratulations, tokens unlocked!",
+                    duration: 10000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    backgroundColor: "linear-gradient(to right, #454A21, #607D3B)",
+                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                    onClick: function() {} // Callback after click
+                });
+                var toastObject = JSON.parse(toastResponse);
+                Toastify(toastObject).showToast();
             } else if (currentTime >= thirtyDayTimestamp && thirtyDayAmounts.getAvailable() > 0 && stateAmountInWei > thirtyDayAmounts.getAvailable()) {
+                valid = true;
                 response = await thirtyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, thirtyDayAmounts.getAvailable());
+                var toastResponse = JSON.stringify({
+                    avatar: "images/favicon.ico",
+                    text: "Congratulations, tokens unlocked!",
+                    duration: 10000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    backgroundColor: "linear-gradient(to right, #454A21, #607D3B)",
+                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                    onClick: function() {} // Callback after click
+                });
+                var toastObject = JSON.parse(toastResponse);
+                Toastify(toastObject).showToast();
             }
 
             if (currentTime >= sixtyDayTimestamp && sixtyDayAmounts.getAvailable() > 0 && stateAmountInWei <= sixtyDayAmounts.getAvailable()) {
+                valid = true;
                 response = await sixtyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, stateAmountInWei);
+                var toastResponse = JSON.stringify({
+                    avatar: "images/favicon.ico",
+                    text: "Congratulations, tokens unlocked!",
+                    duration: 10000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    backgroundColor: "linear-gradient(to right, #454A21, #607D3B)",
+                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                    onClick: function() {} // Callback after click
+                });
+                var toastObject = JSON.parse(toastResponse);
+                Toastify(toastObject).showToast();
             } else if (currentTime >= sixtyDayTimestamp && sixtyDayAmounts.getAvailable() > 0 && stateAmountInWei > sixtyDayAmounts.getAvailable()) {
+                valid = true;
                 response = await sixtyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, sixtyDayAmounts.getAvailable());
+                var toastResponse = JSON.stringify({
+                    avatar: "images/favicon.ico",
+                    text: "Congratulations, tokens unlocked!",
+                    duration: 10000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    backgroundColor: "linear-gradient(to right, #454A21, #607D3B)",
+                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                    onClick: function() {} // Callback after click
+                });
+                var toastObject = JSON.parse(toastResponse);
+                Toastify(toastObject).showToast();
             }
 
             if (currentTime >= ninetyDayTimestamp && ninetyDayAmounts.getAvailable() > 0 && stateAmountInWei <= ninetyDayAmounts.getAvailable()) {
+                valid = true;
                 response = await ninetyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, stateAmountInWei);
+                var toastResponse = JSON.stringify({
+                    avatar: "images/favicon.ico",
+                    text: "Congratulations, tokens unlocked!",
+                    duration: 10000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    backgroundColor: "linear-gradient(to right, #454A21, #607D3B)",
+                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                    onClick: function() {} // Callback after click
+                });
+                var toastObject = JSON.parse(toastResponse);
+                Toastify(toastObject).showToast();
             } else if (currentTime >= ninetyDayTimestamp && ninetyDayAmounts.getAvailable() > 0 && stateAmountInWei > ninetyDayAmounts.getAvailable()) {
+                valid = true;
                 response = await ninetyDayTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, ninetyDayAmounts.getAvailable());
+                var toastResponse = JSON.stringify({
+                    avatar: "images/favicon.ico",
+                    text: "Congratulations, tokens unlocked!",
+                    duration: 10000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    backgroundColor: "linear-gradient(to right, #454A21, #607D3B)",
+                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                    onClick: function() {} // Callback after click
+                });
+                var toastObject = JSON.parse(toastResponse);
+                Toastify(toastObject).showToast();
+            }
+            if (valid == false){
+                var toastResponse = JSON.stringify({
+                    avatar: "images/sorry.png",
+                    text: "Sorry, invalid request, please check input!",
+                    duration: 10000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    backgroundColor: "linear-gradient(to right, #FF6600, #FFA500)",
+                    stopOnFocus: false, // Prevents dismissing of toast on hover
+                    onClick: function() {} // Callback after click
+                });
+                var toastObject = JSON.parse(toastResponse);
+                Toastify(toastObject).showToast();
             }
         } else {
             var toastResponse = JSON.stringify({
