@@ -418,6 +418,7 @@ var provider;
 var signer;
 
 
+
 document.addEventListener("DOMContentLoaded", function(event) {
     console.log("Page has loaded ...");
     window.ethereum.enable();
@@ -448,12 +449,42 @@ function clearInput() {
     document.getElementById("state_amount").value = '';
 }
 
+async function calculateWeiPerSecond(_eth_address, ){
+    (balances[_to] + alreadyWithdrawn[_to]).div(netReleasePeriod); 
+}
+
 async function calculateBalancesAtStartup() {
-        // Provide message if still in first time period
+    window.ethereum.enable();
+
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    // Current time
+    var currentBlock = await provider.getBlock("latest");
+    currentTime = currentBlock.timestamp;
+    currentTimeBN = new ethers.BigNumber.from(currentTime);
+    console.log("Current time: " + currentTime);
+
+    // Instantiate all 3 timelock contracts
+    linearTimeLockContract = new ethers.Contract(linear_address, abi, provider);
+
+    // Cliff edge timestamp
+    cliffEdgeTimestamp = await linearTimeLockContract.cliffEdge();
+    cliffEdgeTimestampBN = new ethers.BigNumber.from(cliffEdgeTimestamp);
+
+    // Release edge timestamp
+    releaseEdgeTimestamp = await linearTimeLockContract.releaseEdge();
+    releaseEdgeTimestampBN = new ethers.BigNumber.from(releaseEdgeTimestamp);
+
+    // Net release period
+    releaseNetPeriod = await linearTimeLockContract.netReleasePeriod();
+    releaseNetPeriodBN = new ethers.BigNumber.from(releaseNetPeriod);
+
+    if (currentTime >= releaseEdgeTimestampBN)
+
     if (
-        currentTime < linearTimestamp) {
-        console.log("Less than 30 days has passed, no tokens available yet");
-        var unlockCommences = new Date(linearTimestamp * 1000);
+        currentTime < cliffEdgeTimestamp) {
+        console.log("No tokens available yet");
+        var unlockCommences = new Date(cliffEdgeTimestamp * 1000);
         var toastResponse = JSON.stringify({
             avatar: "../images/favicon.ico",
             text: "Unlocking commences at: " + unlockCommences.toLocaleString(),
@@ -470,7 +501,6 @@ async function calculateBalancesAtStartup() {
         Toastify(toastObject).showToast();
     } else {
         linearAmounts.reset();
-        window.ethereum.enable();
         document.getElementById("pb").style.width = '0%';
         console.log("Disabling button");
         document.getElementById("button_calculate_balances").disabled = true;
@@ -478,17 +508,6 @@ async function calculateBalancesAtStartup() {
         document.getElementById("pb").style.transition = "all 30s linear 0s";
         document.getElementById("pb").style.width = '80%';
         var toastResponse;
-        // Provider
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-
-        // Current time
-        var currentBlock = await provider.getBlock("latest");
-        currentTime = currentBlock.timestamp;
-        console.log("Current time: " + currentTime);
-
-        // Signer
-        signer = provider.getSigner();
-        console.log(signer);
 
         // Eth address
         console.log("Calculating balances");
@@ -498,43 +517,36 @@ async function calculateBalancesAtStartup() {
         if (resultRegex != null) {
             var recipientAddress = resultRegex[0];
 
-            // Instantiate all 3 timelock contracts
-            linearTimeLockContract = new ethers.Contract(linear_address, abi, provider);
-
-            // Instances timestamps
-            linearTimestamp = await linearTimeLockContract.timePeriod();
-            console.log("30 day: " + linearTimestamp);
-
-            // 30 day contract balances
             linearUsersBalance = await linearTimeLockContract.balances(resultRegex[0]);
             linearUsersBalanceBN = new ethers.BigNumber.from(linearUsersBalance);
             linearAmounts.incrementLocked(linearUsersBalanceBN);
-            if (currentTime >= linearTimestamp) {
-                linearAmounts.incrementAvailable(linearUsersBalanceBN);
-            }
-            console.log("30 day user balance: " + linearAmounts.getLocked());
+
+            console.log("User's balance: " + linearAmounts.getLocked());
             linearAlreadyWithdrawn = await linearTimeLockContract.alreadyWithdrawn(resultRegex[0]);
             linearAlreadyWithdrawnBN = new ethers.BigNumber.from(linearAlreadyWithdrawn);
             linearAmounts.incrementWithdrawn(linearAlreadyWithdrawnBN);
-            console.log("already withdrawn: " + linearAmounts.getWithdrawn());
+            console.log("Already withdrawn: " + linearAmounts.getWithdrawn());
 
             // Populate UI with values
             console.log("Adding start:");
             console.log(linearAmounts.getLocked());
             console.log("Adding end.");
-            const usersBalance = ethers.utils.formatEther(linearAmounts.getLocked());
+            var usersBalance = ethers.utils.formatEther(linearAmounts.getLocked());
             if (usersBalance < 1 && usersBalance > 0) {
                 document.getElementById("locked").innerHTML = "< 1";
             } else {
                 document.getElementById("locked").innerHTML = usersBalance;
             }
-            const alreadyWithdrawn = ethers.utils.formatEther(linearAmounts.getWithdrawn());
+            var alreadyWithdrawn = ethers.utils.formatEther(linearAmounts.getWithdrawn());
             if (alreadyWithdrawn < 1 && alreadyWithdrawn > 0) {
                 document.getElementById("withdrawn").innerHTML = "< 1";
             } else {
                 document.getElementById("withdrawn").innerHTML = alreadyWithdrawn;
             }
-            const available = ethers.utils.formatEther(linearAmounts.getAvailable());
+            // Calculate how much is available at this second
+            var weiPerSecond = (usersBalance + alreadyWithdrawn) / releaseNetPeriod;
+            console.log("Wei per second: " + weiPerSecond);
+            var available = ethers.utils.formatEther(linearAmounts.getAvailable());
             if (available < 1 && available > 0) {
                 document.getElementById("available").innerHTML = "< 1";
             } else {
@@ -860,3 +872,8 @@ async function onButtonClickTransfer() {
         document.getElementById("pb").style.width = '0%';
     });
 }
+
+// TODO
+// Change every value to BN and process only in BN
+// Implement logic that allows user to unlock all tokens if releaseEdge has elapsed
+// Create functions for any repeated code i.e calculating weiPerSecond etc.
