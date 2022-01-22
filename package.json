@@ -1,0 +1,27 @@
+{
+  "name": "timelock-token-user-interface",
+  "version": "1.0.0",
+  "description": "# What does it do?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "gh-pages -d public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/second-state/timelock-token-user-interface.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/second-state/timelock-token-user-interface/issues"
+  },
+  "homepage": "https://second-state.github.io/timelock-token-user-interface/html",
+  "dependencies": {
+    "ethers": "^5.5.3",
+    "express": "^4.17.2",
+    "gh-pages": "^3.2.3"
+  }
+}
+ 

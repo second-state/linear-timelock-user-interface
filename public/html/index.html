@@ -1,0 +1,71 @@
+<! DOCTYPE html>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#000000">
+    <title>Home | Timelock</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0-rc.0/web3.min.js" integrity="sha512-/PTXSvaFzmO4So7Ghyq+DEZOz0sNLU4v1DP4gMOfY3kFu9L/IKoqSHZ6lNl3ZoZ7wT20io3vu/U4IchGcGIhfw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  </head>
+  <body>
+    <div id="root">
+      <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+      <script src="../js/helper.js"></script>
+      <div class="container View WelcomeView">
+        <h1 class="Banner">ParaState Timelock</h1>
+        <div class="Message center">
+          <div class="Title"></div>
+          <a onclick="connectWallet()" id="connect" title="MetaMask via Wikimedia Commons- https://commons.wikimedia.org/wiki/File:MetaMask_Fox.svg">
+            <img class="small_fox" width="80px" alt="MetaMask Fox" src="../images/metamask-fox.svg">
+          </a>
+          <div class="Details" id="connect_wallet_text">Click ☝️ to connect wallet. </div>
+          <br>
+          <hr>
+          <input class="full_width small" id="eth_address" type="text" value="Ethereum address">
+          <br>
+          <br>
+          <input class="full_width small" id="state_amount" type="text" value="ERC20 amount in wei">
+          <br>
+          <br>
+          <button class="clearButton center" onclick="clearInput()" id="clear_input">Clear input</button>
+          <br>
+          <button class="BalanceButton center" id="button_calculate_balances" onclick="calculateBalances()">Refresh/Calculate Balances</button>
+          <br>
+          <button class="NavButton center" id="button_transfer_tokens" onclick="onButtonClickTransfer($('#eth_address').val())">Unlock Your Tokens</button>
+          <br>
+          <table id="example" class="table-responsive-sm center tableText">
+            <thead>
+              <tr>
+                <th scope="col">Locked</th>
+                <th scope="col">Withdrawn</th>
+                <th scope="col">Available</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="locked">0</td>
+                <td id="withdrawn">0</td>
+                <td id="available">0</td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" id="pb" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+          </div>
+          <hr>
+          <a href="https://parastate.io" target="_blank">
+            <img class="center small_image" src="../images/parastate_logo.png">
+          </a>
+          <br>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
