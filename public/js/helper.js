@@ -363,7 +363,7 @@ const abi = [
 ];
 
 // Address of the linear timelock instance
-const linear_address = '0x3E6eFdBAE123E57b7485E303e6a87823D278a28B';
+const linear_address = '0x5CDCCbA39ce998590C54455ED5BE930d920918a1';
 
 
 // IMPORTANT - which address are you pasting here?
@@ -489,6 +489,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 async function connectWallet() {
+    linearAmounts.reset();
     window.ethereum.enable();
     console.log('Called connect wallet which is inside helper.js');
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -621,7 +622,7 @@ async function updateBalances() {
                 linearAmounts.setAvailable(linearAmounts.getLocked());
                 console.log("No time lock in place, all tokens are available");
             } else {
-                linearAmounts.setAvailable((linearAmounts.getCurrentTime() - linearAmounts.getMostRecentUnlockTimestamp()).mul(linearAmounts.setWeiPerSecond()));
+                linearAmounts.setAvailable((linearAmounts.getCurrentTime().sub(linearAmounts.getMostRecentUnlockTimestamp())).mul(linearAmounts.getWeiPerSecond()));
             }
             if (ethers.utils.formatEther(linearAmounts.getAvailable()) < 1 && ethers.utils.formatEther(linearAmounts.getAvailable()) > 0) {
                 document.getElementById("available").innerHTML = "< 1";
@@ -658,242 +659,14 @@ async function updateBalances() {
     }
 }
 
-async function calculateBalancesAtStartup() {
-    window.ethereum.enable();
-
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-
-    // Current time
-    var currentBlock = await provider.getBlock("latest");
-    currentTime = currentBlock.timestamp;
-    currentTimeBN = new ethers.BigNumber.from(currentTime);
-    console.log("Current time: " + currentTime);
-
-    // Instantiate all 3 timelock contracts
-    linearTimeLockContract = new ethers.Contract(linear_address, abi, provider);
-
-    // Cliff edge timestamp
-    cliffEdgeTimestamp = await linearTimeLockContract.cliffEdge();
-    cliffEdgeTimestampBN = new ethers.BigNumber.from(cliffEdgeTimestamp);
-
-    // Release edge timestamp
-    releaseEdgeTimestamp = await linearTimeLockContract.releaseEdge();
-    releaseEdgeTimestampBN = new ethers.BigNumber.from(releaseEdgeTimestamp);
-
-    // Net release period
-    releaseNetPeriod = await linearTimeLockContract.netReleasePeriod();
-    releaseNetPeriodBN = new ethers.BigNumber.from(releaseNetPeriod);
-
-    if (currentTime >= releaseEdgeTimestampBN)
-
-    if (
-        currentTime < cliffEdgeTimestamp) {
-        console.log("No tokens available yet");
-        var unlockCommences = new Date(cliffEdgeTimestamp * 1000);
-        var toastResponse = JSON.stringify({
-            avatar: "../images/favicon.ico",
-            text: "Unlocking commences at: " + unlockCommences.toLocaleString(),
-            duration: 10000,
-            newWindow: true,
-            close: true,
-            gravity: "top", // `top` or `bottom`
-            position: "right", // `left`, `center` or `right`
-            backgroundColor: "linear-gradient(to right, #FF6600, #FFA500)",
-            stopOnFocus: false, // Prevents dismissing of toast on hover
-            onClick: function() {} // Callback after click
-        });
-        var toastObject = JSON.parse(toastResponse);
-        Toastify(toastObject).showToast();
-    } else {
-        linearAmounts.reset();
-        document.getElementById("pb").style.width = '0%';
-        console.log("Disabling button");
-        document.getElementById("button_calculate_balances").disabled = true;
-        document.getElementById("button_calculate_balances").value = "Calculating balances, please wait ...";
-        document.getElementById("pb").style.transition = "all 30s linear 0s";
-        document.getElementById("pb").style.width = '80%';
-        var toastResponse;
-
-        // Eth address
-        console.log("Calculating balances");
-        eth_address = document.getElementById('eth_address').value;
-        var pattern = /0x[a-fA-F0-9]{40}/;
-        var resultRegex = pattern.exec(eth_address);
-        if (resultRegex != null) {
-            var recipientAddress = resultRegex[0];
-
-            linearUsersBalance = await linearTimeLockContract.balances(resultRegex[0]);
-            linearUsersBalanceBN = new ethers.BigNumber.from(linearUsersBalance);
-            linearAmounts.incrementLocked(linearUsersBalanceBN);
-
-            console.log("User's balance: " + linearAmounts.getLocked());
-            linearAlreadyWithdrawn = await linearTimeLockContract.alreadyWithdrawn(resultRegex[0]);
-            linearAlreadyWithdrawnBN = new ethers.BigNumber.from(linearAlreadyWithdrawn);
-            linearAmounts.incrementWithdrawn(linearAlreadyWithdrawnBN);
-            console.log("Already withdrawn: " + linearAmounts.getWithdrawn());
-
-            // Populate UI with values
-            console.log("Adding start:");
-            console.log(linearAmounts.getLocked());
-            console.log("Adding end.");
-            var usersBalance = ethers.utils.formatEther(linearAmounts.getLocked());
-            if (usersBalance < 1 && usersBalance > 0) {
-                document.getElementById("locked").innerHTML = "< 1";
-            } else {
-                document.getElementById("locked").innerHTML = usersBalance;
-            }
-            var alreadyWithdrawn = ethers.utils.formatEther(linearAmounts.getWithdrawn());
-            if (alreadyWithdrawn < 1 && alreadyWithdrawn > 0) {
-                document.getElementById("withdrawn").innerHTML = "< 1";
-            } else {
-                document.getElementById("withdrawn").innerHTML = alreadyWithdrawn;
-            }
-            // Calculate how much is available at this second
-            var weiPerSecond = (usersBalance + alreadyWithdrawn) / releaseNetPeriod;
-            console.log("Wei per second: " + weiPerSecond);
-            var available = ethers.utils.formatEther(linearAmounts.getAvailable());
-            if (available < 1 && available > 0) {
-                document.getElementById("available").innerHTML = "< 1";
-            } else {
-                document.getElementById("available").innerHTML = available;
-            }
-            // Print value which will be written to state_amount input box
-            //console.log("Max available: " + ethers.utils.formatUnits(available).toString());
-            document.getElementById("state_amount").value = ethers.utils.formatUnits(linearAmounts.getAvailable(), 0);
-            document.getElementById("pb").style.transition = "all 0.1s linear 0s";
-            document.getElementById("pb").style.width = '100%';
-            sleep(1000).then(() => {
-                document.getElementById("pb").classList.remove("progress-bar-animated");
-                document.getElementById("button_calculate_balances").disabled = false;
-                document.getElementById("button_calculate_balances").value = "Refresh/Calculate Balances";
-                document.getElementById("pb").style.width = '0%';
-            });
-        }
-    }
-}
-
 async function calculateBalances() {
-        // Provide message if still in first time period
-    if (
-        currentTime < linearTimestamp) {
-        console.log("Less than 30 days has passed, no tokens available yet");
-        var unlockCommences = new Date(linearTimestamp * 1000);
-        var toastResponse = JSON.stringify({
-            avatar: "../images/favicon.ico",
-            text: "Unlocking commences at: " + unlockCommences.toLocaleString(),
-            duration: 10000,
-            newWindow: true,
-            close: true,
-            gravity: "top", // `top` or `bottom`
-            position: "right", // `left`, `center` or `right`
-            backgroundColor: "linear-gradient(to right, #FF6600, #FFA500)",
-            stopOnFocus: false, // Prevents dismissing of toast on hover
-            onClick: function() {} // Callback after click
-        });
-        var toastObject = JSON.parse(toastResponse);
-        Toastify(toastObject).showToast();
-    } else {
-        linearAmounts.reset();
-        window.ethereum.enable();
-        document.getElementById("pb").style.width = '0%';
-        console.log("Disabling button");
-        document.getElementById("button_calculate_balances").disabled = true;
-        document.getElementById("pb").style.transition = "all 30s linear 0s";
-        document.getElementById("pb").style.width = '80%';
-        var toastResponse;
-        // Provider
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-
-        // Current time
-        var currentBlock = await provider.getBlock("latest");
-        currentTime = currentBlock.timestamp;
-        console.log("Current time: " + currentTime);
-
-        // Signer
-        signer = provider.getSigner();
-        console.log(signer);
-
-        // Eth address
-        console.log("Calculating balances");
-        eth_address = document.getElementById('eth_address').value;
-        var pattern = /0x[a-fA-F0-9]{40}/;
-        var resultRegex = pattern.exec(eth_address);
-        if (resultRegex != null) {
-            var recipientAddress = resultRegex[0];
-
-            // Instantiate all 3 timelock contracts
-            linearTimeLockContract = new ethers.Contract(linear_address, abi, provider);
-
-            // Instances timestamps
-            linearTimestamp = await linearTimeLockContract.timePeriod();
-            console.log("30 day: " + linearTimestamp);
-
-            // 30 day contract balances
-            linearUsersBalance = await linearTimeLockContract.balances(resultRegex[0]);
-            linearUsersBalanceBN = new ethers.BigNumber.from(linearUsersBalance);
-            linearAmounts.incrementLocked(linearUsersBalanceBN);
-            if (currentTime >= linearTimestamp) {
-                linearAmounts.incrementAvailable(linearUsersBalanceBN);
-            }
-            console.log("30 day user balance: " + linearAmounts.getLocked());
-            linearAlreadyWithdrawn = await linearTimeLockContract.alreadyWithdrawn(resultRegex[0]);
-            linearAlreadyWithdrawnBN = new ethers.BigNumber.from(linearAlreadyWithdrawn);
-            linearAmounts.incrementWithdrawn(linearAlreadyWithdrawnBN);
-            console.log("already withdrawn: " + linearAmounts.getWithdrawn());
-
-            // Populate UI with values
-            console.log("Adding start:");
-            console.log(linearAmounts.getLocked());
-            console.log("Adding end.");
-            const usersBalance = ethers.utils.formatEther(linearAmounts.getLocked());
-            if (usersBalance < 1 && usersBalance > 0) {
-                document.getElementById("locked").innerHTML = "< 1";
-            } else {
-                document.getElementById("locked").innerHTML = usersBalance;
-            }
-            const alreadyWithdrawn = ethers.utils.formatEther(linearAmounts.getWithdrawn());
-            if (alreadyWithdrawn < 1 && alreadyWithdrawn > 0) {
-                document.getElementById("withdrawn").innerHTML = "< 1";
-            } else {
-                document.getElementById("withdrawn").innerHTML = alreadyWithdrawn;
-            }
-            const available = ethers.utils.formatEther(linearAmounts.getAvailable());
-            if (available < 1 && available > 0) {
-                document.getElementById("available").innerHTML = "< 1";
-            } else {
-                document.getElementById("available").innerHTML = available;
-            }
-            // Print value which will be written to state_amount input box
-            //console.log("Max available: " + ethers.utils.formatUnits(available).toString());
-            document.getElementById("state_amount").value = ethers.utils.formatUnits(linearAmounts.getAvailable(), 0);
-        } else {
-            var toastResponse = JSON.stringify({
-                avatar: "../images/favicon.ico",
-                text: "Not a valid Ethereum address!",
-                duration: 10000,
-                newWindow: true,
-                close: true,
-                gravity: "top", // `top` or `bottom`
-                position: "right", // `left`, `center` or `right`
-                backgroundColor: "linear-gradient(to right, #FF6600, #FFA500)",
-                stopOnFocus: false, // Prevents dismissing of toast on hover
-                onClick: function() {} // Callback after click
-            });
-            var toastObject = JSON.parse(toastResponse);
-            Toastify(toastObject).showToast();
-        }
-        document.getElementById("pb").style.transition = "all 0.1s linear 0s";
-        document.getElementById("pb").style.width = '100%';
-        sleep(1000).then(() => {
-            document.getElementById("pb").classList.remove("progress-bar-animated");
-            document.getElementById("button_calculate_balances").disabled = false;
-            document.getElementById("pb").style.width = '0%';
-        });
-    }
+    linearAmounts.reset();
+    await updateBalances();
 }
 
 async function onButtonClickTransfer() {
     linearAmounts.reset();
+    await updateBalances();
     // Provider
     window.ethereum.enable()
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -904,11 +677,6 @@ async function onButtonClickTransfer() {
 
     // Instantiate all 3 timelock contracts
     linearTimeLockContract = new ethers.Contract(linear_address, abi, signer);
-
-    // Current time
-    var currentBlock = await provider.getBlock("latest");
-    currentTime = currentBlock.timestamp;
-    console.log("Current time: " + currentTime);
 
     // UI mods
     document.getElementById("pb").style.width = '0%';
@@ -959,34 +727,12 @@ async function onButtonClickTransfer() {
         });
         throw "exit";
     }
-    if (stateAmountInWei > 0) {
-        console.log("Calculating balances");
+    if (stateAmountInWei > 0 && stateAmountInWei <= linearAmounts.getAvailable()) {
         eth_address = document.getElementById('eth_address').value;
         var pattern = /0x[a-fA-F0-9]{40}/;
         var resultRegex = pattern.exec(eth_address);
         if (resultRegex != null) {
             var recipientAddress = resultRegex[0];
-
-            // Instances timestamps
-            linearTimestamp = await linearTimeLockContract.timePeriod();
-            console.log("30 day: " + linearTimestamp);
-
-            // 30 day contract balances
-            linearUsersBalance = await linearTimeLockContract.balances(resultRegex[0]);
-            linearUsersBalanceBN = new ethers.BigNumber.from(linearUsersBalance);
-            linearAmounts.incrementLocked(linearUsersBalanceBN);
-            if (currentTime >= linearTimestamp) {
-                linearAmounts.incrementAvailable(linearUsersBalanceBN);
-            }
-            console.log("30 day user balance: " + linearAmounts.getLocked());
-            linearAlreadyWithdrawn = await linearTimeLockContract.alreadyWithdrawn(resultRegex[0]);
-            linearAlreadyWithdrawnBN = new ethers.BigNumber.from(linearAlreadyWithdrawn);
-            linearAmounts.incrementWithdrawn(linearAlreadyWithdrawnBN);
-            console.log("already withdrawn: " + linearAmounts.getWithdrawn());
-
-            var valid = false;
-            if (currentTime >= linearTimestamp && linearAmounts.getAvailable() > 0 && stateAmountInWei <= linearAmounts.getAvailable()) {
-                valid = true;
                 response = await linearTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, stateAmountInWei);
                 var toastResponse = JSON.stringify({
                     avatar: "../images/favicon.ico",
@@ -1002,41 +748,6 @@ async function onButtonClickTransfer() {
                 });
                 var toastObject = JSON.parse(toastResponse);
                 Toastify(toastObject).showToast();
-            } else if (currentTime >= linearTimestamp && linearAmounts.getAvailable() > 0 && stateAmountInWei > linearAmounts.getAvailable()) {
-                valid = true;
-                response = await linearTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, linearAmounts.getAvailable());
-                var toastResponse = JSON.stringify({
-                    avatar: "../images/favicon.ico",
-                    text: "Congratulations, tokens unlocked!",
-                    duration: 10000,
-                    newWindow: true,
-                    close: true,
-                    gravity: "top", // `top` or `bottom`
-                    position: "right", // `left`, `center` or `right`
-                    backgroundColor: "linear-gradient(to right, #454A21, #607D3B)",
-                    stopOnFocus: false, // Prevents dismissing of toast on hover
-                    onClick: function() {} // Callback after click
-                });
-                var toastObject = JSON.parse(toastResponse);
-                Toastify(toastObject).showToast();
-            }
-
-            if (valid == false){
-                var toastResponse = JSON.stringify({
-                    avatar: "../images/sorry.png",
-                    text: "Sorry, invalid request, please check input!",
-                    duration: 10000,
-                    newWindow: true,
-                    close: true,
-                    gravity: "top", // `top` or `bottom`
-                    position: "right", // `left`, `center` or `right`
-                    backgroundColor: "linear-gradient(to right, #FF6600, #FFA500)",
-                    stopOnFocus: false, // Prevents dismissing of toast on hover
-                    onClick: function() {} // Callback after click
-                });
-                var toastObject = JSON.parse(toastResponse);
-                Toastify(toastObject).showToast();
-            }
         } else {
             var toastResponse = JSON.stringify({
                 avatar: "../images/favicon.ico",
@@ -1056,7 +767,7 @@ async function onButtonClickTransfer() {
     } else {
         var toastResponse = JSON.stringify({
             avatar: "../images/favicon.ico",
-            text: "Token amount must be greater than zero!",
+            text: "Please re-check token amount and try again!",
             duration: 10000,
             newWindow: true,
             close: true,
