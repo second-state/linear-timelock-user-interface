@@ -615,9 +615,15 @@ async function updateBalances() {
             linearAmounts.setWeiPerSecond((ethers.utils.formatEther(linearAmounts.getLocked()).add(ethers.utils.formatEther(linearAmounts.getWithdrawn()))).div(ethers.utils.formatEther(linearAmounts.getNetReleasePeriod())));
             console.log("Wei per second: " + weiPerSecond);
 
-            // Calculate how many tokens are available, given the current time period and how much time has elapsed so far
-            linearAmounts.setAvailable((linearAmounts.getCurrentTime() - linearAmounts.getMostRecentUnlockTimestamp()).mul(linearAmounts.setWeiPerSecond()));
-            if ( ethers.utils.formatEther(linearAmounts.getAvailable()) < 1 && ethers.utils.formatEther(linearAmounts.getAvailable()) > 0) {
+            // Calculate how many tokens are available, given the current time period and how much time has elapsed so far        
+            if (linearAmounts.getCurrentTime() >= linearAmounts.getReleaseEdge()){
+                // The maximum time period has passed, so all locked tokens are available now and forever
+                linearAmounts.setAvailable(linearAmounts.getLocked());
+                console.log("No time lock in place, all tokens are available");
+            } else {
+                linearAmounts.setAvailable((linearAmounts.getCurrentTime() - linearAmounts.getMostRecentUnlockTimestamp()).mul(linearAmounts.setWeiPerSecond()));
+            }
+            if (ethers.utils.formatEther(linearAmounts.getAvailable()) < 1 && ethers.utils.formatEther(linearAmounts.getAvailable()) > 0) {
                 document.getElementById("available").innerHTML = "< 1";
             } else {
                 document.getElementById("available").innerHTML = ethers.utils.formatEther((linearAmounts.getAvailable());
@@ -649,12 +655,6 @@ async function updateBalances() {
             var toastObject = JSON.parse(toastResponse);
             Toastify(toastObject).showToast();
         }
-        // This section is to just show that all tokens are available (if/when release period is actually over)
-        /*
-            if (linearAmounts.getCurrentTime() >= linearAmounts.getReleaseEdge()){
-                console.log("No time lock in place, all tokens are available");
-            }
-        */
     }
 }
 
