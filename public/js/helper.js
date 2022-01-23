@@ -385,6 +385,7 @@ class Amounts {
         this.currentTime = new ethers.BigNumber.from('0');
         this.netReleasePeriod = new ethers.BigNumber.from('0');
         this.mostRecentUnlockTimestamp = new ethers.BigNumber.from('0');
+        this.weiPerSecond = new ethers.BigNumber.from('0');
     }
 
     getLocked() {
@@ -419,15 +420,19 @@ class Amounts {
         return this.mostRecentUnlockTimestamp;
     }
 
-    incrementLocked(_locked) {
+    getWeiPerSecond(){
+        return this.weiPerSecond;
+    }
+
+    setLocked(_locked) {
         this.locked = this.locked.add(_locked);
     }
 
-    incrementWithdrawn(_withdrawn) {
+    setWithdrawn(_withdrawn) {
         this.withdrawn = this.withdrawn.add(_withdrawn);
     }
 
-    incrementAvailable(_available) {
+    setAvailable(_available) {
         this.available = this.available.add(_available);
     }
 
@@ -451,6 +456,10 @@ class Amounts {
         this.mostRecentUnlockTimestamp = _mostRecentUnlockTimestamp;
     }
 
+    setWeiPerSecond(_weiPerSecond){
+        this.weiPerSecond = _weiPerSecond;
+    }
+
     reset() {
         this.locked = new ethers.BigNumber.from('0');
         this.withdrawn = new ethers.BigNumber.from('0');
@@ -460,6 +469,7 @@ class Amounts {
         this.currentTime = new ethers.BigNumber.from('0');
         this.netReleasePeriod = new ethers.BigNumber.from('0');
         this.mostRecentUnlockTimestamp = new ethers.BigNumber.from('0');
+        this.weiPerSecond = new ethers.BigNumber.from('0');
     }
 }
 
@@ -472,7 +482,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     window.ethereum.enable();
     connectWallet().then(() => {
         console.log("Wallet connected in page load section");
-        calculateBalancesAtStartup().then(() => {
+        updateBalances().then(() => {
             console.log("Ready to unlock tokens ...")
         });
     });
@@ -570,13 +580,13 @@ async function updateBalances() {
             // Balance locked 
             linearUsersBalance = await linearTimeLockContract.balances(resultRegex[0]);
             linearUsersBalanceBN = new ethers.BigNumber.from(linearUsersBalance);
-            linearAmounts.incrementLocked(linearUsersBalanceBN);
+            linearAmounts.setLocked(linearUsersBalanceBN);
             console.log("User's balance: " + linearAmounts.getLocked());
 
             // Amount already withdrawn
             linearAlreadyWithdrawn = await linearTimeLockContract.alreadyWithdrawn(resultRegex[0]);
             linearAlreadyWithdrawnBN = new ethers.BigNumber.from(linearAlreadyWithdrawn);
-            linearAmounts.incrementWithdrawn(linearAlreadyWithdrawnBN);
+            linearAmounts.setWithdrawn(linearAlreadyWithdrawnBN);
             console.log("Already withdrawn: " + linearAmounts.getWithdrawn());
 
             // Get most recent unlock timestamp i.e. the last time this specific user last unlocked tokens
@@ -601,15 +611,16 @@ async function updateBalances() {
             } else {
                 document.getElementById("withdrawn").innerHTML = ethers.utils.formatEther(linearAmounts.getWithdrawn());
             }
-            // Calculate how much is available at this second
-            var weiPerSecond = (ethers.utils.formatEther(linearAmounts.getLocked()).add(ethers.utils.formatEther(linearAmounts.getWithdrawn()))) / ethers.utils.formatEther(linearAmounts.getNetReleasePeriod());
+            // Calculate how many wei per second is available for this specific user
+            linearAmounts.setWeiPerSecond((ethers.utils.formatEther(linearAmounts.getLocked()).add(ethers.utils.formatEther(linearAmounts.getWithdrawn()))).div(ethers.utils.formatEther(linearAmounts.getNetReleasePeriod())));
             console.log("Wei per second: " + weiPerSecond);
 
-            var available = ethers.utils.formatEther(linearAmounts.getAvailable());
-            if (available < 1 && available > 0) {
+            // Calculate how many tokens are available, given the current time period and how much time has elapsed so far
+            linearAmounts.setAvailable((linearAmounts.getCurrentTime() - linearAmounts.getMostRecentUnlockTimestamp()).mul(linearAmounts.setWeiPerSecond()));
+            if ( ethers.utils.formatEther(linearAmounts.getAvailable()) < 1 && ethers.utils.formatEther(linearAmounts.getAvailable()) > 0) {
                 document.getElementById("available").innerHTML = "< 1";
             } else {
-                document.getElementById("available").innerHTML = available;
+                document.getElementById("available").innerHTML = ethers.utils.formatEther((linearAmounts.getAvailable());
             }
             // Print value which will be written to state_amount input box
             //console.log("Max available: " + ethers.utils.formatUnits(available).toString());
@@ -1074,3 +1085,5 @@ async function onButtonClickTransfer() {
 // Test that we are always calculating the floor so we never get partial numbers or decimals
 // Make sure that every function starts with linearAmounts.reset() function to clear 
 // Every function must call updateBalance because we don't want any redundant code
+// Make sure that we use ethers everywhere i.e. .mul() instead of * and .add() instead of + etc.
+// See if ethers has a floor function so we never get decimals
