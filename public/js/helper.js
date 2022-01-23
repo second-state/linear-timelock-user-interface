@@ -1,19 +1,15 @@
-const abi = [
-    {
-        "inputs": [
-            {
-                "internalType": "contract IERC20",
-                "name": "_erc20_contract_address",
-                "type": "address"
-            }
-        ],
+const abi = [{
+        "inputs": [{
+            "internalType": "contract IERC20",
+            "name": "_erc20_contract_address",
+            "type": "address"
+        }],
         "stateMutability": "nonpayable",
         "type": "constructor"
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
+        "inputs": [{
                 "indexed": false,
                 "internalType": "address",
                 "name": "recipient",
@@ -31,8 +27,7 @@ const abi = [
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
+        "inputs": [{
                 "indexed": false,
                 "internalType": "address",
                 "name": "from",
@@ -50,8 +45,7 @@ const abi = [
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
+        "inputs": [{
                 "indexed": false,
                 "internalType": "address",
                 "name": "recipient",
@@ -70,57 +64,46 @@ const abi = [
     {
         "inputs": [],
         "name": "allIncomingDepositsFinalised",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
+        "outputs": [{
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
+        "inputs": [{
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }],
         "name": "alreadyWithdrawn",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
+        "inputs": [{
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }],
         "name": "balances",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address[]",
                 "name": "recipients",
                 "type": "address[]"
@@ -139,32 +122,27 @@ const abi = [
     {
         "inputs": [],
         "name": "cliffEdge",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [],
         "name": "contractBalance",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "recipient",
                 "type": "address"
@@ -183,13 +161,11 @@ const abi = [
     {
         "inputs": [],
         "name": "erc20Contract",
-        "outputs": [
-            {
-                "internalType": "contract IERC20",
-                "name": "",
-                "type": "address"
-            }
-        ],
+        "outputs": [{
+            "internalType": "contract IERC20",
+            "name": "",
+            "type": "address"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
@@ -203,77 +179,64 @@ const abi = [
     {
         "inputs": [],
         "name": "initialTimestamp",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
+        "inputs": [{
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }],
         "name": "mostRecentUnlockTimestamp",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [],
         "name": "netReleasePeriod",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [],
         "name": "owner",
-        "outputs": [
-            {
-                "internalType": "address payable",
-                "name": "",
-                "type": "address"
-            }
-        ],
+        "outputs": [{
+            "internalType": "address payable",
+            "name": "",
+            "type": "address"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [],
         "name": "releaseEdge",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "uint256",
                 "name": "_cliffTimePeriod",
                 "type": "uint256"
@@ -292,19 +255,16 @@ const abi = [
     {
         "inputs": [],
         "name": "timestampSet",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
+        "outputs": [{
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "contract IERC20",
                 "name": "token",
                 "type": "address"
@@ -321,8 +281,7 @@ const abi = [
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "contract IERC20",
                 "name": "token",
                 "type": "address"
@@ -344,13 +303,11 @@ const abi = [
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
+        "inputs": [{
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+        }],
         "name": "withdrawEth",
         "outputs": [],
         "stateMutability": "nonpayable",
@@ -400,27 +357,27 @@ class Amounts {
         return this.available;
     }
 
-    getCliffEdge(){
+    getCliffEdge() {
         return this.cliffEdge;
     }
 
-    getReleaseEdge(){
+    getReleaseEdge() {
         return this.releaseEdge;
     }
 
-    getCurrentTime(){
+    getCurrentTime() {
         return this.currentTime;
     }
 
-    getNetReleasePeriod(){
+    getNetReleasePeriod() {
         return this.netReleasePeriod;
     }
 
-    getMostRecentUnlockTimestamp(){
+    getMostRecentUnlockTimestamp() {
         return this.mostRecentUnlockTimestamp;
     }
 
-    getWeiPerSecond(){
+    getWeiPerSecond() {
         return this.weiPerSecond;
     }
 
@@ -436,27 +393,27 @@ class Amounts {
         this.available = this.available.add(_available);
     }
 
-    setCliffEdge(_cliffEdge){
+    setCliffEdge(_cliffEdge) {
         this.cliffEdge = _cliffEdge;
     }
 
-    setReleaseEdge(_releaseEdge){
+    setReleaseEdge(_releaseEdge) {
         this.releaseEdge = _releaseEdge;
     }
 
-    setCurrentTime(_currentTime){
+    setCurrentTime(_currentTime) {
         this.currentTime = _currentTime;
     }
 
-    setNetReleasePeriod(){
+    setNetReleasePeriod() {
         this.netReleasePeriod = this.releaseEdge.sub(this.cliffEdge);
     }
 
-    setMostRecentUnlockTimestamp(_mostRecentUnlockTimestamp){
+    setMostRecentUnlockTimestamp(_mostRecentUnlockTimestamp) {
         this.mostRecentUnlockTimestamp = _mostRecentUnlockTimestamp;
     }
 
-    setWeiPerSecond(_weiPerSecond){
+    setWeiPerSecond(_weiPerSecond) {
         this.weiPerSecond = _weiPerSecond;
     }
 
@@ -506,10 +463,6 @@ async function connectWallet() {
 function clearInput() {
     document.getElementById("eth_address").value = '';
     document.getElementById("state_amount").value = '';
-}
-
-async function calculateWeiPerSecond(_eth_address, ){
-    (balances[_to] + alreadyWithdrawn[_to]).div(linearAmounts.getNetReleasePeriod()); 
 }
 
 async function updateBalances() {
@@ -617,7 +570,7 @@ async function updateBalances() {
             console.log("Wei per second: " + linearAmounts.getWeiPerSecond());
 
             // Calculate how many tokens are available, given the current time period and how much time has elapsed so far        
-            if (linearAmounts.getCurrentTime() >= linearAmounts.getReleaseEdge()){
+            if (linearAmounts.getCurrentTime() >= linearAmounts.getReleaseEdge()) {
                 // The maximum time period has passed, so all locked tokens are available now and forever
                 linearAmounts.setAvailable(linearAmounts.getLocked());
                 console.log("No time lock in place, all tokens are available");
@@ -733,21 +686,21 @@ async function onButtonClickTransfer() {
         var resultRegex = pattern.exec(eth_address);
         if (resultRegex != null) {
             var recipientAddress = resultRegex[0];
-                response = await linearTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, stateAmountInWei);
-                var toastResponse = JSON.stringify({
-                    avatar: "../images/favicon.ico",
-                    text: "Congratulations, tokens unlocked!",
-                    duration: 10000,
-                    newWindow: true,
-                    close: true,
-                    gravity: "top", // `top` or `bottom`
-                    position: "right", // `left`, `center` or `right`
-                    backgroundColor: "linear-gradient(to right, #454A21, #607D3B)",
-                    stopOnFocus: false, // Prevents dismissing of toast on hover
-                    onClick: function() {} // Callback after click
-                });
-                var toastObject = JSON.parse(toastResponse);
-                Toastify(toastObject).showToast();
+            response = await linearTimeLockContract.transferTimeLockedTokensAfterTimePeriod(erc20_contract_address, recipientAddress, stateAmountInWei);
+            var toastResponse = JSON.stringify({
+                avatar: "../images/favicon.ico",
+                text: "Congratulations, tokens unlocked!",
+                duration: 10000,
+                newWindow: true,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                backgroundColor: "linear-gradient(to right, #454A21, #607D3B)",
+                stopOnFocus: false, // Prevents dismissing of toast on hover
+                onClick: function() {} // Callback after click
+            });
+            var toastObject = JSON.parse(toastResponse);
+            Toastify(toastObject).showToast();
         } else {
             var toastResponse = JSON.stringify({
                 avatar: "../images/favicon.ico",
@@ -788,13 +741,3 @@ async function onButtonClickTransfer() {
         document.getElementById("pb").style.width = '0%';
     });
 }
-
-// TODO
-// Change every value to BN and process only in BN
-// Implement logic that allows user to unlock all tokens if releaseEdge has elapsed
-// Create functions for any repeated code i.e calculating weiPerSecond etc.
-// Test that we are always calculating the floor so we never get partial numbers or decimals
-// Make sure that every function starts with linearAmounts.reset() function to clear 
-// Every function must call updateBalance because we don't want any redundant code
-// Make sure that we use ethers everywhere i.e. .mul() instead of * and .add() instead of + etc.
-// See if ethers has a floor function so we never get decimals
