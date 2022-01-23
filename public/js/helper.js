@@ -449,7 +449,7 @@ class Amounts {
     }
 
     setNetReleasePeriod(){
-        this.netReleasePeriod = this.releaseEdge.min(this.cliffEdge);
+        this.netReleasePeriod = this.releaseEdge.sub(this.cliffEdge);
     }
 
     setMostRecentUnlockTimestamp(_mostRecentUnlockTimestamp){
@@ -590,7 +590,7 @@ async function updateBalances() {
             console.log("Already withdrawn: " + linearAmounts.getWithdrawn());
 
             // Get most recent unlock timestamp i.e. the last time this specific user last unlocked tokens
-            mostRecentUnlockTimestamp = await linearTimeLockContract.mostRecentUnlockTimestamp();
+            mostRecentUnlockTimestamp = await linearTimeLockContract.mostRecentUnlockTimestamp(resultRegex[0]);
             mostRecentUnlockTimestampBN = new ethers.BigNumber.from(mostRecentUnlockTimestamp);
             linearAmounts.setMostRecentUnlockTimestamp(mostRecentUnlockTimestampBN);
             console.log("Time of most recent unlock: " + linearAmounts.getMostRecentUnlockTimestamp());
@@ -612,8 +612,8 @@ async function updateBalances() {
                 document.getElementById("withdrawn").innerHTML = ethers.utils.formatEther(linearAmounts.getWithdrawn());
             }
             // Calculate how many wei per second is available for this specific user
-            linearAmounts.setWeiPerSecond((ethers.utils.formatEther(linearAmounts.getLocked()).add(ethers.utils.formatEther(linearAmounts.getWithdrawn()))).div(ethers.utils.formatEther(linearAmounts.getNetReleasePeriod())));
-            console.log("Wei per second: " + weiPerSecond);
+            linearAmounts.setWeiPerSecond((linearAmounts.getLocked().add(linearAmounts.getWithdrawn())).div(linearAmounts.getNetReleasePeriod()));
+            console.log("Wei per second: " + linearAmounts.getWeiPerSecond());
 
             // Calculate how many tokens are available, given the current time period and how much time has elapsed so far        
             if (linearAmounts.getCurrentTime() >= linearAmounts.getReleaseEdge()){
@@ -626,7 +626,7 @@ async function updateBalances() {
             if (ethers.utils.formatEther(linearAmounts.getAvailable()) < 1 && ethers.utils.formatEther(linearAmounts.getAvailable()) > 0) {
                 document.getElementById("available").innerHTML = "< 1";
             } else {
-                document.getElementById("available").innerHTML = ethers.utils.formatEther((linearAmounts.getAvailable());
+                document.getElementById("available").innerHTML = ethers.utils.formatEther(linearAmounts.getAvailable());
             }
             // Print value which will be written to state_amount input box
             //console.log("Max available: " + ethers.utils.formatUnits(available).toString());
