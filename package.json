@@ -1,5 +1,5 @@
 {
-  "name": "linear-timelock-token-user-interface",
+  "name": "linear-timelock-user-interface",
   "version": "1.0.2",
   "description": "A user interface for the https://github.com/second-state/linear-timelock-smart-contract/",
   "main": "server.js",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/second-state/linear-timelock-token-user-interface.git"
+    "url": "git+https://github.com/second-state/linear-timelock-user-interface.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/second-state/linear-timelock-token-user-interface/issues"
+    "url": "https://github.com/second-state/linear-timelock-user-interface/issues"
   },
-  "homepage": "https://second-state.github.io/linear-timelock-token-user-interface/html",
+  "homepage": "https://second-state.github.io/linear-timelock-user-interface/html",
   "dependencies": {
     "ethers": "^5.5.3",
     "express": "^4.17.2",
