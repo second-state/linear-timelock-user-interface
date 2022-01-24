@@ -27,7 +27,7 @@ The [timelock smart contract](https://github.com/second-state/linear-timelock-sm
 Clone this repository
 
 ```
-git clone git@github.com:second-state/linear-timelock-token-user-interface.git
+git clone git@github.com:second-state/linear-timelock-user-interface.git
 ```
 
 ## ABI and address of Timelock
