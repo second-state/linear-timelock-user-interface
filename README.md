@@ -54,4 +54,4 @@ To publish/deploy simply type
 npm run deploy
 ```
 
-The site will then be hosted to [https://second-state.github.io/linear-timelock-token-user-interface/html/](https://second-state.github.io/linear-timelock-token-user-interface/html/)
+The site will then be hosted to [https://second-state.github.io/linear-timelock-user-interface/html/](https://second-state.github.io/linear-timelock-token-user-interface/html/)
