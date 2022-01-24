@@ -1,6 +1,6 @@
 {
   "name": "linear-timelock-user-interface",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A user interface for the https://github.com/second-state/linear-timelock-smart-contract/",
   "main": "server.js",
   "scripts": {
