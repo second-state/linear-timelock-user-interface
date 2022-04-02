@@ -48,7 +48,13 @@ npm install
 
 ## Running
 
-To publish/deploy simply type
+To test on local hardware (localhost) simply type
+
+```
+node server.js
+```
+
+To publish/deploy at GitHub pages, open `package.json` and edit accordingly, then simply type
 
 ```
 npm run deploy
