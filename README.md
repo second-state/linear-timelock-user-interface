@@ -48,11 +48,22 @@ npm install
 
 ## Running
 
+### Localhost for testing
+
 To test on local hardware (localhost) simply type
 
 ```
 node server.js
 ```
+
+### Publish externally
+
+**Please note:** A disclaimer may be required, whereby the user must accept in order to unlock tokens. If this is the case then a disclaimer needs to be implemented in the UI. In addition the wording for the disclaimer has to be added to the code. The operation of the disclaimer needs to be tested before the UI is publicly deployed.
+
+An example of how a disclaimer was recently implemented in Simple Timelock UI can be found at the following GitHub commit. A change to the HTML button, some inline HTML text and additional CSS are required (as shown in the commit details in the following link)
+https://github.com/second-state/claim-parastate-erc20-token_locking-na_cliff-na_vesting-na/commit/2d59a91812be4fe482ba42f48dddd41d9730ea2b
+
+Also, please attend to any open issues in this repository to ensure correct and optimal operation.
 
 To publish/deploy at GitHub pages, open `package.json` and edit accordingly, then simply type
 
