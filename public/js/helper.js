@@ -1,331 +1,198 @@
-const abi = [{
-        "inputs": [{
-            "internalType": "contract IERC20",
-            "name": "_erc20_contract_address",
-            "type": "address"
-        }],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "anonymous": false,
-        "inputs": [{
-                "indexed": false,
-                "internalType": "address",
-                "name": "recipient",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "AllocationPerformed",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [{
-                "indexed": false,
-                "internalType": "address",
-                "name": "from",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "TokensDeposited",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [{
-                "indexed": false,
-                "internalType": "address",
-                "name": "recipient",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "TokensUnlocked",
-        "type": "event"
-    },
-    {
-        "inputs": [],
-        "name": "allIncomingDepositsFinalised",
-        "outputs": [{
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-        }],
-        "name": "alreadyWithdrawn",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-        }],
-        "name": "balances",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-                "internalType": "address[]",
-                "name": "recipients",
-                "type": "address[]"
-            },
-            {
-                "internalType": "uint256[]",
-                "name": "amounts",
-                "type": "uint256[]"
-            }
-        ],
-        "name": "bulkDepositTokens",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "cliffEdge",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "contractBalance",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-                "internalType": "address",
-                "name": "recipient",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "depositTokens",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "erc20Contract",
-        "outputs": [{
-            "internalType": "contract IERC20",
-            "name": "",
-            "type": "address"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "finalizeAllIncomingDeposits",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "initialTimestamp",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-        }],
-        "name": "mostRecentUnlockTimestamp",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "netReleasePeriod",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "owner",
-        "outputs": [{
-            "internalType": "address payable",
-            "name": "",
-            "type": "address"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "releaseEdge",
-        "outputs": [{
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-                "internalType": "uint256",
-                "name": "_cliffTimePeriod",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_releaseTimePeriod",
-                "type": "uint256"
-            }
-        ],
-        "name": "setTimestamp",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "timestampSet",
-        "outputs": [{
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-        }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-                "internalType": "contract IERC20",
-                "name": "token",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "transferAccidentallyLockedTokens",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-                "internalType": "contract IERC20",
-                "name": "token",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "transferTimeLockedTokensAfterTimePeriod",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [{
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-        }],
-        "name": "withdrawEth",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "stateMutability": "payable",
-        "type": "receive"
-    }
+const abi = [
+        {
+                "anonymous": false,
+                "inputs": [
+                        {
+                                "indexed": true,
+                                "internalType": "address",
+                                "name": "owner",
+                                "type": "address"
+                        },
+                        {
+                                "indexed": true,
+                                "internalType": "address",
+                                "name": "spender",
+                                "type": "address"
+                        },
+                        {
+                                "indexed": false,
+                                "internalType": "uint256",
+                                "name": "value",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "Approval",
+                "type": "event"
+        },
+        {
+                "anonymous": false,
+                "inputs": [
+                        {
+                                "indexed": true,
+                                "internalType": "address",
+                                "name": "from",
+                                "type": "address"
+                        },
+                        {
+                                "indexed": true,
+                                "internalType": "address",
+                                "name": "to",
+                                "type": "address"
+                        },
+                        {
+                                "indexed": false,
+                                "internalType": "uint256",
+                                "name": "value",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "Transfer",
+                "type": "event"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "address",
+                                "name": "owner",
+                                "type": "address"
+                        },
+                        {
+                                "internalType": "address",
+                                "name": "spender",
+                                "type": "address"
+                        }
+                ],
+                "name": "allowance",
+                "outputs": [
+                        {
+                                "internalType": "uint256",
+                                "name": "",
+                                "type": "uint256"
+                        }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "address",
+                                "name": "spender",
+                                "type": "address"
+                        },
+                        {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "approve",
+                "outputs": [
+                        {
+                                "internalType": "bool",
+                                "name": "",
+                                "type": "bool"
+                        }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "address",
+                                "name": "account",
+                                "type": "address"
+                        }
+                ],
+                "name": "balanceOf",
+                "outputs": [
+                        {
+                                "internalType": "uint256",
+                                "name": "",
+                                "type": "uint256"
+                        }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+        },
+        {
+                "inputs": [],
+                "name": "totalSupply",
+                "outputs": [
+                        {
+                                "internalType": "uint256",
+                                "name": "",
+                                "type": "uint256"
+                        }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "address",
+                                "name": "to",
+                                "type": "address"
+                        },
+                        {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "transfer",
+                "outputs": [
+                        {
+                                "internalType": "bool",
+                                "name": "",
+                                "type": "bool"
+                        }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "address",
+                                "name": "from",
+                                "type": "address"
+                        },
+                        {
+                                "internalType": "address",
+                                "name": "to",
+                                "type": "address"
+                        },
+                        {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "transferFrom",
+                "outputs": [
+                        {
+                                "internalType": "bool",
+                                "name": "",
+                                "type": "bool"
+                        }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+        }
 ];
 
 // Address of the linear timelock instance
-const linear_address = '0x5CDCCbA39ce998590C54455ED5BE930d920918a1';
+// const linear_address = '0x5CDCCbA39ce998590C54455ED5BE930d920918a1';
+const linear_address = '0x7A17dA35A20FDF9b78E220BB14A11BA5FCAaA3FB'; // Goeril
 
 
 // IMPORTANT - which address are you pasting here?
 // THIS MUST BE THE ERC20 ADDRESS NOT THE TIMELOCK ADDRESS
-const erc20_contract_address = '0x23D91837fceE9b52D76e2BE18410D9b2522f681D';
+// const erc20_contract_address = '0x23D91837fceE9b52D76e2BE18410D9b2522f681D';
+const erc20_contract_address = '0xDA2F1D68d76DA861629C86b8823fE35807Cf8689'; // Goerli
 
 function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
@@ -341,8 +208,8 @@ class Amounts {
         this.releaseEdge = new ethers.BigNumber.from('0');
         this.currentTime = new ethers.BigNumber.from('0');
         this.netReleasePeriod = new ethers.BigNumber.from('0');
-        this.mostRecentUnlockTimestamp = new ethers.BigNumber.from('0');
-        this.weiPerSecond = new ethers.BigNumber.from('0');
+        // this.mostRecentUnlockTimestamp = new ethers.BigNumber.from('0');
+        // this.weiPerSecond = new ethers.BigNumber.from('0');
     }
 
     getLocked() {
@@ -373,6 +240,7 @@ class Amounts {
         return this.netReleasePeriod;
     }
 
+    /*
     getMostRecentUnlockTimestamp() {
         return this.mostRecentUnlockTimestamp;
     }
@@ -380,6 +248,7 @@ class Amounts {
     getWeiPerSecond() {
         return this.weiPerSecond;
     }
+    */
 
     setLocked(_locked) {
         this.locked = this.locked.add(_locked);
@@ -425,8 +294,8 @@ class Amounts {
         this.releaseEdge = new ethers.BigNumber.from('0');
         this.currentTime = new ethers.BigNumber.from('0');
         this.netReleasePeriod = new ethers.BigNumber.from('0');
-        this.mostRecentUnlockTimestamp = new ethers.BigNumber.from('0');
-        this.weiPerSecond = new ethers.BigNumber.from('0');
+        // this.mostRecentUnlockTimestamp = new ethers.BigNumber.from('0');
+        // this.weiPerSecond = new ethers.BigNumber.from('0');
     }
 }
 
@@ -544,10 +413,10 @@ async function updateBalances() {
             console.log("Already withdrawn: " + linearAmounts.getWithdrawn());
 
             // Get most recent unlock timestamp i.e. the last time this specific user last unlocked tokens
-            mostRecentUnlockTimestamp = await linearTimeLockContract.mostRecentUnlockTimestamp(resultRegex[0]);
-            mostRecentUnlockTimestampBN = new ethers.BigNumber.from(mostRecentUnlockTimestamp);
-            linearAmounts.setMostRecentUnlockTimestamp(mostRecentUnlockTimestampBN);
-            console.log("Time of most recent unlock: " + linearAmounts.getMostRecentUnlockTimestamp());
+            // mostRecentUnlockTimestamp = await linearTimeLockContract.mostRecentUnlockTimestamp(resultRegex[0]);
+            // mostRecentUnlockTimestampBN = new ethers.BigNumber.from(mostRecentUnlockTimestamp);
+            // linearAmounts.setMostRecentUnlockTimestamp(mostRecentUnlockTimestampBN);
+            // console.log("Time of most recent unlock: " + linearAmounts.getMostRecentUnlockTimestamp());
 
             // Populate UI with values
             console.log("Adding start:");
@@ -566,8 +435,8 @@ async function updateBalances() {
                 document.getElementById("withdrawn").innerHTML = ethers.utils.formatEther(linearAmounts.getWithdrawn());
             }
             // Calculate how many wei per second is available for this specific user
-            linearAmounts.setWeiPerSecond((linearAmounts.getLocked().add(linearAmounts.getWithdrawn())).div(linearAmounts.getNetReleasePeriod()));
-            console.log("Wei per second: " + linearAmounts.getWeiPerSecond());
+            // linearAmounts.setWeiPerSecond((linearAmounts.getLocked().add(linearAmounts.getWithdrawn())).div(linearAmounts.getNetReleasePeriod()));
+            // console.log("Wei per second: " + linearAmounts.getWeiPerSecond());
 
             // Calculate how many tokens are available, given the current time period and how much time has elapsed so far        
             if (linearAmounts.getCurrentTime() >= linearAmounts.getReleaseEdge()) {
@@ -575,7 +444,11 @@ async function updateBalances() {
                 linearAmounts.setAvailable(linearAmounts.getLocked());
                 console.log("No time lock in place, all tokens are available");
             } else {
-                linearAmounts.setAvailable((linearAmounts.getCurrentTime().sub(linearAmounts.getMostRecentUnlockTimestamp())).mul(linearAmounts.getWeiPerSecond()));
+                // linearAmounts.setAvailable((linearAmounts.getCurrentTime().sub(linearAmounts.getMostRecentUnlockTimestamp())).mul(linearAmounts.getWeiPerSecond()));
+		var total = linearAmounts.getLocked().add(linearAmounts.getWithdrawn());
+		var vested = total.mul(linearAmounts.getCurrentTime().sub(linearAmounts.getCliffEdge())).div(linearAmounts.getReleaseEdge().sub(linearAmounts.getCliffEdge()));
+		var avail = vested.sub(linearAmounts.getWithdrawn());
+		linearAmounts.setAvailable(avail);
             }
             if (ethers.utils.formatEther(linearAmounts.getAvailable()) < 1 && ethers.utils.formatEther(linearAmounts.getAvailable()) > 0) {
                 document.getElementById("available").innerHTML = "< 1";
