@@ -1,68 +1,213 @@
 const abi = [
         {
-                "anonymous": false,
                 "inputs": [
                         {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "owner",
+                                "internalType": "contract IERC20",
+                                "name": "_erc20_contract_address",
                                 "type": "address"
-                        },
-                        {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "spender",
-                                "type": "address"
-                        },
-                        {
-                                "indexed": false,
-                                "internalType": "uint256",
-                                "name": "value",
-                                "type": "uint256"
                         }
                 ],
-                "name": "Approval",
-                "type": "event"
+                "stateMutability": "nonpayable",
+                "type": "constructor"
         },
         {
                 "anonymous": false,
                 "inputs": [
                         {
-                                "indexed": true,
+                                "indexed": false,
+                                "internalType": "address",
+                                "name": "recipient",
+                                "type": "address"
+                        },
+                        {
+                                "indexed": false,
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "AllocationPerformed",
+                "type": "event"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "address[]",
+                                "name": "recipients",
+                                "type": "address[]"
+                        },
+                        {
+                                "internalType": "uint256[]",
+                                "name": "amounts",
+                                "type": "uint256[]"
+                        }
+                ],
+                "name": "bulkDepositTokens",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "address",
+                                "name": "recipient",
+                                "type": "address"
+                        },
+                        {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "depositTokens",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+        },
+        {
+                "inputs": [],
+                "name": "finalizeAllIncomingDeposits",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "int256",
+                                "name": "_cliffTimePeriod",
+                                "type": "int256"
+                        },
+                        {
+                                "internalType": "int256",
+                                "name": "_releaseTimePeriod",
+                                "type": "int256"
+                        }
+                ],
+                "name": "setTimestamp",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+        },
+        {
+                "anonymous": false,
+                "inputs": [
+                        {
+                                "indexed": false,
                                 "internalType": "address",
                                 "name": "from",
                                 "type": "address"
                         },
                         {
-                                "indexed": true,
+                                "indexed": false,
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "TokensDeposited",
+                "type": "event"
+        },
+        {
+                "anonymous": false,
+                "inputs": [
+                        {
+                                "indexed": false,
                                 "internalType": "address",
-                                "name": "to",
+                                "name": "recipient",
                                 "type": "address"
                         },
                         {
                                 "indexed": false,
                                 "internalType": "uint256",
-                                "name": "value",
+                                "name": "amount",
                                 "type": "uint256"
                         }
                 ],
-                "name": "Transfer",
+                "name": "TokensUnlocked",
                 "type": "event"
         },
         {
                 "inputs": [
                         {
-                                "internalType": "address",
-                                "name": "owner",
+                                "internalType": "contract IERC20",
+                                "name": "token",
+                                "type": "address"
+                        },
+                        {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "transferAccidentallyLockedTokens",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "contract IERC20",
+                                "name": "token",
                                 "type": "address"
                         },
                         {
                                 "internalType": "address",
-                                "name": "spender",
+                                "name": "to",
+                                "type": "address"
+                        },
+                        {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "transferTimeLockedTokensAfterTimePeriod",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                        }
+                ],
+                "name": "withdrawEth",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+        },
+        {
+                "stateMutability": "payable",
+                "type": "receive"
+        },
+        {
+                "inputs": [],
+                "name": "allIncomingDepositsFinalised",
+                "outputs": [
+                        {
+                                "internalType": "bool",
+                                "name": "",
+                                "type": "bool"
+                        }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+        },
+        {
+                "inputs": [
+                        {
+                                "internalType": "address",
+                                "name": "",
                                 "type": "address"
                         }
                 ],
-                "name": "allowance",
+                "name": "alreadyWithdrawn",
                 "outputs": [
                         {
                                 "internalType": "uint256",
@@ -77,35 +222,11 @@ const abi = [
                 "inputs": [
                         {
                                 "internalType": "address",
-                                "name": "spender",
-                                "type": "address"
-                        },
-                        {
-                                "internalType": "uint256",
-                                "name": "amount",
-                                "type": "uint256"
-                        }
-                ],
-                "name": "approve",
-                "outputs": [
-                        {
-                                "internalType": "bool",
                                 "name": "",
-                                "type": "bool"
-                        }
-                ],
-                "stateMutability": "nonpayable",
-                "type": "function"
-        },
-        {
-                "inputs": [
-                        {
-                                "internalType": "address",
-                                "name": "account",
                                 "type": "address"
                         }
                 ],
-                "name": "balanceOf",
+                "name": "balances",
                 "outputs": [
                         {
                                 "internalType": "uint256",
@@ -118,7 +239,7 @@ const abi = [
         },
         {
                 "inputs": [],
-                "name": "totalSupply",
+                "name": "cliffEdge",
                 "outputs": [
                         {
                                 "internalType": "uint256",
@@ -130,48 +251,73 @@ const abi = [
                 "type": "function"
         },
         {
-                "inputs": [
-                        {
-                                "internalType": "address",
-                                "name": "to",
-                                "type": "address"
-                        },
+                "inputs": [],
+                "name": "contractBalance",
+                "outputs": [
                         {
                                 "internalType": "uint256",
-                                "name": "amount",
+                                "name": "",
                                 "type": "uint256"
                         }
                 ],
-                "name": "transfer",
-                "outputs": [
-                        {
-                                "internalType": "bool",
-                                "name": "",
-                                "type": "bool"
-                        }
-                ],
-                "stateMutability": "nonpayable",
+                "stateMutability": "view",
                 "type": "function"
         },
         {
-                "inputs": [
+                "inputs": [],
+                "name": "erc20Contract",
+                "outputs": [
                         {
-                                "internalType": "address",
-                                "name": "from",
+                                "internalType": "contract IERC20",
+                                "name": "",
                                 "type": "address"
-                        },
-                        {
-                                "internalType": "address",
-                                "name": "to",
-                                "type": "address"
-                        },
+                        }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+        },
+        {
+                "inputs": [],
+                "name": "initialTimestamp",
+                "outputs": [
                         {
                                 "internalType": "uint256",
-                                "name": "amount",
+                                "name": "",
                                 "type": "uint256"
                         }
                 ],
-                "name": "transferFrom",
+                "stateMutability": "view",
+                "type": "function"
+        },
+        {
+                "inputs": [],
+                "name": "owner",
+                "outputs": [
+                        {
+                                "internalType": "address payable",
+                                "name": "",
+                                "type": "address"
+                        }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+        },
+        {
+                "inputs": [],
+                "name": "releaseEdge",
+                "outputs": [
+                        {
+                                "internalType": "uint256",
+                                "name": "",
+                                "type": "uint256"
+                        }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+        },
+        {
+                "inputs": [],
+                "name": "timestampSet",
                 "outputs": [
                         {
                                 "internalType": "bool",
@@ -179,7 +325,7 @@ const abi = [
                                 "type": "bool"
                         }
                 ],
-                "stateMutability": "nonpayable",
+                "stateMutability": "view",
                 "type": "function"
         }
 ];
